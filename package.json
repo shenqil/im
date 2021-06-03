@@ -4,11 +4,15 @@
   "description": "electron_demo",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir ",
+    "dist": "electron-builder --config=./electron-builder.json5",
+    "postinstall": "electron-builder install-app-deps"
   },
   "author": "lsq",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^13.0.1"
+    "electron": "^13.0.1",
+    "electron-builder": "^22.10.5"
   }
 }

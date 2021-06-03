@@ -1,0 +1,5 @@
+{
+  appId: "com.example.app", // 应用程序 ID
+  productName: "electron-demo", // 可执行文件指定产品名称
+  copyright: "Copyright © 2021 LSQ",
+}

@@ -1,7 +1,9 @@
-# 开启一个electron项目
+# 开启一个 electron 项目
 
-## 1. npm init  -y 创建一个前端工程
-+ 修改 main 选项为 `main.js`
+## 1. npm init -y 创建一个前端工程
+
+- 修改 main 选项为 `main.js`
+
 ```
 {
   "name": "electron_demo",
@@ -14,17 +16,21 @@
 ```
 
 ## 2.安装 `electron`包
+
 ```
 npm install --save-dev electron
 ```
-+ 修改启动脚本
+
+- 修改启动脚本
+
 ```
   "scripts": {
     "start": "electron ."
   },
 ```
 
-## 3.新建一个html，作为页面入口
+## 3.新建一个 html，作为页面入口
+
 ```
 // index.html
 
@@ -49,7 +55,8 @@ npm install --save-dev electron
 
 ```
 
-## 4.新建一个main.js,作为整个应用入口
+## 4.新建一个 main.js,作为整个应用入口
+
 ```
 // main.js
 
@@ -82,6 +89,7 @@ app.on('window-all-closed', function () {
 ```
 
 ## 5.编写页面预加载脚本
+
 ```
 // preload.js
 
@@ -97,7 +105,8 @@ window.addEventListener('DOMContentLoaded', () => {
 })
 ```
 
-## 6.编写页面js
+## 6.编写页面 js
+
 ```
 // renderer.js
 
@@ -107,3 +116,9 @@ console.log('hello')
 ## 7.运行 `npm run start` 启动整个应用
 
 [源码](https://github.com/fssqLove/electron-exp)
+
+## 8.安装 `electron-builder` 对 electron 进行打包
+
+```npm
+yarn add electron-builder --dev
+```
