@@ -2,4 +2,18 @@
   appId: "com.example.app", // 应用程序 ID
   productName: "electron-demo", // 可执行文件指定产品名称
   copyright: "Copyright © 2021 LSQ",
+  //  win 打包配置
+  win: {
+    target: "nsis", // 打包类型
+    icon: "build/icons/icon.ico", // 应用程序图标的路径
+    legalTrademarks: "fssq", // 字符串 - 商标和注册商标
+  },
+  nsis: {
+    oneClick: false,
+    perMachine: true, // 是否开启安装时权限限制（此电脑或当前用户）
+    allowToChangeInstallationDirectory: true, // 自定义安装目录
+    allowElevation: true,
+    createDesktopShortcut: true, // 生成桌面图标
+    installerIcon: "build/icons/icon.ico", // 安装程序图标的路径
+  },
 }
