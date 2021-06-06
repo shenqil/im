@@ -5,8 +5,8 @@
   "main": ".webpack/main/main.built.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development node ./build/scripts/start.js",
-    "start:main": "cross-env NODE_ENV=development webpack --config ./build/configs/webpack.main.js",
-    "start:render": "cross-env NODE_ENV=development webpack serve --config ./build/configs/webpack.dev.js",
+    "build:pack": "cross-env NODE_ENV=production node ./build/scripts/build.js --dir --config=./electron-builder.json5",
+    "build:dist": "cross-env NODE_ENV=production node ./build/scripts/build.js --config=./electron-builder.json5",
     "pack": "electron-builder --dir ",
     "dist": "electron-builder --config=./electron-builder.json5"
   },

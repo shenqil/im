@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from 'electron';
-// declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
+import { resolve } from 'path'
 
-console.log(process.env.WEBPACK_CHUNK_NAME, 'env')
+console.log(process.env.WEBPACK_DEV_SERVER_URL,__dirname, 'env')
 
 const createWindow = (): void => {
   // Create the browser window.
@@ -11,7 +11,12 @@ const createWindow = (): void => {
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL('http://localhost:8080/');
+  if(process.env.WEBPACK_DEV_SERVER_URL){
+    mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+  }else{
+    mainWindow.loadURL(resolve(__dirname,'../renderer/main_window/index.html'));
+  }
+
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();

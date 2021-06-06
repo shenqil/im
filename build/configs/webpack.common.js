@@ -1,8 +1,9 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const { resolve } = require('../utils/common')
+const { resolve, packageInfo } = require('../utils/common')
 
 module.exports = {
+    // target: `electron${packageInfo.electronVersion}-renderer`, // preload
     entry: resolve('src/renderer/main_window/index.ts'),
     output: {
         filename: '[name].[contenthash:10].js',
@@ -16,7 +17,6 @@ module.exports = {
             ...require('./webpack.rules'),
             {
                 test: /\.html$/i,
-                // 处理html文件的img图片(负责引入img,从而能被url-loader进行处理)
                 loader: 'html-loader',
             }
         ],

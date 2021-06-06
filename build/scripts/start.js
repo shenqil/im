@@ -1,9 +1,12 @@
 const webpack = require('webpack');
 const { spawn } = require('child_process');
 
-const { taskKill } = require('../utils/common')
+const { taskKill, deleteFolder, resolve } = require('../utils/common')
 
 const webpackMainCfg = require('../configs/webpack.main');
+
+// 清空主进程缓存文件
+deleteFolder(resolve('./.webpack/main'))
 
 let watch = CreateWatch()
 
@@ -44,6 +47,9 @@ function CreateWatch() {
             isWatchRefresh: true,
             isKill: true,
             args: ['electron', `.webpack/main/main.js`],
+            env: {
+                WEBPACK_DEV_SERVER_URL: 'http://localhost:8080/'
+            }
         },
         {
             name: 'serverProcess', // 子进程名车
@@ -71,7 +77,7 @@ function CreateWatch() {
 
         itemProcess.subProcess = spawn("npx", [...itemProcess.args], {
             shell: true,
-            env: process.env,
+            env: { ...process.env, ...itemProcess.env },
             stdio: 'inherit',
         })
 

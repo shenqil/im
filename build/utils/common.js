@@ -1,4 +1,5 @@
 const path = require('path')
+const fs = require('fs')
 const { spawnSync } = require('child_process');
 
 /**
@@ -28,9 +29,7 @@ const packageInfo = parsePackage()
 /**
  * 判断是否为生产环境
  * */
-function isProduction() {
-    return process.env.NODE_ENV === 'production'
-}
+const isProduction = process.env.NODE_ENV === 'production'
 
 /**
  * 杀掉进程
@@ -42,9 +41,39 @@ function taskKill(pid) {
     })
 }
 
+
+/**
+ * 删除指定路径的所有文件
+ * @param path
+ */
+function deleteFolder(filePath) {
+    let files = [];
+    if (fs.existsSync(filePath)) {
+        files = fs.readdirSync(filePath);
+        files.forEach((file) => {
+            let curPath = path.join(filePath, file);
+            if (fs.statSync(curPath).isDirectory()) {
+                deleteFolder(curPath);
+            } else {
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(filePath);
+    }
+}
+
+/**
+ * 解析所有参数
+ * */
+function getProgramArgv() {
+    return process.argv.slice(2)
+}
+
 module.exports = {
     resolve,
     packageInfo,
     isProduction,
-    taskKill
+    taskKill,
+    deleteFolder,
+    getProgramArgv
 }
