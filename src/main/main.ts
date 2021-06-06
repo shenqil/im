@@ -1,6 +1,9 @@
 import { app, BrowserWindow } from 'electron';
 import { resolve } from 'path'
 
+// 引入所有窗口
+import './window/index'
+
 console.log(process.env.WEBPACK_DEV_SERVER_URL,__dirname, 'env')
 
 const createWindow = (): void => {
