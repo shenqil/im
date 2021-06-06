@@ -1,13 +1,14 @@
 import { app, BrowserWindow } from 'electron';
 import { resolve } from 'path'
 
-console.log(process.env.WEBPACK_DEV_SERVER_URL,__dirname, 'env')
-
 const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     height: 600,
-    width: 800
+    width: 800,
+    webPreferences:{
+      preload:resolve(__dirname,'../preload/preload.built.js')
+    }
   });
 
   // and load the index.html of the app.
