@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { resolve } from 'path'
 
 // 引入所有窗口
@@ -10,7 +10,10 @@ const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     height: 600,
-    width: 800
+    width: 800,
+    webPreferences:{
+      preload:resolve(__dirname,'../preload/preload.built.js')
+    }
   });
 
   // and load the index.html of the app.
@@ -49,3 +52,9 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+
+ipcMain.on('synchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.returnValue = 'pong'
+})

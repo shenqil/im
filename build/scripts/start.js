@@ -4,18 +4,20 @@ const { spawn } = require('child_process');
 const { taskKill, deleteFolder, resolve } = require('../utils/common')
 
 const webpackMainCfg = require('../configs/webpack.main');
+const webpackPreloadCfg = require('../configs/webpack.preload');
 
 // 清空主进程缓存文件
 deleteFolder(resolve('./.webpack/main'))
+deleteFolder(resolve('./.webpack/preload'))
 
 let watch = CreateWatch()
 
 const compiler = webpack([
-    webpackMainCfg
+    webpackMainCfg,
+    webpackPreloadCfg
 ])
 
 compiler.watch({
-    // Example [watchOptions](/configuration/watch/#watchoptions)
     aggregateTimeout: 300,
     poll: undefined
 }, (err, stats) => {

@@ -5,6 +5,7 @@ const { spawnSync } = require('child_process');
 const { deleteFolder, resolve, getProgramArgv } = require('../utils/common')
 
 const webpackMainCfg = require('../configs/webpack.main')
+const webpackPreloadCfg = require('../configs/webpack.preload')
 const webpackRenderCfg = require('../configs/webpack.prod')
 
 // 清空所有缓存文件
@@ -16,6 +17,7 @@ const electronProgramArgv = getProgramArgv()
 // webpack 进行打包
 webpack([
     webpackMainCfg,
+    webpackPreloadCfg,
     webpackRenderCfg
 ], (err, stats) => {
     if (stats.hasErrors()) {
