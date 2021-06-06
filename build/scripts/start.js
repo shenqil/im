@@ -39,19 +39,19 @@ compiler.watch({
 function CreateWatch() {
     let allSubProcess = [
         {
+            name: 'electronProcess',
+            subProcess: null,
+            isWatchRefresh: true,
+            isKill: true,
+            args: ['electron', `.webpack/main/main.js`],
+        },
+        {
             name: 'serverProcess', // 子进程名车
             subProcess: null, // 保存子进程引用
             isWatchRefresh: false, // 监听到变化是否刷新
             isKill: true, // 进程被杀掉时确认结束子进程，否则会重新启用一个新的子进程
             args: ['webpack serve --config', './build/configs/webpack.dev.js'],
 
-        },
-        {
-            name: 'electronProcess',
-            subProcess: null,
-            isWatchRefresh: true,
-            isKill: true,
-            args: ['electron', `.webpack/main/main.js`],
         },
     ]
     let isKillAll = false
@@ -108,7 +108,7 @@ function CreateWatch() {
 
     return (opthion) => {
         if (opthion.chunkName) {
-            allSubProcess[1].args[1] = `.webpack/main/${opthion.chunkName.main}`
+            allSubProcess[0].args[1] = `.webpack/main/${opthion.chunkName.main}`
         }
 
         // 创建所有子进程
