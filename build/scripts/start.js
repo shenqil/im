@@ -4,8 +4,6 @@ const { spawn } = require('child_process');
 const { taskKill } = require('../utils/common')
 
 const webpackMainCfg = require('../configs/webpack.main');
-const { kill } = require('process');
-const { flat } = require('../configs/webpack.rules');
 
 let watch = CreateWatch()
 
@@ -89,7 +87,6 @@ function CreateWatch() {
         })
         itemProcess.subProcess.on('error', (spawnError) => console.error(spawnError));
     }
-
 
     /**
      * 杀掉所有进程
