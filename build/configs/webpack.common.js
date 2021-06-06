@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { resolve, packageInfo } = require('../utils/common')
 
 module.exports = {
-    target: `electron${packageInfo.electronVersion}-renderer`, // preload
+    // target: `electron${packageInfo.electronVersion}-renderer`, 
     entry: resolve('src/renderer/main_window/index.ts'),
     output: {
         filename: '[name].[contenthash:10].js',
