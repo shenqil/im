@@ -1,18 +1,18 @@
 console.log("hello main")
 
-const boxDom = document.querySelector('.electron-version')
-
 const btnHelp = document.createElement('button')
 btnHelp.innerHTML = '打开help 窗口'
 
 const btnAbout = document.createElement('button')
 btnAbout.innerHTML = '打开about 窗口'
 
+const {openHlepWin,openAboutWin} = (window as any)
+
 btnHelp.onclick = function(){
+    console.log(window)
 }
 
-btnAbout.onclick = function(){
-}
+btnAbout.onclick = ()=>openHlepWin()
 
-boxDom?.appendChild(btnAbout)
-boxDom?.appendChild(btnHelp)
+document.body.appendChild(btnAbout)
+document.body.appendChild(btnHelp)
