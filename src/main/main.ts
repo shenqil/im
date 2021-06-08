@@ -12,7 +12,8 @@ const createWindow = (): void => {
     height: 600,
     width: 800,
     webPreferences:{
-      preload:resolve(__dirname,'../preload/preload.built.js')
+      preload:resolve(__dirname,'../preload/preload.built.js'),
+      contextIsolation:false
     }
   });
 

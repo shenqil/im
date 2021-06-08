@@ -8,11 +8,9 @@ btnAbout.innerHTML = '打开about 窗口'
 
 const {openHlepWin,openAboutWin} = (window as any)
 
-btnHelp.onclick = function(){
-    console.log(window)
-}
+btnHelp.onclick = ()=>openAboutWin()
 
-btnAbout.onclick = ()=>openHlepWin()
+btnAbout.onclick = ()=>openAboutWin()
 
 document.body.appendChild(btnAbout)
 document.body.appendChild(btnHelp)
