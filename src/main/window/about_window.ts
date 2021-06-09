@@ -10,7 +10,10 @@ const createWindow = (): void => {
     // Create the browser window.
     aboutWindow = new BrowserWindow({
       height: 600,
-      width: 800
+      width: 800,
+      webPreferences:{
+          preload:resolve(__dirname,'./preload/test.load.built.js')
+      }
     });
   
     // and load the index.html of the app.

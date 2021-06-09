@@ -10,7 +10,7 @@ let entryNames = [];
 function getAllWindowName() {
     const dirPath = resolve('src/renderer')
 
-    if (!fs.existsSync(dirPath)) {
+    if (!fs.statSync(dirPath).isDirectory()) {
         throw new Error('渲染窗口路径不存在')
     }
 
@@ -23,9 +23,14 @@ function getAllWindowName() {
 const defaultTemplate = resolve('./index.html')
 function htmlTemplate(name) {
     let templatePath = resolve(`src/renderer/${name}/index.html`)
-    if (fs.existsSync(templatePath)) {
-        return { template: templatePath }
+    try {
+        if (fs.statSync(dirPath).isFile()) {
+            return { template: templatePath }
+        }
+    } catch {
+
     }
+
     return { template: defaultTemplate }
 }
 
@@ -34,8 +39,17 @@ getAllWindowName()
 let entry = {}
 let plugins = []
 entryNames.forEach(name => {
+    const entryPath = resolve(`src/renderer/${name}/index.ts`)
+    try {
+        if (!fs.statSync(entryPath).isFile()) {
+            return
+        }
+    } catch {
+        return
+    }
+
     // 填充所有入口
-    entry[name] = resolve(`src/renderer/${name}/index.ts`)
+    entry[name] = entryPath
 
     // 填充所有渲染窗口
     plugins.push(new HtmlWebpackPlugin({

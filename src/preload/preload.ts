@@ -1,4 +1,7 @@
 const { ipcRenderer } = require('electron')
+import './moudule/a'
+import './moudule/b'
+
 console.log(ipcRenderer.sendSync('synchronous-message', 'ping')) // prints "pong"
 
 
