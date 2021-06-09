@@ -1,16 +1,17 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const { resolve, packageInfo } = require('../utils/common')
+const rendererCfg = require('../utils/rendererCfg')
 
 module.exports = {
     // target: `electron${packageInfo.electronVersion}-renderer`, 
-    entry: resolve('src/renderer/main_window/index.ts'),
+    entry: rendererCfg.entry,
     output: {
-        filename: '[name].[contenthash:10].js',
-        path: resolve('.webpack/renderer/main_window'),
+        filename: '[name]/index.[contenthash:10].js',
+        path: resolve('.webpack/renderer'),
     },
     plugins: [
-        new HtmlWebpackPlugin({ template: resolve('./index.html') }),
+        new HtmlWebpackPlugin({ template: resolve('./index.html'), filename: '[name].html' }),
     ],
     module: {
         rules: [

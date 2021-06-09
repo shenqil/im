@@ -19,9 +19,9 @@ const createWindow = (): void => {
 
   // and load the index.html of the app.
   if(process.env.WEBPACK_DEV_SERVER_URL){
-    mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+    mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + 'main_window.html');
   }else{
-    mainWindow.loadURL(resolve(__dirname,'../renderer/main_window/index.html'));
+    mainWindow.loadURL(resolve(__dirname,'../renderer/main_window.html'));
   }
 
 
