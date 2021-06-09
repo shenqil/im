@@ -7,8 +7,7 @@ const webpackMainCfg = require('../configs/webpack.main');
 const webpackPreloadCfg = require('../configs/webpack.preload');
 
 // 清空主进程缓存文件
-deleteFolder(resolve('./.webpack/main'))
-deleteFolder(resolve('./.webpack/preload'))
+deleteFolder(resolve('./.webpack'))
 
 let watch = CreateWatch()
 
@@ -48,7 +47,7 @@ function CreateWatch() {
             subProcess: null,
             isWatchRefresh: true,
             isKill: true,
-            args: ['electron', `.webpack/main/main.js`],
+            args: ['electron', `.webpack/main.built.js`],
             env: {
                 WEBPACK_DEV_SERVER_URL: 'http://localhost:8080/'
             }
@@ -116,7 +115,7 @@ function CreateWatch() {
 
     return (opthion) => {
         if (opthion.chunkName) {
-            allSubProcess[0].args[1] = `.webpack/main/${opthion.chunkName.main}`
+            allSubProcess[0].args[1] = `.webpack/${opthion.chunkName.main}`
         }
 
         // 创建所有子进程

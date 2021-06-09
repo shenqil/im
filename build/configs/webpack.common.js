@@ -1,5 +1,3 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-
 const { resolve, packageInfo } = require('../utils/common')
 const rendererCfg = require('../utils/rendererCfg')
 
@@ -11,7 +9,7 @@ module.exports = {
         path: resolve('.webpack/renderer'),
     },
     plugins: [
-        new HtmlWebpackPlugin({ template: resolve('./index.html'), filename: '[name].html' }),
+        ...rendererCfg.plugins
     ],
     module: {
         rules: [

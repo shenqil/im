@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import { resolve } from 'path'
 
 // 引入所有窗口
-import './window/index'
+import './main/window/index'
 
 console.log(process.env.WEBPACK_DEV_SERVER_URL,__dirname, 'env')
 
@@ -12,7 +12,7 @@ const createWindow = (): void => {
     height: 600,
     width: 800,
     webPreferences:{
-      preload:resolve(__dirname,'../preload/preload.built.js'),
+      preload:resolve(__dirname,'./preload/preload.built.js'),
       contextIsolation:false
     }
   });
@@ -21,7 +21,7 @@ const createWindow = (): void => {
   if(process.env.WEBPACK_DEV_SERVER_URL){
     mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + 'main_window.html');
   }else{
-    mainWindow.loadURL(resolve(__dirname,'../renderer/main_window.html'));
+    mainWindow.loadURL(resolve(__dirname,'./renderer/main_window.html'));
   }
 
 

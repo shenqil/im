@@ -38,13 +38,12 @@ entryNames.forEach(name => {
     entry[name] = resolve(`src/renderer/${name}/index.ts`)
 
     // 填充所有渲染窗口
-    if ('main_window' == name) {
-        plugins.push(new HtmlWebpackPlugin({
-            ...htmlTemplate(name),
-            filename: `${name}.html`,
-            chunks: [name],
-        }))
-    }
+    plugins.push(new HtmlWebpackPlugin({
+        ...htmlTemplate(name),
+        filename: `${name}.html`,
+        chunks: [name],
+    }))
+
 
 })
 

@@ -17,7 +17,7 @@ const createWindow = (): void => {
     if(process.env.WEBPACK_DEV_SERVER_URL){
         aboutWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + 'about_window.html');
     }else{
-        aboutWindow.loadURL(resolve(__dirname,'../renderer/about_window.html'));
+        aboutWindow.loadURL(resolve(__dirname,'./renderer/about_window.html'));
     }
   
   
