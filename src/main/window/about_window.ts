@@ -1,5 +1,5 @@
 import { BrowserWindow,ipcMain } from 'electron';
-import { resolve } from 'path'
+import {joinDirname} from '../utils/common'
 
 
 let aboutWindow:BrowserWindow;
@@ -12,7 +12,7 @@ const createWindow = (): void => {
       height: 600,
       width: 800,
       webPreferences:{
-          preload:resolve(__dirname,'./preload/test.load.built.js')
+          preload:joinDirname('./preload/preload.ts')
       }
     });
   
@@ -20,7 +20,7 @@ const createWindow = (): void => {
     if(process.env.WEBPACK_DEV_SERVER_URL){
         aboutWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + 'about_window.html');
     }else{
-        aboutWindow.loadURL(resolve(__dirname,'./renderer/about_window.html'));
+        aboutWindow.loadURL( joinDirname('./renderer/about_window.html'));
     }
   
   

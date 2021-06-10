@@ -1,10 +1,12 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import { resolve } from 'path'
 
+// 引入所有自定义协议
+import './main/schemes/index'
 // 引入所有窗口
 import './main/window/index'
+// 引入工具包
+import {joinDirname} from './main/utils/common'
 
-console.log(process.env.WEBPACK_DEV_SERVER_URL,__dirname, 'env')
 
 const createWindow = (): void => {
   // Create the browser window.
@@ -12,7 +14,7 @@ const createWindow = (): void => {
     height: 600,
     width: 800,
     webPreferences:{
-      preload:resolve(__dirname,'./preload/preload.built.js'),
+      preload: joinDirname('./preload/preload.ts'),
       contextIsolation:false
     }
   });
@@ -21,7 +23,7 @@ const createWindow = (): void => {
   if(process.env.WEBPACK_DEV_SERVER_URL){
     mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + 'main_window.html');
   }else{
-    mainWindow.loadURL(resolve(__dirname,'./renderer/main_window.html'));
+    mainWindow.loadURL(joinDirname('./renderer/main_window.html'));
   }
 
 
@@ -32,7 +34,9 @@ const createWindow = (): void => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.whenReady().then(() => {
+  createWindow()
+})
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
