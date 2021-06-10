@@ -1,4 +1,4 @@
-import {multiply} from '../public_moudule/a'
+import {multiply} from '../public/a'
 import moment from 'moment'
 const input = document.createElement('input')
 document.body.appendChild(input)

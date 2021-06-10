@@ -1,5 +1,5 @@
-import {multiply} from '../public_moudule/a'
-import { add} from '../public_moudule/b'
+import {multiply} from '../public/a'
+import { add} from '../public/b'
 console.log("hello main")
 
 import _ from 'lodash'

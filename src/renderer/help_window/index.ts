@@ -1,5 +1,5 @@
-import {multiply} from '../public_moudule/a'
-import { add} from '../public_moudule/b'
+import {multiply} from '../public/a'
+import { add} from '../public/b'
 
 const input = document.createElement('input')
 document.body.appendChild(input)
