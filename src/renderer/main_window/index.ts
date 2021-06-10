@@ -5,6 +5,9 @@ console.log("hello main")
 import _ from 'lodash'
 import moment from 'moment'
 
+import '@renderer/static/js/index.js'
+// import imgSrc from '@renderer/static/img/2abbbce9b334558100246ffe07fd9c6f11.jpg'
+
 const btnHelp = document.createElement('button')
 btnHelp.innerHTML = '打开help 窗口'
 
@@ -30,3 +33,8 @@ input.addEventListener('input',(e)=>{
     console.log(_.add(num,num))
     console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
 })
+
+// const img = document.createElement('img')
+// img.src = imgSrc
+
+// document.body.appendChild(img)
