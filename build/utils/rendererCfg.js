@@ -39,6 +39,11 @@ getAllWindowName()
 let entry = {}
 let plugins = []
 entryNames.forEach(name => {
+    // 过滤掉不是窗口的文件夹
+    if (!/_window$/.test(name)) {
+        return
+    }
+
     const entryPath = resolve(`src/renderer/${name}/index.ts`)
     try {
         if (!fs.statSync(entryPath).isFile()) {

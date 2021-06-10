@@ -1,7 +1,10 @@
-const { resolve, packageInfo } = require('../utils/common')
-const rendererCfg = require('../utils/rendererCfg')
+const { merge } = require('webpack-merge');
 
-module.exports = {
+const { resolve } = require('../utils/common')
+const rendererCfg = require('../utils/rendererCfg')
+const base = require('./webpack.base')
+
+module.exports = merge(base, {
     // target: `electron${packageInfo.electronVersion}-renderer`, 
     entry: rendererCfg.entry,
     output: {
@@ -13,20 +16,14 @@ module.exports = {
     ],
     module: {
         rules: [
-            ...require('./webpack.rules'),
             {
                 test: /\.html$/i,
                 loader: 'html-loader',
             }
         ],
     },
-    optimization: {
-        splitChunks: {
-            chunks: 'all',
-        },
-    },
     resolve: {
         // 配置省略文件路径的后缀名
         extensions: ['.tsx', '.ts', '.js'],
     },
-};
+});

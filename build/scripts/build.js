@@ -1,5 +1,4 @@
 const webpack = require('webpack');
-const path = require('path')
 const { spawnSync } = require('child_process');
 
 const { deleteFolder, resolve, getProgramArgv } = require('../utils/common')

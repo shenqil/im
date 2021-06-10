@@ -1,21 +1,12 @@
-const { resolve, packageInfo, isProduction } = require('../utils/common')
+const { merge } = require('webpack-merge');
 
-module.exports = {
+const { resolve, packageInfo } = require('../utils/common')
+const base = require('./webpack.base')
+
+module.exports = merge(base, {
     target: `electron${packageInfo.electronVersion}-main`,
     entry: resolve('src/main.ts'),
-    mode: isProduction ? 'production' : 'development',
-    devtool: isProduction ? 'source-map' : 'inline-source-map',
     output: {
-        filename: '[name].built.js',
         path: resolve('.webpack'),
     },
-    module: {
-        rules: require('./webpack.rules'),
-    },
-    resolve: {
-        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json']
-    },
-    watchOptions: {
-        ignored: '**/node_modules',
-    },
-};
+});
