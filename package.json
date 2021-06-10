@@ -6,6 +6,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development node ./build/scripts/start.js",
     "start:render": "cross-env NODE_ENV=development webpack --config ./build/configs/webpack.dev.js",
+    "build": "cross-env NODE_ENV=development node ./build/scripts/build.js --dir --config=./electron-builder.json5",
     "build:pack": "cross-env NODE_ENV=production node ./build/scripts/build.js --dir --config=./electron-builder.json5",
     "build:dist": "cross-env NODE_ENV=production node ./build/scripts/build.js --config=./electron-builder.json5",
     "pack": "electron-builder --dir ",
@@ -14,6 +15,7 @@
   "author": "lsq",
   "license": "ISC",
   "devDependencies": {
+    "@types/lodash": "^4.14.170",
     "cross-env": "^7.0.3",
     "electron": "^13.0.1",
     "electron-builder": "^22.10.5",
@@ -26,5 +28,9 @@
     "webpack-cli": "^4.7.0",
     "webpack-dev-server": "^3.11.2",
     "webpack-merge": "^5.7.3"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1"
   }
 }

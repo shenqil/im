@@ -1,4 +1,8 @@
+import _ from 'lodash'
 
 export function add(a:number,b:number):number{
-    return a+b
+    if(a>b){
+        return a
+    }
+    return _.add(a,b)
 }

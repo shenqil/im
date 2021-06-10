@@ -7,6 +7,11 @@ import './main/window/index'
 // 引入工具包
 import {joinDirname} from './main/utils/common'
 
+import moment from 'moment'
+import _ from 'lodash'
+
+console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
+console.log(_.add(Date.now(),10))
 
 const createWindow = (): void => {
   // Create the browser window.

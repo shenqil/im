@@ -29,6 +29,7 @@ module.exports = {
     optimization: {
         splitChunks: {
             chunks: 'all',
+            minSize: 10 * 1024 // 10k以上的包进行拆包
         },
     },
     watchOptions: {

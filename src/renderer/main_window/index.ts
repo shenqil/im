@@ -2,7 +2,8 @@ import {multiply} from '../public_moudule/a'
 import { add} from '../public_moudule/b'
 console.log("hello main")
 
-
+import _ from 'lodash'
+import moment from 'moment'
 
 const btnHelp = document.createElement('button')
 btnHelp.innerHTML = '打开help 窗口'
@@ -26,4 +27,6 @@ input.addEventListener('input',(e)=>{
     const num = Number(input.value)
     console.log(multiply(num,num))
     console.log(add(num,num))
+    console.log(_.add(num,num))
+    console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
 })
