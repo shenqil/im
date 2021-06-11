@@ -1,7 +1,7 @@
 const fs = require('fs')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const { resolve } = require('../utils/common')
+const { resolve, isProduction } = require('../utils/common')
 
 let entryNames = [];
 /**
@@ -16,6 +16,26 @@ function getAllWindowName() {
 
     entryNames = fs.readdirSync(dirPath)
 }
+
+/**
+ * 填充meta标签
+ * */
+function getMeta() {
+    const securityPolicy = {
+        'Content-Security-Policy': { 'http-equiv': 'Content-Security-Policy', 'content': "default-src 'self'; script-src 'self'" },
+        'X-Content-Security-Policy': { 'http-equiv': 'X-Content-Security-Policy', 'content': "default-src 'self'; script-src 'self'" }
+    }
+
+    let resultMetaObj = {}
+
+    // 生产环境开启安全策略
+    if (isProduction) {
+        resultMetaObj = { ...securityPolicy }
+    }
+
+    return resultMetaObj
+}
+const metaObj = getMeta()
 
 /**
  * 获取窗口html模板
@@ -61,6 +81,9 @@ entryNames.forEach(name => {
         ...htmlTemplate(name),
         filename: `${name}.html`,
         chunks: [name],
+        meta: {
+            ...metaObj
+        }
     }))
 
 
