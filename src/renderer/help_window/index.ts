@@ -1,5 +1,7 @@
-import {multiply} from '../public/a'
-import { add} from '../public/b'
+import {multiply} from '../public/js/a'
+import { add} from '../public/js/b'
+
+import '../public/font/iconfont.css'
 
 const input = document.createElement('input')
 document.body.appendChild(input)
@@ -11,3 +13,8 @@ input.addEventListener('input',(e)=>{
 })
 
 console.log("hello help")
+
+
+const i = document.createElement('i')
+i.className = 'iconfont icon-xiazai'
+document.body.appendChild(i)

@@ -4,10 +4,7 @@ const { resolve } = require('../utils/common')
 const rendererCfg = require('../utils/rendererCfg')
 const base = require('./webpack.base')
 
-const CopyPlugin = require("copy-webpack-plugin");
-
 module.exports = merge(base, {
-    // target: `electron${packageInfo.electronVersion}-renderer`, 
     entry: rendererCfg.entry,
     output: {
         filename: '[name]/index.[contenthash:10].js',
@@ -15,18 +12,27 @@ module.exports = merge(base, {
     },
     plugins: [
         ...rendererCfg.plugins,
-        new CopyPlugin({
-            patterns: [
-                { from: resolve('./src/renderer/static'), to: resolve('.webpack/renderer/static') },
-            ],
-        }),
     ],
     module: {
         rules: [
             {
                 test: /\.html$/i,
                 loader: 'html-loader',
-            }
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'static/images/[hash][ext][query]'
+                }
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'static/font/[hash][ext][query]'
+                }
+            },
         ],
     },
     resolve: {

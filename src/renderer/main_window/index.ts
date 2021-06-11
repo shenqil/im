@@ -1,12 +1,16 @@
-import {multiply} from '../public/a'
-import { add} from '../public/b'
+import {multiply} from '../public/js/a'
+import { add} from '../public/js/b'
 console.log("hello main")
 
 import _ from 'lodash'
 import moment from 'moment'
 
-import '@renderer/static/js/index.js'
-// import imgSrc from '@renderer/static/img/2abbbce9b334558100246ffe07fd9c6f11.jpg'
+import '@renderer/public/js/index.js'
+import imgSrc from '@renderer/public/img/2abbbce9b334558100246ffe07fd9c6f11.jpg'
+
+import  './index.scss'
+import '../public/css/reset.css'
+import '../public/font/iconfont.css'
 
 const btnHelp = document.createElement('button')
 btnHelp.innerHTML = '打开help 窗口'
@@ -34,7 +38,11 @@ input.addEventListener('input',(e)=>{
     console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
 })
 
-// const img = document.createElement('img')
-// img.src = imgSrc
+const img = document.createElement('img')
+img.src = imgSrc
 
-// document.body.appendChild(img)
+document.body.appendChild(img)
+
+const i = document.createElement('i')
+i.className = 'iconfont icon-xiazai'
+document.body.appendChild(i)

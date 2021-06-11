@@ -1,5 +1,7 @@
-import {multiply} from '../public/a'
+import {multiply} from '../public/js/a'
 import moment from 'moment'
+import  './index.scss'
+
 const input = document.createElement('input')
 document.body.appendChild(input)
 

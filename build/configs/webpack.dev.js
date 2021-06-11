@@ -1,6 +1,6 @@
-const { merge } = require('webpack-merge');
+const { merge } = require('webpack-merge')
 
-const common = require('./webpack.common.js');
+const common = require('./webpack.common.js')
 const { resolve } = require('../utils/common')
 
 module.exports = merge(common, {
@@ -14,6 +14,17 @@ module.exports = merge(common, {
         hot: true,
     },
     module: {
-        rules: []
+        rules: [
+            {
+                test: /\.((c|sa|sc)ss)$/i,
+                use: [
+                    "style-loader",
+                    "css-loader",
+                    'sass-loader'
+                ]
+            }
+        ]
     },
+    plugins: [
+    ],
 });
