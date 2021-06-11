@@ -1,6 +1,4 @@
 {
-	// "vetur.format.defaultFormatter.js": "none",
-	// "vetur.format.defaultFormatter.ts": "none",
 	// "eslint.format.enable": true,
 	// "eslint.alwaysShowStatus": true,
 	// "eslint.validate": [
@@ -11,7 +9,6 @@
 	// 	"vue"
 	// ],
 	"editor.formatOnSave": true,
-	"vue3snippets.enable-compile-vue-file-on-did-save-code": true,
 	// "editor.codeActionsOnSave": {
 	// 	"source.fixAll.eslint": true,
 	// },

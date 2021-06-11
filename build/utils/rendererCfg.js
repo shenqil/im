@@ -64,7 +64,7 @@ entryNames.forEach(name => {
         return
     }
 
-    const entryPath = resolve(`src/renderer/${name}/index.ts`)
+    const entryPath = resolve(`src/renderer/${name}/index.tsx`)
     try {
         if (!fs.statSync(entryPath).isFile()) {
             return

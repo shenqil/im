@@ -14,16 +14,10 @@ module.exports = {
                 use: 'node-loader',
             },
             {
-                test: /\.tsx?$/,
+                test: /\.(ts|js)x?$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: 'ts-loader',
-                    options: {
-                        transpileOnly: true
-                    }
-                }
+                loader: 'babel-loader',
             },
-
         ],
     },
     optimization: {
