@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, contextBridge } = require('electron')
 import './moudule/a'
 import './moudule/b'
 
@@ -16,15 +16,14 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-/**
- * 打开帮助窗口
- * */ 
- (window as any).openHlepWin = function(){
-    console.log('openHelpWin')
-    ipcRenderer.send('openHelpWin')
-};
 
-(window as any).openAboutWin = function(){
-    console.log('openAboutWin')
-    ipcRenderer.send('openAboutWin')
-};
+contextBridge.exposeInMainWorld('myAPI', {
+    openHlepWin: function(){
+        console.log('openHelpWin')
+        ipcRenderer.send('openHelpWin')
+    },
+    openAboutWin: function(){
+        console.log('openAboutWin')
+        ipcRenderer.send('openAboutWin')
+    }
+});

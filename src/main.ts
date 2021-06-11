@@ -13,8 +13,7 @@ const createWindow = (): void => {
     height: 600,
     width: 800,
     webPreferences:{
-      preload: joinDirname('./preload/preload.ts'),
-      contextIsolation:false
+      preload: joinDirname('./preload/preload.ts')
     }
   });
 

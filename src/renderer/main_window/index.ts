@@ -20,7 +20,7 @@ btnAbout.innerHTML = '打开about 窗口'
 
 const input = document.createElement('input')
 
-const {openHlepWin,openAboutWin} = (window as any)
+const {openHlepWin,openAboutWin} = (window as any).myAPI
 
 btnHelp.onclick = ()=>openHlepWin()
 
