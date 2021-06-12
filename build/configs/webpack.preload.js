@@ -5,6 +5,7 @@ const base = require('./webpack.base')
 module.exports = merge(base, {
     target: `electron${packageInfo.electronVersion}-preload`,
     entry: preloadCfg.entry,
+    devtool: 'inline-source-map',
     output: {
         path: resolve('.webpack/preload'),
     },
