@@ -15,7 +15,7 @@ function App() {
       <div className="box">
         <div className="content">
           德玛西亚，永不退缩
-              <i className="iconfont icon-xiazai"></i>
+          <i className="iconfont icon-xiazai"></i>
           <img src={img1} />
           <img src={img2} />
         </div>
