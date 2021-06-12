@@ -7,9 +7,6 @@ const webpackMainCfg = require('../configs/webpack.main')
 const webpackPreloadCfg = require('../configs/webpack.preload')
 const webpackRenderCfg = require('../configs/webpack.prod')
 
-// 清空所有缓存文件
-deleteFolder(resolve('./.webpack'))
-
 // 获取命令行参数
 const electronProgramArgv = getProgramArgv()
 
