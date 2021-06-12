@@ -6,9 +6,6 @@ const { taskKill, deleteFolder, resolve } = require('../utils/common')
 const webpackMainCfg = require('../configs/webpack.main');
 const webpackPreloadCfg = require('../configs/webpack.preload');
 
-// 清空主进程缓存文件
-deleteFolder(resolve('./.webpack'))
-
 let watch = CreateWatch()
 
 const compiler = webpack([
