@@ -1,5 +1,5 @@
 const { merge } = require('webpack-merge');
-const { resolve, packageInfo, isProduction } = require('../utils/common')
+const { resolve, packageInfo } = require('../utils/common')
 const preloadCfg = require('../utils/preloadCfg')
 const base = require('./webpack.base')
 module.exports = merge(base, {

@@ -1,10 +1,12 @@
 const webpack = require('webpack');
 const { spawn } = require('child_process');
 
-const { taskKill, deleteFolder, resolve } = require('../utils/common')
+const { taskKill } = require('../utils/common')
 
 const webpackMainCfg = require('../configs/webpack.main');
 const webpackPreloadCfg = require('../configs/webpack.preload');
+
+require('./publicProcess')
 
 let watch = CreateWatch()
 

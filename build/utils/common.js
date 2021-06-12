@@ -9,41 +9,13 @@ function resolve(p) {
     return path.resolve(__dirname, '../../', p)
 }
 
-/**
- * 创建生产版本package.json
- * */
-function createPackage(packageInfoStr) {
-    const dirName = resolve('./.webpack')
 
-    try {
-        const stat = fs.statSync(dirName)
-        if (!stat.isDirectory(dirName)) {
-            throw new Error(`${dirName} 不是文件夹`)
-        }
-    } catch {
-        fs.mkdirSync(dirName)
-    }
-
-    console.log(dirName, 'dirName')
-
-    const packageInfo = JSON.parse(packageInfoStr)
-
-    packageInfo.main = 'main.built.js'
-    packageInfo.scripts = {}
-    packageInfo.devDependencies = {}
-    packageInfo.dependencies = {}
-
-    fs.writeFileSync(path.join(dirName, 'package.json'), JSON.stringify(packageInfo), {
-        encoding: 'utf-8'
-    })
-}
 
 /**
  * 提取package 里面的信息
  * */
 function parsePackage() {
     const packageInfo = require(resolve("package.json"))
-    createPackage(JSON.stringify(packageInfo))
 
     // 解析使用的electron版本
     let electronVersion = packageInfo?.devDependencies?.electron ?? ""
@@ -51,8 +23,10 @@ function parsePackage() {
         electronVersion = electronVersion.slice(1).split('.').slice(0, 2).join('.')
     }
 
-    packageInfo.electronVersion = electronVersion
-    return packageInfo
+    return {
+        electronVersion, // 解析后的参数直接挂载
+        tatget: JSON.stringify(packageInfo) // 挂载原始数据
+    }
 }
 
 
@@ -93,9 +67,6 @@ function getProgramArgv() {
     return process.argv.slice(2)
 }
 
-
-// 清空主进程缓存文件
-deleteFolder(resolve('./.webpack'))
 /**
  * 得到package里面的信息
  * */

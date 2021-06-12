@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const { spawnSync } = require('child_process');
 
-const { deleteFolder, resolve, getProgramArgv } = require('../utils/common')
+const { getProgramArgv } = require('../utils/common')
 
 const webpackMainCfg = require('../configs/webpack.main')
 const webpackPreloadCfg = require('../configs/webpack.preload')
@@ -9,6 +9,8 @@ const webpackRenderCfg = require('../configs/webpack.prod')
 
 // 获取命令行参数
 const electronProgramArgv = getProgramArgv()
+
+require('./publicProcess')
 
 // webpack 进行打包
 webpack([
