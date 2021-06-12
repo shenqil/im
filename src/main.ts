@@ -5,22 +5,22 @@ import './main/schemes/index'
 // 引入所有窗口
 import './main/window/index'
 // 引入工具包
-import {joinDirname} from './main/utils/common'
+import { joinDirname } from './main/utils/common'
 
 const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
-    webPreferences:{
+    webPreferences: {
       preload: joinDirname('./preload/preload.ts')
     }
   });
 
   // and load the index.html of the app.
-  if(process.env.WEBPACK_DEV_SERVER_URL){
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
     mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + 'main_window.html');
-  }else{
+  } else {
     mainWindow.loadURL(joinDirname('./renderer/main_window.html'));
   }
 

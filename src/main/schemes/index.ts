@@ -1,4 +1,4 @@
-import { app,protocol } from 'electron';
+import { app, protocol } from 'electron';
 import appProtocol from './appProtocol'
 
 protocol.registerSchemesAsPrivileged([appProtocol.config])

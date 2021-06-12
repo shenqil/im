@@ -3,20 +3,20 @@ import { render } from "react-dom";
 
 import '../public/css/reset.css'
 import '../public/font/iconfont.css'
-import  './index.scss'
+import './index.scss'
 
 function App() {
-    const [state, setState] = useState("CLICK ME");
-  
-    return <div>
-      <div className="box">
-        <div className="content">
-          ，永不退缩
-          <i className="iconfont icon-xiazai"></i>
-        </div>
+  const [state, setState] = useState("CLICK ME");
+
+  return <div>
+    <div className="box">
+      <div className="content">
+        ，永不退缩
+        <i className="iconfont icon-xiazai"></i>
       </div>
-      <button onClick={() => setState(state+2)}>{state}</button>
-    </div>;
-  }
-  
-  render(<App />, document.getElementById("root"));
+    </div>
+    <button onClick={() => setState(state + 2)}>{state}</button>
+  </div>;
+}
+
+render(<App />, document.getElementById("root"));
