@@ -6,6 +6,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development node ./build/scripts/start.js",
     "start:render": "cross-env NODE_ENV=development webpack --config ./build/configs/webpack.dev.js",
+    "start:preload": "cross-env NODE_ENV=development webpack --config ./build/configs/webpack.preload.js",
     "build": "cross-env NODE_ENV=development node ./build/scripts/build.js --dir --config=./electron-builder.json5",
     "build:pack": "cross-env NODE_ENV=production node ./build/scripts/build.js --dir --config=./electron-builder.json5",
     "build:dist": "cross-env NODE_ENV=production node ./build/scripts/build.js --config=./electron-builder.json5",

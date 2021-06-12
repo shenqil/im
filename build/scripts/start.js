@@ -6,6 +6,8 @@ const { taskKill } = require('../utils/common')
 const webpackMainCfg = require('../configs/webpack.main');
 const webpackPreloadCfg = require('../configs/webpack.preload');
 
+require('./publicProcess')
+
 let watch = CreateWatch()
 
 const compiler = webpack([
