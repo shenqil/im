@@ -1,14 +1,22 @@
-import {multiply} from '../public/js/a'
-import moment from 'moment'
+import React, { useState } from "react";
+import { render } from "react-dom";
+
+import '../public/css/reset.css'
+import '../public/font/iconfont.css'
 import  './index.scss'
 
-const input = document.createElement('input')
-document.body.appendChild(input)
-
-console.log("hello about")
-
-input.addEventListener('input',(e)=>{
-    const num = Number(input.value)
-    console.log(multiply(num,num))
-    console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
-})
+function App() {
+    const [state, setState] = useState("CLICK ME");
+  
+    return <div>
+      <div className="box">
+        <div className="content">
+          ，永不退缩
+          <i className="iconfont icon-xiazai"></i>
+        </div>
+      </div>
+      <button onClick={() => setState(state+2)}>{state}</button>
+    </div>;
+  }
+  
+  render(<App />, document.getElementById("root"));

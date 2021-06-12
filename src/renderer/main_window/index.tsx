@@ -7,6 +7,7 @@ import '../public/font/iconfont.css'
 
 import React, { useState } from "react";
 import { render } from "react-dom";
+const {openHlepWin,openAboutWin} = (window as any).myAPI
 
 function App() {
     const [state, setState] = useState("CLICK ME");
@@ -21,6 +22,8 @@ function App() {
         </div>
       </div>
       <button onClick={() => setState("CLICKED")}>{state}</button>
+      <button onClick={() => openHlepWin()}>openHlepWin</button>
+      <button onClick={() => openAboutWin()}>openAboutWin</button>
     </div>;
   }
   

@@ -1,23 +1,23 @@
-import {multiply} from '../public/js/a'
-import { add} from '../public/js/b'
+import React, { useState } from "react";
+import { render } from "react-dom";
 
+import '../public/css/reset.css'
 import '../public/font/iconfont.css'
 
-const input = document.createElement('input')
-document.body.appendChild(input)
+function App() {
+    const [state, setState] = useState("CLICK ME");
+  
+    return <div>
+      <div className="box">
+        <div className="content">
+          ，永不退缩
+          <i className="iconfont icon-xiazai"></i>
+        </div>
+      </div>
+      <button onClick={() => setState(state+1)}>{state}</button>
+    </div>;
+  }
+  
+  render(<App />, document.getElementById("root"));
 
-input.addEventListener('input',(e)=>{
-    const num = Number(input.value)
-    console.log(multiply(num,num))
-    console.log(add(num,num))
-
-    console.error(new Error('错误'))
-})
-
-console.log("hello help")
-
-
-const i = document.createElement('i')
-i.className = 'iconfont icon-xiazai'
-document.body.appendChild(i)
 
