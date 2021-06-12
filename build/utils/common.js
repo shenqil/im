@@ -24,8 +24,6 @@ function createPackage(packageInfoStr) {
         fs.mkdirSync(dirName)
     }
 
-    console.log(dirName, 'dirName')
-
     const packageInfo = JSON.parse(packageInfoStr)
 
     packageInfo.main = 'main.built.js'
