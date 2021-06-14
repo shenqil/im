@@ -1,6 +1,6 @@
-import { app, BrowserWindow, ipcMain} from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 
-import { joinDirname} from './main/utils/common';
+import { joinDirname } from './main/utils/common';
 
 // 引入所有自定义协议
 import './main/schemes/index';
@@ -56,7 +56,7 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-ipcMain.on('synchronous-message', (event:any, arg) => {
+ipcMain.on('synchronous-message', (event: any, arg) => {
   console.log(arg); // prints "ping"
   // eslint-disable-next-line no-param-reassign
   event.returnValue = 'pong';
