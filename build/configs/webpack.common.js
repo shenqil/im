@@ -1,4 +1,5 @@
 const { merge } = require('webpack-merge');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const { resolve } = require('../utils/common')
 const rendererCfg = require('../utils/rendererCfg')
@@ -12,6 +13,7 @@ module.exports = merge(base, {
     },
     plugins: [
         ...rendererCfg.plugins,
+        new ESLintPlugin(),
     ],
     module: {
         rules: [
