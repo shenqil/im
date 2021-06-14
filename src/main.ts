@@ -1,11 +1,12 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 
+import { joinDirname } from './main/utils/common';
+
 // 引入所有自定义协议
-import './main/schemes/index'
+import './main/schemes/index';
 // 引入所有窗口
-import './main/window/index'
+import './main/window/index';
 // 引入工具包
-import { joinDirname } from './main/utils/common'
 
 const createWindow = (): void => {
   // Create the browser window.
@@ -13,17 +14,16 @@ const createWindow = (): void => {
     height: 600,
     width: 800,
     webPreferences: {
-      preload: joinDirname('./preload/preload.ts')
-    }
+      preload: joinDirname('./preload/preload.ts'),
+    },
   });
 
   // and load the index.html of the app.
   if (process.env.WEBPACK_DEV_SERVER_URL) {
-    mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + 'main_window.html');
+    mainWindow.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}main_window.html`);
   } else {
     mainWindow.loadURL(joinDirname('./renderer/main_window.html'));
   }
-
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
@@ -33,8 +33,8 @@ const createWindow = (): void => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  createWindow()
-})
+  createWindow();
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -56,8 +56,8 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-
-ipcMain.on('synchronous-message', (event, arg) => {
-  console.log(arg) // prints "ping"
-  event.returnValue = 'pong'
-})
+ipcMain.on('synchronous-message', (event:any, arg) => {
+  console.log(arg); // prints "ping"
+  // eslint-disable-next-line no-param-reassign
+  event.returnValue = 'pong';
+});

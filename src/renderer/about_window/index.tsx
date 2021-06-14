@@ -1,22 +1,24 @@
-import React, { useState } from "react";
-import { render } from "react-dom";
+import React, { useState } from 'react';
+import { render } from 'react-dom';
 
-import '../public/css/reset.css'
-import '../public/font/iconfont.css'
-import './index.scss'
+import '../public/css/reset.css';
+import '../public/font/iconfont.css';
+import './index.scss';
 
 function App() {
-  const [state, setState] = useState("CLICK ME");
+  const [state, setState] = useState('CLICK ME');
 
-  return <div>
-    <div className="box">
-      <div className="content">
-        ，永不退缩
-        <i className="iconfont icon-xiazai"></i>
+  return (
+    <div>
+      <div className="box">
+        <div className="content">
+          ，永不退缩
+          <i className="iconfont icon-xiazai" />
+        </div>
       </div>
+      <button type="button" onClick={() => setState(state + 2)}>{state}</button>
     </div>
-    <button onClick={() => setState(state + 2)}>{state}</button>
-  </div>;
+  );
 }
 
-render(<App />, document.getElementById("root"));
+render(<App />, document.getElementById('root'));

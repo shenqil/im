@@ -1,2 +1,2 @@
-import './moudule/a'
-import './moudule/c'
+import './moudule/a';
+import './moudule/c';
