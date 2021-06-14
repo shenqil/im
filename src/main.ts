@@ -1,6 +1,6 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain} from 'electron';
 
-import { joinDirname } from './main/utils/common';
+import { joinDirname} from './main/utils/common';
 
 // 引入所有自定义协议
 import './main/schemes/index';
