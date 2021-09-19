@@ -1,1 +1,1 @@
-console.log('preload - c')
+console.log('preload - c');

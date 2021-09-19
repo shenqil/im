@@ -10,7 +10,7 @@ const APP_SCHEME_CFG = {
   },
 };
 
-function register():void {
+function register(): void {
   protocol.registerFileProtocol('app', (request, callback) => {
     const url = request.url.substr(6).replace(/.ts$/i, '.built.js');
     console.log(path.normalize(`${__dirname}/${url}`));
