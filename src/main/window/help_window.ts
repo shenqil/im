@@ -10,6 +10,9 @@ const createWindow = (): void => {
   helpWindow = new BrowserWindow({
     height: 600,
     width: 800,
+    webPreferences: {
+      nativeWindowOpen: true,
+    },
   });
 
   // and load the index.html of the app.
