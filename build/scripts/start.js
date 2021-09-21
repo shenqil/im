@@ -45,7 +45,7 @@ function CreateWatch() {
       isKill: true,
       args: ["electron", `.webpack/main.built.js`],
       env: {
-        WEBPACK_DEV_SERVER_URL: "http://localhost:8080/",
+        WEBPACK_DEV_SERVER_URL: "http://localhost:8888/",
       },
     },
     {
