@@ -6,7 +6,9 @@ const { resolve } = require("../utils/common");
 module.exports = merge(common, {
   mode: "development",
   devServer: {
-    contentBase: resolve(".webpack/renderer/main_window"),
+    static: {
+      directory: resolve(".webpack/renderer/main_window"),
+    },
     // 启动gzip 压缩
     compress: true,
     // 端口号

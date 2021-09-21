@@ -11,6 +11,7 @@ const createWindow = (): void => {
     height: 600,
     width: 800,
     webPreferences: {
+      nativeWindowOpen: true,
       preload: joinDirname('./preload/preload.ts'),
     },
   });
