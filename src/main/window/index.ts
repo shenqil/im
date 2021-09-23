@@ -1,12 +1,9 @@
-const files = (import.meta as any).globEager(".ts")
+import IWins from './interface'
+
+const files = (require as any).context('.', false, /_window\.ts$/);
 const modules: any = {};
+files.keys().forEach((key: string) => {
+  modules[key.replace(/(.\/|_window.ts)/g, '')] = files(key).default;
+});
 
-for (const key in files) {
-  if (Object.prototype.hasOwnProperty.call(files, key)) {
-    if (/_window.ts/.test(key)) {
-      modules[key.replace(/_window.ts/, '')] = files[key].default
-    }
-  }
-}
-
-export default modules;
+export default modules as IWins;

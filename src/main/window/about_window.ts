@@ -1,32 +1,13 @@
-import { BrowserWindow, ipcMain } from 'electron';
-import { joinDirname } from '../utils/common';
+import BaseWIN, { IBaseWIN } from './base'
 
-let aboutWindow: BrowserWindow;
-const createWindow = (): void => {
-  if (aboutWindow) {
-    return;
+export interface IAboutWindow extends IBaseWIN {
+
+}
+export class AboutWindow extends BaseWIN implements IAboutWindow {
+  constructor(name: string) {
+    super(name);
   }
-  // Create the browser window.
-  aboutWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
-    webPreferences: {
-      nativeWindowOpen: true,
-      preload: joinDirname('./preload/preload.ts'),
-    },
-  });
+}
 
-  // and load the index.html of the app.
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    aboutWindow.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}about_window.html`);
-  } else {
-    aboutWindow.loadURL(joinDirname('./renderer/about_window.html'));
-  }
+export default new AboutWindow("about_window")
 
-  // Open the DevTools.
-  aboutWindow.webContents.openDevTools();
-};
-
-ipcMain.on('openAboutWin', () => {
-  createWindow();
-});
