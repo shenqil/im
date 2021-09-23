@@ -6,35 +6,12 @@ import { joinDirname } from './main/utils/common';
 import './main/schemes/index';
 // 引入所有窗口
 import wins from './main/window/index';
-// 引入工具包
-
-const createWindow = (): void => {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
-    webPreferences: {
-      nativeWindowOpen: true,
-      preload: joinDirname('./preload/preload.ts'),
-    },
-  });
-
-  // and load the index.html of the app.
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    mainWindow.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}main_window.html`);
-  } else {
-    mainWindow.loadURL(joinDirname('./renderer/main_window.html'));
-  }
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  createWindow();
+  wins.main.openWin()
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -50,7 +27,7 @@ app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    wins.main.openWin()
   }
 });
 
