@@ -5,7 +5,7 @@ import { joinDirname } from './main/utils/common';
 // 引入所有自定义协议
 import './main/schemes/index';
 // 引入所有窗口
-import './main/window/index';
+import wins from './main/window/index';
 // 引入工具包
 
 const createWindow = (): void => {
@@ -61,4 +61,12 @@ ipcMain.on('synchronous-message', (event: any, arg) => {
   console.log(arg); // prints "ping"
   // eslint-disable-next-line no-param-reassign
   event.returnValue = 'pong';
+});
+
+ipcMain.on('openAboutWin', () => {
+  wins.about.openWin()
+});
+
+ipcMain.on('openHelpWin', () => {
+  wins['help'].openWin()
 });
