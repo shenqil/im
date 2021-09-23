@@ -1,16 +1,13 @@
-import { BrowserWindow, ipcMain } from 'electron';
-import { createBrowserWindow } from '../utils/win'
+import BaseWIN, { IBaseWIN } from './base'
 
-const WIN_NAME = 'login_window'
+export interface ILoginWindow extends IBaseWIN {
 
-let window: BrowserWindow;
-const createWindow = (): void => {
-  if (window) {
-    return;
-  }
-  window = createBrowserWindow({}, WIN_NAME)
-};
-
-export default {
-  createWindow
 }
+
+export class LoginWindow extends BaseWIN implements ILoginWindow {
+  constructor(name: string) {
+    super(name);
+  }
+}
+
+export default new LoginWindow("login_window")
