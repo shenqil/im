@@ -16,7 +16,12 @@ module.exports = merge(common, {
             },
           },
           // 将css文件变成commonjs模块加载js中，里面内容是样式字符串
-          "css-loader",
+          {
+            loader: "css-loader",
+            options:{
+              modules: true
+            }
+          },
           "sass-loader",
         ],
       },
