@@ -1,10 +1,14 @@
 import React from 'react'
 import { render } from 'react-dom'
-import styles from './index.scss';
+import NormalLogin from './components/NormalLogin';
+import 'antd/dist/antd.css'
+import style from './index.scss';
 function App() {
   return (
-    <div className={styles.login}>
-      登录
+    <div className={style.login}>
+      <div className={style.model}>
+        <NormalLogin/>
+      </div>
     </div>
   )
 }
