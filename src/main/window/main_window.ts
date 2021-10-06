@@ -1,7 +1,8 @@
 import BaseWIN, { IBaseWIN } from './base'
+import { BrowserWindowConstructorOptions } from 'electron';
 
 export interface IMainWindow extends IBaseWIN {
-  openWin(): void
+
 }
 
 export class MainWindow extends BaseWIN implements IMainWindow {
@@ -9,13 +10,17 @@ export class MainWindow extends BaseWIN implements IMainWindow {
     super(name);
   }
 
-  openWin() {
-    super.openWin({
+  openWin(options: BrowserWindowConstructorOptions | void) {
+    let o = {
       width: 800,
       height: 600,
       maximizable: true,
       resizable: true
-    })
+    }
+    if (options) {
+      o = Object.assign(o, options)
+    }
+    super.openWin(o)
   }
 }
 

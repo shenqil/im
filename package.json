@@ -57,6 +57,7 @@
     "webpack-merge": "^5.7.3"
   },
   "dependencies": {
+    "antd": "^4.16.13",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "mqtt": "^4.2.8",
