@@ -6,8 +6,11 @@ import style from './index.scss';
 function App() {
   return (
     <div className={style.login}>
-      <div className={style.model}>
-        <NormalLogin/>
+      <div className={style.title}>
+        IM - 即时沟通
+      </div>
+      <div className={style.container}>
+        <NormalLogin/>  
       </div>
     </div>
   )

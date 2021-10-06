@@ -1,5 +1,6 @@
 import React from 'react'
 import { Form, Input, Button, Checkbox } from 'antd';
+import style from './index.scss';
 
 const NormalLogin  = ()=> {
   const onFinish = (values: any) => {
@@ -11,41 +12,47 @@ const NormalLogin  = ()=> {
   };
 
   return (
-    <Form
-      name="basic"
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
-      initialValues={{ remember: true }}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-    >
-      <Form.Item
-        label="Username"
-        name="username"
-        rules={[{ required: true, message: 'Please input your username!' }]}
+    <div className={style['normal-login']}>
+      <Form
+        name="basic"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
       >
-        <Input />
-      </Form.Item>
+        <Form.Item
+          label="账号"
+          name="username"
+          rules={[{ required: true, message: '请输入账号!' }]}
+        >
+          <Input size="large"/>
+        </Form.Item>
 
-      <Form.Item
-        label="Password"
-        name="password"
-        rules={[{ required: true, message: 'Please input your password!' }]}
-      >
-        <Input.Password />
-      </Form.Item>
+        <Form.Item
+          label="密码"
+          name="password"
+          rules={[
+            { required: true, message: '请输入密码!' },
+            { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/, message: '需要8-16个包含大小写字母和数字的字符' }
+          ]}
+        >
+          <Input.Password size="large"/>
+        </Form.Item>
 
-      <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
-        <Checkbox>Remember me</Checkbox>
-      </Form.Item>
+        <Form.Item name="remember" valuePropName="checked" wrapperCol={{ span: 16 }}>
+          <Checkbox>记住我</Checkbox>
+        </Form.Item>
 
-      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item wrapperCol={{ span: 16 }}>
+          <Button type="primary" size="large" htmlType="submit" className={style.submit}>
+            登录
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
+
   );
 }
 
