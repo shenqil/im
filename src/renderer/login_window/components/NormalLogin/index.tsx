@@ -1,9 +1,10 @@
-import React ,{useState} from 'react'
-import { Form, Input, Button, Checkbox } from 'antd';
+import React, { useState } from 'react';
+import {
+  Form, Input, Button, Checkbox,
+} from 'antd';
 import style from './index.scss';
 
-function NormalLogin () {
-
+function NormalLogin() {
   const [loading, setLoading] = useState(false);
 
   const onFinish = (values: any) => {
@@ -30,7 +31,7 @@ function NormalLogin () {
           name="username"
           rules={[{ required: true, message: '请输入账号!' }]}
         >
-          <Input size="large"/>
+          <Input size="large" />
         </Form.Item>
 
         <Form.Item
@@ -38,10 +39,10 @@ function NormalLogin () {
           name="password"
           rules={[
             { required: true, message: '请输入密码!' },
-            { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/, message: '需要8-16个包含大小写字母和数字的字符' }
+            { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/, message: '需要8-16个包含大小写字母和数字的字符' },
           ]}
         >
-          <Input.Password size="large"/>
+          <Input.Password size="large" />
         </Form.Item>
 
         <Form.Item name="remember" valuePropName="checked" wrapperCol={{ span: 16 }}>
@@ -59,4 +60,4 @@ function NormalLogin () {
   );
 }
 
-export default NormalLogin
+export default NormalLogin;
