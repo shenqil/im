@@ -28,7 +28,7 @@ app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
-    wins.main.openWin()
+    wins.main.openWin();
   }
 });
 
@@ -42,9 +42,9 @@ ipcMain.on('synchronous-message', (event: any, arg) => {
 });
 
 ipcMain.on('openAboutWin', () => {
-  wins.about.openWin()
+  wins.about.openWin();
 });
 
 ipcMain.on('openHelpWin', () => {
-  wins['help'].openWin()
+  wins.help.openWin();
 });

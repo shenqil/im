@@ -24,4 +24,4 @@ export class MainWindow extends BaseWIN implements IMainWindow {
   }
 }
 
-export default new MainWindow("main_window")
+export default new MainWindow('main_window');

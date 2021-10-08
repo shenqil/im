@@ -1,5 +1,5 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
-import { joinDirname } from '../utils/common'
+import { joinDirname } from '../utils/common';
 
 /**
  * loadWinURL 加载界面地址
@@ -9,7 +9,7 @@ import { joinDirname } from '../utils/common'
 export function loadWinURL(win: BrowserWindow, winName: string) {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     win.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}${winName}.html`);
-    win.webContents.openDevTools()
+    win.webContents.openDevTools();
   } else {
     win.loadURL(joinDirname(`./renderer/${winName}.html`));
     // win.webContents.openDevTools()
@@ -30,19 +30,19 @@ export function createBrowserWindow(option: BrowserWindowConstructorOptions, win
     webPreferences: {
       nodeIntegration: true,
       preload: joinDirname('./preload/preload.ts'),
-    }
-  }
+    },
+  };
 
-  option.webPreferences = Object.assign(defaultOption.webPreferences, option.webPreferences)
+  // eslint-disable-next-line no-param-reassign
+  option.webPreferences = Object.assign(defaultOption.webPreferences, option.webPreferences);
 
-  const newWin = new BrowserWindow(Object.assign(defaultOption, option))
+  const newWin = new BrowserWindow(Object.assign(defaultOption, option));
 
-  loadWinURL(newWin, winName)
-  newWin.setMenu(null)
+  loadWinURL(newWin, winName);
+  newWin.setMenu(null);
 
-  return newWin
+  return newWin;
 }
-
 
 /**
  * 定义基础窗口接口
@@ -56,12 +56,13 @@ export interface IBaseWIN {
  * 定义一个基础窗口
  * */
 class BaseWIN implements IBaseWIN {
-  win: BrowserWindow | null // 窗口实体
-  WIN_NAME: string // 窗口名称
+  win: BrowserWindow | null; // 窗口实体
+
+  WIN_NAME: string; // 窗口名称
 
   constructor(name: string) {
-    this.win = null
-    this.WIN_NAME = name
+    this.win = null;
+    this.WIN_NAME = name;
   }
 
   /**
@@ -69,11 +70,11 @@ class BaseWIN implements IBaseWIN {
    * */
   openWin(options: BrowserWindowConstructorOptions | void) {
     if (this.win) {
-      return
+      return;
     }
 
-    this.win = createBrowserWindow(options || {}, this.WIN_NAME)
+    this.win = createBrowserWindow(options || {}, this.WIN_NAME);
   }
 }
 
-export default BaseWIN
+export default BaseWIN;
