@@ -28,6 +28,7 @@
         "optionalDependencies": false,
         "peerDependencies": false
       }
-    ]
+    ],
+    "no-restricted-syntax":"warn"
   }
 }
