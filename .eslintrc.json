@@ -15,6 +15,7 @@
   },
   "plugins": ["@typescript-eslint"],
   "extends": [
+    "airbnb",
     "airbnb-typescript",
     "airbnb/hooks",
     "plugin:@typescript-eslint/recommended"
@@ -28,9 +29,6 @@
         "optionalDependencies": false,
         "peerDependencies": false
       }
-    ],
-    "@typescript-eslint/space-infix-ops": "off",
-    "@typescript-eslint/object-curly-spacing": "off",
-    "no-restricted-syntax": "off"
+    ]
   }
 }
