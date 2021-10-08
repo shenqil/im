@@ -1,8 +1,11 @@
-import React from 'react'
+import React ,{useState} from 'react'
 import { Form, Input, Button, Checkbox } from 'antd';
 import style from './index.scss';
 
-const NormalLogin  = ()=> {
+function NormalLogin () {
+
+  const [loading, setLoading] = useState(false);
+
   const onFinish = (values: any) => {
     console.log('Success:', values);
   };
@@ -46,7 +49,7 @@ const NormalLogin  = ()=> {
         </Form.Item>
 
         <Form.Item wrapperCol={{ span: 16 }}>
-          <Button type="primary" size="large" htmlType="submit" className={style.submit}>
+          <Button type="primary" size="large" htmlType="submit" loading={loading} className={style.submit}>
             登录
           </Button>
         </Form.Item>
