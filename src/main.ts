@@ -1,7 +1,5 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 
-import { joinDirname } from './main/utils/common';
-
 // 引入所有自定义协议
 import './main/schemes/index';
 // 引入所有窗口
@@ -11,7 +9,7 @@ import wins from './main/window/index';
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  wins.main.openWin()
+  wins.main.openWin();
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -27,7 +25,7 @@ app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
-    wins.main.openWin()
+    wins.main.openWin();
   }
 });
 
@@ -41,9 +39,9 @@ ipcMain.on('synchronous-message', (event: any, arg) => {
 });
 
 ipcMain.on('openAboutWin', () => {
-  wins.about.openWin()
+  wins.about.openWin();
 });
 
 ipcMain.on('openHelpWin', () => {
-  wins['help'].openWin()
+  wins.help.openWin();
 });

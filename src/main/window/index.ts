@@ -1,4 +1,4 @@
-import IWins from './interface'
+import IWins from './interface';
 
 const files = (require as any).context('.', false, /_window\.ts$/);
 const modules: any = {};
