@@ -7,7 +7,12 @@ const modules:any = {
 
 ipcMain.on('mainBridgeEvent', async (event, { id, keys, args }) => {
   try {
-    const result = await keys.reduce((pre:any, cur:any) => pre[cur], modules)(args);
+    const [self, callBack] = keys.reduce(
+      ([,pre]:any, cur:any) => [pre, pre[cur]], [modules, modules],
+    );
+
+    const result = await callBack.apply(self, args);
+
     event.reply('mainBridgeEvent--succee', {
       id, result,
     });

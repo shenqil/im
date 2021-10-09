@@ -19,21 +19,28 @@ class MQTTConnect implements IMQTTConnect {
   login(username:string, password:string) {
     return new Promise((resolve, reject) => {
       let timeHandle:NodeJS.Timeout;
-
-      this.client = mqtt.connect({
-        protocol: 'mqtt',
+      this.client = mqtt.connect('mqtt://localhost:1883', {
         protocolVersion: 5,
-        host: 'localhost',
-        port: 1883,
         clientId: 'PC',
         username,
         password,
       });
 
-      this.client.on('connect', (e) => {
-        console.log(e);
+      this.client.on('connect', () => {
         clearTimeout(timeHandle);
-        resolve(e);
+        resolve('登录成功');
+      });
+
+      this.client.on('reconnect', (error:any) => {
+        console.log('正在重连:', error);
+      });
+
+      this.client.on('error', (error) => {
+        console.log('连接失败:', error);
+      });
+
+      this.client.on('message', (topic, message) => {
+        console.log('收到消息：', topic, message.toString());
       });
 
       timeHandle = setTimeout(() => {
