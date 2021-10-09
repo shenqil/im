@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-
+// 引入窗口通讯
+import './main/ipcMain/index';
 // 引入所有自定义协议
 import './main/schemes/index';
 // 引入所有窗口

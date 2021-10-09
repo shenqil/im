@@ -2,13 +2,31 @@ import React, { useState } from 'react';
 import {
   Form, Input, Button, Checkbox,
 } from 'antd';
+import md5 from 'md5';
 import style from './index.scss';
+// eslint-disable-next-line import/extensions
+import { mainBridge } from '../../../public/ipcRenderer/index';
 
 function NormalLogin() {
   const [loading, setLoading] = useState(false);
 
   const onFinish = (values: any) => {
-    console.log('Success:', values);
+    setLoading(true);
+
+    const { username, password } = values;
+    mainBridge.mqtt.connect.login(
+      username,
+      md5(password),
+    )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const onFinishFailed = (errorInfo: any) => {

@@ -3,51 +3,29 @@ import {
   v4 as uuidv4,
 } from 'uuid';
 
-const eventMap:Map<string, Array<any>> = new Map();
-
-function NewProxy(key:any) {
-  const a = () => {};
-  a.keys = [key];
-  const obj = new Proxy(a, {
-    get(target, k) {
-      target.keys.push(k);
-      return obj;
-    },
-    apply(target, _, args) {
-      return new Promise((resolve, reject) => {
-        const id = uuidv4();
-        ipcRenderer.send('mainBridgeEvent', {
-          id,
-          keys: target.keys,
-          args,
-        });
-
-        eventMap.set(id, [resolve, reject]);
-      });
-    },
-  }) as any;
-
-  return obj;
-}
+const eventMap:Map<string, Function> = new Map();
 
 ipcRenderer.on('mainBridgeEvent--succee', (_, args) => {
-  if (eventMap.has(args.id)) {
-    const [resolve] = eventMap.get(args.id) || [];
-    eventMap.delete(args.id);
-    resolve(args.result);
+  const callBack = eventMap.get(args.id);
+  eventMap.delete(args.id);
+  if (callBack) {
+    callBack(null, args.result);
   }
 });
 
 ipcRenderer.on('mainBridgeEvent--error', (_, args) => {
-  if (eventMap.has(args.id)) {
-    const [, reject] = eventMap.get(args.id) || [];
-    eventMap.delete(args.id);
-    reject(args.error);
+  const callBack = eventMap.get(args.id);
+  eventMap.delete(args.id);
+  if (callBack) {
+    callBack(args.error);
   }
 });
 
-contextBridge.exposeInMainWorld('mainBridge', new Proxy({}, {
-  get(_, key) {
-    return NewProxy(key);
-  },
-}));
+contextBridge.exposeInMainWorld('mainBridgeCall', (params:any, callBack:Function) => {
+  const id = uuidv4();
+  eventMap.set(id, callBack);
+  ipcRenderer.send('mainBridgeEvent', {
+    id,
+    ...params,
+  });
+});

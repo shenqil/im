@@ -27,7 +27,7 @@ class MQTTConnect implements IMQTTConnect {
         port: 1883,
         clientId: 'PC',
         username,
-        password: Buffer.from(password),
+        password,
       });
 
       this.client.on('connect', (e) => {
