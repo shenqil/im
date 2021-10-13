@@ -1,8 +1,8 @@
 import { ipcMain } from 'electron';
-import mqttSev from '../server/mqtt/index';
+import server from '../server/index';
 
 const modules:any = {
-  mqtt: mqttSev,
+  server,
 };
 
 ipcMain.on('mainBridgeEvent', async (event, { id, keys, args }) => {

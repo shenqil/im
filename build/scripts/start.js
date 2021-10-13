@@ -43,7 +43,7 @@ function CreateWatch() {
       subProcess: null,
       isWatchRefresh: true,
       isKill: true,
-      args: ["electron", `.webpack/main.built.js`],
+      args: ["chcp 65001 && electron", `.webpack/main.built.js`],
       env: {
         WEBPACK_DEV_SERVER_URL: "http://localhost:8888/",
       },

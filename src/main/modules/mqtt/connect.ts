@@ -28,6 +28,9 @@ class MQTTConnect implements IMQTTConnect {
 
       this.client.on('connect', () => {
         clearTimeout(timeHandle);
+        // this.client?.subscribe('testtopic/#', { qos: 0 }, (e) => {
+        //   console.log(e, 'testtopic/#');
+        // });
         resolve('登录成功');
       });
 

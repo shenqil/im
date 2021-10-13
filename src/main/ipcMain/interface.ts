@@ -1,5 +1,5 @@
-import IMQTT from '../server/mqtt/interface';
+import IServer from '../server/interface';
 
 export default interface IMainBridge {
-  mqtt:IMQTT
+  server:IServer
 }

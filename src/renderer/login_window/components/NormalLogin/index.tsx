@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Form, Input, Button, Checkbox,
+  Form, Input, Button, Checkbox, message,
 } from 'antd';
 import md5 from 'md5';
 import style from './index.scss';
@@ -14,23 +14,20 @@ function NormalLogin() {
     setLoading(true);
 
     const { username, password } = values;
-    mainBridge.mqtt.connect.login(
+    mainBridge.server.connectSrv.login(
       username,
       md5(password),
     )
-      .then((res) => {
-        console.log(res);
+      .then(() => {
+        message.success('登录成功');
       })
       .catch((err) => {
         console.error(err);
+        message.warning('登录失败');
       })
       .finally(() => {
         setLoading(false);
       });
-  };
-
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
   };
 
   return (
@@ -41,7 +38,6 @@ function NormalLogin() {
         wrapperCol={{ span: 16 }}
         initialValues={{ remember: true }}
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
         <Form.Item
