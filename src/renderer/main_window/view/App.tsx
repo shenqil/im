@@ -1,14 +1,16 @@
 import React from 'react';
-import { HashRouter as Router, Link } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
+import { Provider } from 'react-redux';
 import routes from '../router/index';
+import store from '../store/index';
 
 function App() {
   return (
     <Router>
-      <Link to="/">首页</Link>
-      <Link to="/addressBook">addressBook</Link>
-      {renderRoutes(routes)}
+      <Provider store={store}>
+        {renderRoutes(routes)}
+      </Provider>
     </Router>
   );
 }
