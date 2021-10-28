@@ -2,7 +2,6 @@ const { merge } = require("webpack-merge");
 
 const common = require("./webpack.common.js");
 const { resolve } = require("../utils/common");
-const loader = require("sass-loader");
 
 module.exports = merge(common, {
   mode: "development",
@@ -19,22 +18,31 @@ module.exports = merge(common, {
   module: {
     rules: [
       {
-        test: /\.css$/i,
-        include: /node_modules/,
+        test: /\.((c|sa|sc)ss)$/i,
+        include: [
+          /node_modules/,
+          resolve("src/renderer/public"),
+        ],
         use: [
           "style-loader",
-          "css-loader"
+          "css-loader",
+          "sass-loader"
         ],
       },
       {
         test: /\.((c|sa|sc)ss)$/i,
-        exclude: /node_modules/,
+        exclude: [
+          /node_modules/,
+          resolve("src/renderer/public"),
+        ],
         use: [
           "style-loader",
           {
             loader: "css-loader",
             options:{
-              modules: true
+              modules:{
+                   localIdentName: "[name]__[local]--[hash:base64:5]",
+              }
             }
           },
           "sass-loader"

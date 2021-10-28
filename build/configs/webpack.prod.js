@@ -1,5 +1,6 @@
 const { merge } = require("webpack-merge");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { resolve } = require("../utils/common");
 
 const common = require("./webpack.common.js");
 
@@ -8,7 +9,10 @@ module.exports = merge(common, {
     rules: [
       {
         test: /\.css$/i,
-        include: /node_modules/,
+        include: [
+          /node_modules/,
+          resolve("src/renderer/public"),
+        ],
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
@@ -21,7 +25,10 @@ module.exports = merge(common, {
       },
       {
         test: /\.((c|sa|sc)ss)$/i,
-        exclude: /node_modules/,
+        exclude: [
+          /node_modules/,
+          resolve("src/renderer/public"),
+        ],
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
@@ -33,7 +40,9 @@ module.exports = merge(common, {
           {
             loader: "css-loader",
             options:{
-              modules: true
+              modules:{
+                localIdentName: "[name]__[local]--[hash:base64:5]",
+              }
             }
           },
           "sass-loader",
