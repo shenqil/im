@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { render } from 'react-dom';
 
 import '../public/css/reset.css';
-import '../public/font/iconfont.css';
 import './index.scss';
 
 function App() {
@@ -13,7 +12,6 @@ function App() {
       <div className="box">
         <div className="content">
           ，永不退缩
-          <i className="iconfont icon-xiazai" />
         </div>
       </div>
       <button type="button" onClick={() => setState(state + 2)}>{state}</button>

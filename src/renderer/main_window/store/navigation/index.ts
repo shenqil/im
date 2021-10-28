@@ -6,6 +6,7 @@ export enum ENavigationType {
 }
 
 export interface INavigationItem {
+  key:string,
   name:string,
   icon:string,
   unreadCount?:number,
@@ -25,23 +26,34 @@ const defaultState:INavigationState = {
   list: [
     {
       name: '消息',
-      icon: '',
+      key: 'msg',
+      icon: 'icon-xiaoxi',
+      unreadCount: 0,
+    },
+    {
+      name: '通讯录',
+      key: 'addressBook',
+      icon: 'icon-tongxunlu',
+      unreadCount: 0,
+    },
+    {
+      name: '设置',
+      key: 'seting',
+      icon: 'icon-gengduo',
       unreadCount: 0,
     },
   ],
-  activa: {
-    name: '消息',
-    icon: '',
-    unreadCount: 0,
-  },
+  activa: undefined,
 };
 
 function reducer(state = defaultState, action:INavigationAction) {
-  console.log(state, action);
   switch (action.type) {
     case ENavigationType.activa: {
       if (!Array.isArray(action.payload)) {
-        state.activa = action.payload;
+        return {
+          activa: action.payload,
+          list: [...state.list],
+        };
       }
       break;
     }
@@ -49,7 +61,7 @@ function reducer(state = defaultState, action:INavigationAction) {
       break;
   }
 
-  return JSON.parse(JSON.stringify(state));
+  return state;
 }
 
 export default reducer;
