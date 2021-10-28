@@ -7,11 +7,11 @@ import store from '../store/index';
 
 function App() {
   return (
-    <Router>
-      <Provider store={store}>
+    <Provider store={store}>
+      <Router>
         {renderRoutes(routes)}
-      </Provider>
-    </Router>
+      </Router>
+    </Provider>
   );
 }
 
