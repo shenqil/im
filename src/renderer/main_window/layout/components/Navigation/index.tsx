@@ -25,7 +25,6 @@ function NavigationItem(props:{ navItem:INavigationItem, activa:INavigationItem 
  * 导航栏
  * */
 function Navigation(props:IProps) {
-  console.log(props);
   const {
     list: NavList, activa, changeActiva, history,
   } = props;

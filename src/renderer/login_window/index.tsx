@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import NormalLogin from './components/NormalLogin';
 import 'antd/dist/antd.css';
 import style from './index.scss';
+import '../public/css/index.scss';
 
 function App() {
   return (

@@ -10,9 +10,9 @@ import wins from './main/window/index';
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  // wins.login.openWin();
+  wins.login.openWin();
   wins.main.openWin({
-    // show: false
+    show: false,
   });
 });
 

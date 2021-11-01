@@ -13,7 +13,8 @@ const connectSrv:IConnectSrv = {
   async login(username:string, password:string) {
     await mqtt.connect.login(username, password);
     wins.login.win?.hide();
-    wins.main.openWin();
+    wins.main.win?.show();
+    wins.main.win?.focus();
     wins.login.win?.close();
   },
   /**
