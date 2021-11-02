@@ -16,6 +16,9 @@ const connectSrv:IConnectSrv = {
     wins.main.win?.show();
     wins.main.win?.focus();
     wins.login.win?.close();
+
+    mqtt.user.fetchInfo();
+    mqtt.user.fetchToken();
   },
   /**
    * 退出
