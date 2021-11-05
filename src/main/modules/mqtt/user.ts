@@ -1,14 +1,39 @@
 import connect from './connect';
 
+export interface IUserRole {
+  userId: string,
+  roleId: string
+}
+
+export interface IUserInfo {
+  id: string,
+  avatar:string,
+  userName: string,
+  realName: string,
+  password?: string,
+  phone?: string,
+  email?: string,
+  status: number,
+  creator?: string,
+  createdAt?: string,
+  userRoles?: Array<IUserRole>
+}
+
+export interface IToken {
+  accessToken: string,
+  expiresAt: number,
+  tokenType: string
+}
+
 export interface IUser {
-  fetchInfo():Promise<unknown>
-  fetchToken():Promise<unknown>
+  fetchInfo():Promise<IUserInfo>
+  fetchToken():Promise<IToken>
 }
 
 /**
  * 获取当前用户信息
  * */
-async function fetchUserInfo() {
+async function fetchUserInfo():Promise<IUserInfo> {
   if (!connect.getUserName) {
     throw new Error('用户未登录，不存在username');
   }
@@ -20,14 +45,13 @@ async function fetchUserInfo() {
       retain: false,
     },
   });
-  console.log(res, 'fetchUserInfo');
-  return res;
+  return JSON.parse(res as string);
 }
 
 /**
  * 获取token
  * */
-async function fetchToken() {
+async function fetchToken():Promise<IToken> {
   if (!connect.getUserName) {
     throw new Error('用户未登录，不存在username');
   }
@@ -39,8 +63,7 @@ async function fetchToken() {
       retain: false,
     },
   });
-  console.log(res, 'fetchToken');
-  return res;
+  return JSON.parse(res as string);
 }
 
 export default {

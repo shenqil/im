@@ -1,7 +1,8 @@
-import { ENavigationType, INavigationAction, INavigationItem } from './index';
-import { IActivasFunc } from '../interface';
+import {
+  IActivasFunc, ENavigationType, INavigationAction, INavigationItem,
+} from '../interface';
 
-export const changeActiva = (value:INavigationItem | undefined):INavigationAction => (
+export const changeActiva = (value:INavigationItem):INavigationAction => (
   {
     type: ENavigationType.activa,
     payload: value,
@@ -9,7 +10,7 @@ export const changeActiva = (value:INavigationItem | undefined):INavigationActio
 );
 
 export interface INavigationActions {
-  changeActiva: IActivasFunc<INavigationItem | undefined, INavigationAction>
+  changeActiva: IActivasFunc<INavigationItem, INavigationAction>
 }
 
 export default {

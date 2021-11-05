@@ -11,9 +11,9 @@ import wins from './main/window/index';
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   wins.login.openWin();
-  wins.main.openWin({
-    show: false,
-  });
+  // wins.main.openWin({
+  //   show: false,
+  // });
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

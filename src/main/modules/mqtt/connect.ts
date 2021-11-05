@@ -15,6 +15,7 @@ export interface IMsg {
 
 export interface IMQTTConnect{
   login(username:string, password:string):Promise<unknown>
+  signOut():void
 }
 
 class MQTTConnect implements IMQTTConnect {
@@ -42,6 +43,11 @@ class MQTTConnect implements IMQTTConnect {
    * 登录到mqtt服务
    * */
   login(username:string, password:string) {
+    if (this.client) {
+      // 已连接，则先退出登录
+      this.signOut();
+    }
+
     // 保存登录信息
     this.username = username;
     this.password = password;
@@ -61,7 +67,6 @@ class MQTTConnect implements IMQTTConnect {
           await this.init();
           resolve('登录成功');
         } catch (error) {
-          console.log(error);
           reject(error);
         }
       });
@@ -82,6 +87,16 @@ class MQTTConnect implements IMQTTConnect {
         reject(new Error('登陆超时'));
       }, this.replyTimeOut);
     });
+  }
+
+  /**
+   * 退出登录
+   * */
+  signOut() {
+    // 退出
+    this.client?.end(true);
+    // 清空数据
+    this.clearData();
   }
 
   /**
@@ -127,6 +142,17 @@ class MQTTConnect implements IMQTTConnect {
         resolve('');
       });
     });
+  }
+
+  /**
+   * 清理所有数据
+   * */
+  private clearData() {
+    this.username = '';
+    this.password = '';
+    this.eventMap.clear();
+    this.manifest = undefined;
+    this.client = undefined;
   }
 
   /**

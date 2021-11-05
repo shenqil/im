@@ -12,7 +12,6 @@ ipcMain.on('mainBridgeEvent', async (event, { id, keys, args }) => {
     );
 
     const result = await callBack.apply(self, args);
-
     event.reply('mainBridgeEvent--succee', {
       id, result,
     });

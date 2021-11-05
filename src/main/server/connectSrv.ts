@@ -13,9 +13,9 @@ const connectSrv:IConnectSrv = {
   async login(username:string, password:string) {
     await mqtt.connect.login(username, password);
     wins.login.win?.hide();
-    wins.main.win?.show();
+    wins.main.openWin();
     wins.main.win?.focus();
-    wins.login.win?.close();
+    wins.login.closeWin();
 
     mqtt.user.fetchInfo();
     mqtt.user.fetchToken();
@@ -24,8 +24,10 @@ const connectSrv:IConnectSrv = {
    * 退出
    * */
   async signOut() {
-    wins.main.win?.close();
+    wins.main.win?.hide();
+    mqtt.connect.signOut();
     wins.login.openWin();
+    wins.main.closeWin();
   },
 };
 
