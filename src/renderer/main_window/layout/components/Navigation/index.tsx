@@ -12,19 +12,19 @@ interface IProps extends INavigationState, INavigationActions, RouteComponentPro
 /**
  * 导航栏元素
  * */
-function NavigationItem(props:{ navItem:INavigationItem, activa:INavigationItem }) {
+const NavigationItem = function (props:{ navItem:INavigationItem, activa:INavigationItem }) {
   const { navItem, activa } = props;
   return (
     <div className={`${styles['nav-item']} ${activa.key === navItem.key && styles['nav-item--activa']}`}>
       <i className={`iconfont ${navItem.icon}`} />
     </div>
   );
-}
+};
 
 /**
  * 导航栏
  * */
-function Navigation(props:IProps) {
+const Navigation = function (props:IProps) {
   const {
     list: NavList, activa, changeActiva, history,
   } = props;
@@ -78,7 +78,7 @@ function Navigation(props:IProps) {
       </div>
     </div>
   );
-}
+};
 
 const mapStateToPropsParam = (state:IStore) => state.navigation;
 const mapDispatchToPropsParam = actions;

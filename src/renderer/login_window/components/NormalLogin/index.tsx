@@ -7,7 +7,7 @@ import style from './index.scss';
 // eslint-disable-next-line import/extensions
 import { mainBridge } from '../../../public/ipcRenderer/index';
 
-function NormalLogin() {
+const NormalLogin = function () {
   const [loading, setLoading] = useState(false);
 
   const onFinish = (values: any) => {
@@ -72,6 +72,6 @@ function NormalLogin() {
     </div>
 
   );
-}
+};
 
 export default NormalLogin;

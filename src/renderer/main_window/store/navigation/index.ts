@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { Action } from 'redux';
 
 export enum ENavigationType {

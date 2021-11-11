@@ -5,7 +5,7 @@ import 'antd/dist/antd.css';
 import style from './index.scss';
 import '../public/css/index.scss';
 
-function App() {
+const App = function () {
   return (
     <div className={style.login}>
       <div className={style.title}>
@@ -16,6 +16,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 render(<App />, document.getElementById('root'));

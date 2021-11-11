@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import routes from '../router/index';
 import store from '../store/index';
 
-function App() {
+const App = function () {
   return (
     <Provider store={store}>
       <Router>
@@ -13,6 +13,6 @@ function App() {
       </Router>
     </Provider>
   );
-}
+};
 
 export default App;

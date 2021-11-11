@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 
 import '../public/css/reset.css';
 
-function App() {
+const App = function () {
   const [state, setState] = useState('CLICK ME');
 
   return (
@@ -16,6 +16,6 @@ function App() {
       <button type="button" onClick={() => setState(state + 1)}>{state}</button>
     </div>
   );
-}
+};
 
 render(<App />, document.getElementById('root'));

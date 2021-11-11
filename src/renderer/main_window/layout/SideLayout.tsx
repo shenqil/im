@@ -11,7 +11,7 @@ interface IProps extends RouteConfigComponentProps, IUserInfoState, IDomainState
 
 }
 
-const SideLayout:FC<IProps> = (props) => {
+const SideLayout:FC<IProps> = function (props) {
   const {
     route, fetchUserInfo, userInfo, fileServer,
   } = props;
