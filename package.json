@@ -32,6 +32,7 @@
     "@types/react-router-config": "^5.0.3",
     "@types/react-router-dom": "^5.3.2",
     "@types/redux": "^3.6.31",
+    "@types/sqlite3": "^3.1.7",
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
     "@typescript-eslint/parser": "^5.3.1",

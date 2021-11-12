@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import server from '../server/index';
+import server from '../server';
 
 const modules:any = {
   server,
