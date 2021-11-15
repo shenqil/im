@@ -39,7 +39,7 @@ module.exports = merge(base, {
     extensions: [".tsx", ".ts", ".js"],
     alias: {
       "@/":resolve("./src/"),
-      "@renderer/": resolve("./src/renderer/"),
+      "@main/": resolve("./src/main/"),
       "@preload/": resolve("./src/preload/"),
       "@renderer/": resolve("./src/renderer/")
     },
