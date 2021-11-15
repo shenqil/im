@@ -1,7 +1,7 @@
 import SQ3Base, { ESQ3Mode } from './base';
 
 export enum ESQ3CommonKey {
-  userInfo = 'USER_INFO',
+  userLoginInfo = 'USER_LOGIN_INFO',
   config = 'CONFIG',
 }
 
@@ -35,12 +35,15 @@ class SQ3Common extends SQ3Base {
   }
 
   async saveData(key:ESQ3CommonKey, v:string) {
-    return this.sql(`INSERT INTO ${this.tabelName} (${this.tabelField.join(',')})  VALUES(?,?) on DUPLICATE key update`, [key, v], ESQ3Mode.run);
+    return this.sql(`INSERT INTO ${this.tabelName} (${this.tabelField.join(',')}) VALUES ( ?, ? ) ON CONFLICT ( "key" ) DO UPDATE SET value = ?;`, [key, v, v], ESQ3Mode.run);
   }
 
   async getData(key:ESQ3CommonKey):Promise<string> {
-    const res = await this.sql(`SELECT * FROM ${this.tabelName} WHERE key = ?`, key, ESQ3Mode.get);
-    return res as string;
+    const res = await this.sql(`SELECT * FROM ${this.tabelName} WHERE key = ?`, key, ESQ3Mode.get) as any;
+    if (!res?.value) {
+      return '';
+    }
+    return res?.value as string;
   }
 }
 

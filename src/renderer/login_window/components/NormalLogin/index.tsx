@@ -1,19 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Form, Input, Button, Checkbox, message,
 } from 'antd';
 import md5 from 'md5';
+import { throttle } from 'throttle-debounce';
 import style from './index.scss';
-// eslint-disable-next-line import/extensions
 import { mainBridge } from '../../../public/ipcRenderer/index';
+import { ILoginInfo } from '../../../../main/server/interface';
 
 const NormalLogin = function () {
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm<ILoginInfo>();
+
+  const throttleSaveUserLoginInfo = throttle(1000, () => {
+    mainBridge.server.userSrv.saveUserLoginInfo(form.getFieldsValue());
+  });
+
+  useEffect(() => {
+    mainBridge.server.userSrv.getUserLoginInfo()
+      .then((res) => {
+        form.setFieldsValue(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  });
+
+  const onFieldsChange = () => {
+    throttleSaveUserLoginInfo();
+  };
 
   const onFinish = (values: any) => {
     setLoading(true);
 
     const { username, password } = values;
+
     mainBridge.server.connectSrv.login(
       username,
       md5(password),
@@ -36,8 +57,9 @@ const NormalLogin = function () {
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        initialValues={{ remember: true }}
+        form={form}
         onFinish={onFinish}
+        onFieldsChange={onFieldsChange}
         autoComplete="off"
       >
         <Form.Item
@@ -60,7 +82,9 @@ const NormalLogin = function () {
         </Form.Item>
 
         <Form.Item name="remember" valuePropName="checked" wrapperCol={{ span: 16 }}>
-          <Checkbox>记住我</Checkbox>
+          <Checkbox>
+            记住我
+          </Checkbox>
         </Form.Item>
 
         <Form.Item wrapperCol={{ span: 16 }}>

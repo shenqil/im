@@ -8,30 +8,31 @@ export interface Iconfig {
 }
 
 export interface IConfigSrv {
-  get():Iconfig,
+  get():Promise<Readonly<Iconfig>>,
   update(config:Iconfig):Promise<unknown>
 }
 
 class ConfigSrv implements IConfigSrv {
   private config:Iconfig;
 
+  private isCache:Boolean;
+
   constructor() {
     this.config = {
       filePath: path.join(app.getPath('userData'), 'db'),
     };
-
-    SQ3.common.getData(ESQ3CommonKey.config)
-      .then((res) => {
-        if (res) {
-          this.config = JSON.parse(res) as Iconfig;
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    this.isCache = false;
   }
 
-  get():Iconfig {
+  async get():Promise<Readonly<Iconfig>> {
+    if (!this.isCache) {
+      const res = await SQ3.common.getData(ESQ3CommonKey.config);
+      if (res) {
+        this.config = JSON.parse(res) as Iconfig;
+        this.isCache = true;
+      }
+    }
+
     return Object.freeze(this.config);
   }
 

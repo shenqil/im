@@ -29,7 +29,7 @@ async function initSqlite3() {
 initSqlite3()
   .then(() => {
     sqlite3Status = 'success';
-    depMap.forEach(([resolve]) => resolve(''));
+    depMap.forEach(([resolve]) => resolve(sqlite3DB));
   })
   .catch((err) => {
     sqlite3Status = err;
@@ -158,6 +158,9 @@ class SQ3Base {
   async sql(sql: string, params: any, mode: ESQ3Mode = ESQ3Mode.all): Promise<unknown> {
     await awaitSqlite3Init();
     await this.awaitCreateTable();
+
+    // console.info(`SQL: ${mode} ${sql} ${JSON.stringify(params)}`);
+
     return new Promise((resolve, reject) => {
       (this.db as any)[mode](sql, params, (err:Error, data:unknown) => {
         if (err) {

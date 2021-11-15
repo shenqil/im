@@ -42,7 +42,7 @@ export async function dirExists(dir:string):Promise<unknown> {
     }
     throw new Error(`${dir}路径存在,但是是文件`);
   } catch (err) {
-    if ((err as Error)?.message.indexOf('路径存在,但是是文件') !== 1) {
+    if ((err as Error)?.message.indexOf('路径存在,但是是文件') !== -1) {
       throw err;
     }
 
