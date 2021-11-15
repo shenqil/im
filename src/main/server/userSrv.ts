@@ -14,7 +14,8 @@ export interface IUserSrv {
 export interface ILoginInfo {
   username:string,
   password:string,
-  remember:boolean
+  remember:boolean,
+  autoLogin:boolean
 }
 
 class UserSrv implements IUserSrv {
@@ -49,6 +50,7 @@ class UserSrv implements IUserSrv {
         username: '',
         password: '',
         remember: false,
+        autoLogin: false,
       };
     }
     return JSON.parse(res) as ILoginInfo;
@@ -59,6 +61,7 @@ class UserSrv implements IUserSrv {
     if (!loginInfo.remember) {
       loginInfo.username = '';
       loginInfo.password = '';
+      loginInfo.autoLogin = false;
     }
     return SQ3.common.saveData(ESQ3CommonKey.userLoginInfo, JSON.stringify(loginInfo));
   }

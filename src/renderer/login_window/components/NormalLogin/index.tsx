@@ -4,9 +4,9 @@ import {
 } from 'antd';
 import md5 from 'md5';
 import { throttle } from 'throttle-debounce';
+import { ILoginInfo } from '@main/server/interface';
 import style from './index.scss';
 import { mainBridge } from '../../../public/ipcRenderer/index';
-import { ILoginInfo } from '../../../../main/server/interface';
 
 const NormalLogin = function () {
   const [loading, setLoading] = useState(false);
@@ -16,24 +16,10 @@ const NormalLogin = function () {
     mainBridge.server.userSrv.saveUserLoginInfo(form.getFieldsValue());
   });
 
-  useEffect(() => {
-    mainBridge.server.userSrv.getUserLoginInfo()
-      .then((res) => {
-        form.setFieldsValue(res);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  });
-
-  const onFieldsChange = () => {
-    throttleSaveUserLoginInfo();
-  };
-
-  const onFinish = (values: any) => {
+  const onFinish = () => {
     setLoading(true);
 
-    const { username, password } = values;
+    const { username, password } = form.getFieldsValue();
 
     mainBridge.server.connectSrv.login(
       username,
@@ -50,6 +36,23 @@ const NormalLogin = function () {
         setLoading(false);
       });
   };
+
+  const onFieldsChange = () => {
+    throttleSaveUserLoginInfo();
+  };
+
+  useEffect(() => {
+    mainBridge.server.userSrv.getUserLoginInfo()
+      .then((res) => {
+        form.setFieldsValue(res);
+        if (res.username && res.password && res.autoLogin) {
+          onFinish();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  });
 
   return (
     <div className={style['normal-login']}>
@@ -77,13 +80,20 @@ const NormalLogin = function () {
             { required: true, message: '请输入密码!' },
             { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/, message: '需要8-16个包含大小写字母和数字的字符' },
           ]}
+          className={style.password}
         >
           <Input.Password size="large" />
         </Form.Item>
 
-        <Form.Item name="remember" valuePropName="checked" wrapperCol={{ span: 16 }}>
+        <Form.Item name="remember" valuePropName="checked" wrapperCol={{ span: 16 }} className={style.remember}>
           <Checkbox>
             记住我
+          </Checkbox>
+        </Form.Item>
+
+        <Form.Item name="autoLogin" valuePropName="checked" wrapperCol={{ span: 16 }}>
+          <Checkbox>
+            自动登录
           </Checkbox>
         </Form.Item>
 
