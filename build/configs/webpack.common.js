@@ -5,8 +5,6 @@ const { resolve } = require("../utils/common");
 const rendererCfg = require("../utils/rendererCfg");
 const base = require("./webpack.base");
 
-console.log(resolve("./src/renderer/"),'1111111111111111')
-
 module.exports = merge(base, {
   entry: rendererCfg.entry,
   output: {
