@@ -33,6 +33,8 @@ class MQTTConnect implements IMQTTConnect {
 
   public serverPrefix = 'IMServer';
 
+  public clientPrefix = 'IMClient';
+
   constructor() {
     this.eventMap = new Map();
     this.username = '';
@@ -58,6 +60,7 @@ class MQTTConnect implements IMQTTConnect {
         clientId: 'PC',
         username,
         password,
+        clean: false,
       });
 
       this.client.on('connect', async () => {
@@ -72,11 +75,11 @@ class MQTTConnect implements IMQTTConnect {
       });
 
       this.client.on('reconnect', (error:any) => {
-        console.log('正在重连:', error);
+        console.warn('正在重连:', error);
       });
 
       this.client.on('error', (error) => {
-        console.log('连接失败:', error);
+        console.error('连接失败:', error);
       });
 
       // 监听所有消息
@@ -134,7 +137,7 @@ class MQTTConnect implements IMQTTConnect {
         reject(new Error('用户名称不存在'));
         return;
       }
-      this.client?.subscribe(`${this.username}/#`, (err:Error) => {
+      this.client?.subscribe(`${this.clientPrefix}/${this.username}/#`, (err:Error) => {
         if (err) {
           reject(err);
           return;
