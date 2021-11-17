@@ -1,0 +1,60 @@
+@import  "../../../../../public/css/color.scss";
+
+.side-bar{
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  &__title{
+    width: 100%;
+    height: 56px;
+    font-weight: 600;
+    font-size: 16px;
+    color: $mainFontColor;
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    padding-left: 16px;
+  }
+
+  &-item{
+    width: 100%;
+    height: 58px;
+    padding: 10px 18px;
+    display: flex;
+    flex-flow: row;
+    justify-content: flex-start;
+    align-items:center;
+    cursor: pointer;
+
+    &:hover{
+      background-color: $backgroundColor;
+    }
+    &--activa{
+      background-color: $backgroundColor;
+    }
+
+    &__icon{
+      width: 38px;
+      height: 38px;
+      border-radius: 5px;
+      overflow: hidden;
+      background-color: $mainColor;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &-font{
+        color: #fff;
+        font-size: 20px;
+      }
+    }
+
+    &__name{
+      margin-left: 14px;
+      font-size: 14px;
+      color: $mainFontColor;
+    }
+  }
+}

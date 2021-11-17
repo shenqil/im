@@ -5,6 +5,8 @@ const { resolve } = require("../utils/common");
 const rendererCfg = require("../utils/rendererCfg");
 const base = require("./webpack.base");
 
+console.log(resolve("./src/renderer/"),'1111111111111111')
+
 module.exports = merge(base, {
   entry: rendererCfg.entry,
   output: {
@@ -39,9 +41,9 @@ module.exports = merge(base, {
     extensions: [".tsx", ".ts", ".js"],
     alias: {
       "@/":resolve("./src/"),
-      "@main/": resolve("./src/main/"),
-      "@preload/": resolve("./src/preload/"),
-      "@renderer/": resolve("./src/renderer/")
+      "@main": resolve("./src/main"),
+      "@preload": resolve("./src/preload"),
+      "@renderer": resolve("./src/renderer")
     },
   },
 });

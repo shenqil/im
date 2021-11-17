@@ -11,6 +11,7 @@ body {
     height: 100%;
     font-family: "PingFang SC", "Microsoft YaHei", "SimHei", "Helvetica Neue",
         "Hiragino Sans GB";
+    user-select: none;
 }
 
 #root{
