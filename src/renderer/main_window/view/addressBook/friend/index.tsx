@@ -1,7 +1,12 @@
 import React from 'react';
+import { mainBridge } from '@renderer/public/ipcRenderer';
 import styles from './index.scss';
 
 const Friend = function () {
+  function openAddFriendWin() {
+    mainBridge.wins.addFriend.openWin();
+  }
+
   return (
     <div className={styles.friend}>
       <div className={styles.friend__header}>
@@ -9,7 +14,7 @@ const Friend = function () {
           我的好友
         </div>
 
-        <i className={`iconfont icon-tianjiahaoyou ${styles['friend__header-add']}`} />
+        <i className={`iconfont icon-tianjiahaoyou ${styles['friend__header-add']}`} onClick={openAddFriendWin} aria-hidden="true" />
       </div>
 
       <div className={styles.friend__container}>
