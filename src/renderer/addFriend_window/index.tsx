@@ -13,8 +13,14 @@ const App = function () {
       return;
     }
     const res = await mainBridge.server.friendSrv.search(value);
-    console.log(res, 'handleOk');
-    // mainBridge.wins.addFriend.closeWin();
+    if (res) {
+      await mainBridge.wins.businessCard.show({
+        isCursorPoint: false,
+        friendInfo: res,
+      });
+    }
+
+    mainBridge.wins.addFriend.closeWin();
   }
 
   function handCancel() {
