@@ -110,15 +110,15 @@ class MQTTConnect implements IMQTTConnect {
     await this.subscribeSelfTopic();
 
     // 获取主清单
-    this.manifest = await this.fetchManifest(this.username);
+    this.manifest = await this.fetchManifest();
   }
 
   /**
    * 获取主清单
    * */
-  async fetchManifest(userName:string):Promise<IManifest> {
+  async fetchManifest():Promise<IManifest> {
     const res = await this.sendMsgWaitReply({
-      topic: `${this.serverPrefix}/manifest/get/${userName}`,
+      topic: 'manifest/get',
       message: '',
       opts: {
         qos: 0,
@@ -174,6 +174,11 @@ class MQTTConnect implements IMQTTConnect {
     return new Promise((resolve, reject) => {
       let timeHandle: NodeJS.Timeout;
 
+      if (!this.getUserName) {
+        reject(new Error('用户未登录，不存在username'));
+        return;
+      }
+
       // 监听回调
       this.listen(msgId, (res:unknown) => {
         // 清除定时器
@@ -182,7 +187,7 @@ class MQTTConnect implements IMQTTConnect {
       });
 
       // 发送
-      msg.topic += `/${msgId}`;
+      msg.topic = `${this.serverPrefix}/${msg.topic}/${this.getUserName}/${msgId}`;
       this.sendMsg(msg);
 
       // 超时

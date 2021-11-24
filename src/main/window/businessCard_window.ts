@@ -2,10 +2,10 @@ import BaseWIN, { IBaseWIN } from './base';
 import mainWin from './main_window';
 import { centerPoint } from './utils';
 
-export interface IAddFriendWindow extends IBaseWIN {
+export interface IBusinessCardWindow extends IBaseWIN {
 
 }
-export class AddFriendWindow extends BaseWIN implements IAddFriendWindow {
+export class BusinessCardWindow extends BaseWIN implements IBusinessCardWindow {
   openWin() {
     if (!mainWin.win) {
       return;
@@ -34,4 +34,4 @@ export class AddFriendWindow extends BaseWIN implements IAddFriendWindow {
   }
 }
 
-export default new AddFriendWindow('addFriend_window');
+export default new BusinessCardWindow('businessCard_window');

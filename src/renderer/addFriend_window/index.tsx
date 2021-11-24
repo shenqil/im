@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { render } from 'react-dom';
 import { Input, Button } from 'antd';
 import 'antd/dist/antd.css';
@@ -7,12 +7,22 @@ import { mainBridge } from '@renderer/public/ipcRenderer';
 import styles from './index.scss';
 
 const App = function () {
-  function handleOk() {
-    mainBridge.wins.addFriend.closeWin();
+  let value:string = '';
+  async function handleOk() {
+    if (!value) {
+      return;
+    }
+    const res = await mainBridge.server.friendSrv.search(value);
+    console.log(res, 'handleOk');
+    // mainBridge.wins.addFriend.closeWin();
   }
 
   function handCancel() {
     mainBridge.wins.addFriend.closeWin();
+  }
+
+  function onChange(e:ChangeEvent<HTMLInputElement>) {
+    value = e.target.value;
   }
 
   return (
@@ -24,7 +34,7 @@ const App = function () {
       </div>
 
       <div className={styles['add-friend__content']}>
-        <Input placeholder="请输入手机号/用户名" size="large" />
+        <Input placeholder="请输入手机号/用户名" size="large" onChange={(e) => onChange(e)} />
       </div>
 
       <div className={styles['add-friend__footer']}>

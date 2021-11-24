@@ -34,11 +34,8 @@ export interface IUser {
  * 获取当前用户信息
  * */
 async function fetchUserInfo():Promise<IUserInfo> {
-  if (!connect.getUserName) {
-    throw new Error('用户未登录，不存在username');
-  }
   const res = await connect.sendMsgWaitReply({
-    topic: `IMServer/user/get/${connect.getUserName}`,
+    topic: 'user/get',
     message: '',
     opts: {
       qos: 0,
@@ -52,11 +49,8 @@ async function fetchUserInfo():Promise<IUserInfo> {
  * 获取token
  * */
 async function fetchToken():Promise<IToken> {
-  if (!connect.getUserName) {
-    throw new Error('用户未登录，不存在username');
-  }
   const res = await connect.sendMsgWaitReply({
-    topic: `IMServer/user/getToken/${connect.getUserName}`,
+    topic: 'user/getToken',
     message: '',
     opts: {
       qos: 0,
