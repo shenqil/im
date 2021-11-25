@@ -1,4 +1,5 @@
 import { ipcMain } from 'electron';
+import './event';
 import server from '../server';
 import wins from '../window';
 
