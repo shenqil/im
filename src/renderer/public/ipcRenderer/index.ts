@@ -1,4 +1,5 @@
 import IMainBridge from '@main/ipcMain/interface';
+import { EMainEventKey } from '@main/ipcMain/eventInterface';
 
 const { mainBridgeCall } = (window as any);
 
@@ -41,10 +42,10 @@ export default IMainBridge;
 
 // -------------------------- 事件中心 start --------------
 interface IMainEvent{
-  on(name: string, callBack: Function):void,
-  off(name: string, callBack: Function): void,
-  emit(name: string, params: unknown):void,
+  on(name: EMainEventKey, callBack: Function):void,
+  off(name: EMainEventKey, callBack: Function): void,
+  emit(name: EMainEventKey, params: unknown):void,
 }
-
+export * from '@main/ipcMain/eventInterface';
 export const mainEvent = (window as any).mainEvent as IMainEvent;
 // -------------------------- 事件中心 end ----------------

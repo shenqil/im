@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { render } from 'react-dom';
-import { mainBridge } from '@renderer/public/ipcRenderer';
+import { mainBridge, mainEvent, EMainEventKey } from '@renderer/public/ipcRenderer';
 import { IFriendInfoSrv } from '@main/server/interface';
 import defaultImg from '@renderer/public/img/avatar.png';
 import '@renderer/public/css/index.scss';
+
 import styles from './index.scss';
 
 const BusinessCardItem = function (props: { label: string; content: string; }) {
@@ -40,6 +41,10 @@ const App = function () {
   }, []);
 
   function addFriend() {
+    mainEvent.emit(EMainEventKey.UnifiedPrompt, {
+      type: 'success',
+      msg: '添加好友',
+    });
     console.log('添加好友');
   }
 

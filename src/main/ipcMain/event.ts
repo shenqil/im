@@ -1,22 +1,23 @@
 import { ipcMain, BrowserWindow } from 'electron';
+import { EMainEventKey } from './eventInterface';
 
 interface IMainEvent {
-  on(name: string, processId: number): void
-  off(name: string, processId: number): void
-  emit(name:string, params:unknown):void
+  on(name: EMainEventKey, processId: number): void
+  off(name: EMainEventKey, processId: number): void
+  emit(name:EMainEventKey, params:unknown):void
 }
 
 /**
  * 事件中心
  * */
 class MainEvent implements IMainEvent {
-  private eventMap:Map<string, number[]>;
+  private eventMap:Map<EMainEventKey, number[]>;
 
   constructor() {
     this.eventMap = new Map();
   }
 
-  emit(name: string, params: unknown): void {
+  emit(name: EMainEventKey, params: unknown): void {
     let ids = this.eventMap.get(name) || [];
 
     // 拿到所有相关的窗口
@@ -33,7 +34,7 @@ class MainEvent implements IMainEvent {
     this.eventMap.set(name, ids);
   }
 
-  off(name: string, processId: number): void {
+  off(name: EMainEventKey, processId: number): void {
     const ids = this.eventMap.get(name) || [];
     // 不存在
     const index = ids.findIndex((id) => id === processId);
@@ -46,7 +47,7 @@ class MainEvent implements IMainEvent {
     this.eventMap.set(name, ids);
   }
 
-  on(name: string, processId: number): void {
+  on(name: EMainEventKey, processId: number): void {
     const ids = this.eventMap.get(name) || [];
     // 已存在
     if (ids.findIndex((id) => id === processId) !== -1) {

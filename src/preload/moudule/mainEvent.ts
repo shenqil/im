@@ -12,7 +12,6 @@ contextBridge.exposeInMainWorld('mainEvent', {
     fns.push(callBack);
 
     eventMap.set(name, fns);
-
     // 通知主进程订阅
     ipcRenderer.send('mainEvent', { name, type: 'on' });
   },
@@ -42,7 +41,7 @@ ipcRenderer.on('mainEvent--emit', (_, { name, params }) => {
   const fns = eventMap.get(name) || [];
 
   try {
-    fns.forEach((fn) => fn.apply(params));
+    fns.forEach((fn) => fn(params));
   } catch (error) {
     console.error(error);
   }

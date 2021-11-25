@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 
+import './event';
 import '../public/css/index.scss';
 
 import App from './view/App';
