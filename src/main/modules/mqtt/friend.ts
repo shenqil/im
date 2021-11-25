@@ -1,5 +1,13 @@
 import connect from './connect';
 
+export enum IIFriendStatus {
+  FriendSubscribe = 1,
+  FriendUnsubscribe = 2,
+  FriendRefuse = 3,
+  FriendIgnore = 4,
+  FriendNone = 0,
+}
+
 export interface IFriendInfo {
   id: string,
   avatar:string,
@@ -14,10 +22,21 @@ export interface IFriendOperateParam {
   toUserId:string
 }
 
+export interface IQuasiFriend {
+  id:string,
+  userID1:string,
+  userID2:string,
+  status1:IIFriendStatus,
+  status2:IIFriendStatus,
+  updatedAt:number
+}
+
 export interface IFriend {
   search(keywords:string):Promise<IFriendInfo | undefined>
-  fetchList():Promise<Array<IFriendInfo>>
+  myFriendList():Promise<Array<IFriendInfo>>
+  quasiFriendList():Promise<Array<IQuasiFriend>>
   add(params:IFriendOperateParam):Promise<unknown>
+  ignore(params:IFriendOperateParam):Promise<unknown>
   remove(params:IFriendOperateParam):Promise<unknown>
 }
 
@@ -42,9 +61,27 @@ async function search(keywords:string):Promise<IFriendInfo | undefined> {
 /**
  * 获取好友列表
  * */
-async function fetchList():Promise<Array<IFriendInfo>> {
+async function myFriendList():Promise<Array<IFriendInfo>> {
   const res = await connect.sendMsgWaitReply({
-    topic: 'friend/myFriend',
+    topic: 'friend/myFriends',
+    message: Date.now().toString(),
+    opts: {
+      qos: 0,
+      retain: false,
+    },
+  });
+  if (!res) {
+    return [];
+  }
+  return JSON.parse(res as string);
+}
+
+/**
+ * 准好友列表
+ * */
+async function quasiFriendList() {
+  const res = await connect.sendMsgWaitReply({
+    topic: 'friend/quasiFriends',
     message: Date.now().toString(),
     opts: {
       qos: 0,
@@ -72,6 +109,20 @@ async function add(params:IFriendOperateParam):Promise<unknown> {
 }
 
 /**
+ * 忽略对方好友请求
+ * */
+async function ignore(params:IFriendOperateParam):Promise<unknown> {
+  return connect.sendMsgWaitReply({
+    topic: 'friend/ignore',
+    message: JSON.stringify(params),
+    opts: {
+      qos: 0,
+      retain: false,
+    },
+  });
+}
+
+/**
  * 删除好友
  * */
 async function remove(params:IFriendOperateParam):Promise<unknown> {
@@ -86,7 +137,9 @@ async function remove(params:IFriendOperateParam):Promise<unknown> {
 }
 export default {
   search,
-  fetchList,
+  myFriendList,
+  quasiFriendList,
   add,
+  ignore,
   remove,
 };
