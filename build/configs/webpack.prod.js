@@ -8,7 +8,7 @@ module.exports = merge(common, {
   module: {
     rules: [
       {
-        test: /\.css$/i,
+        test: /\.((c|sa|sc)ss)$/i,
         include: [
           /node_modules/,
           resolve("src/renderer/public"),
@@ -20,7 +20,8 @@ module.exports = merge(common, {
               publicPath: "../../",
             },
           },
-          "css-loader"
+          "css-loader",
+          "sass-loader"
         ],
       },
       {

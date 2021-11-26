@@ -19,4 +19,8 @@
     width: calc(100% - 250px);
     height: 100%;
   }
+
+  &__hidden{
+    display: none;
+  }
 }
