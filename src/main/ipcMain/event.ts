@@ -1,16 +1,12 @@
 import { ipcMain, BrowserWindow } from 'electron';
 import { EMainEventKey } from './eventInterface';
 
-interface IMainEvent {
-  on(name: EMainEventKey, processId: number): void
-  off(name: EMainEventKey, processId: number): void
-  emit(name:EMainEventKey, params:unknown):void
-}
+const callbackMap:Map<string, Array<Function>> = new Map();
 
 /**
  * 事件中心
  * */
-class MainEvent implements IMainEvent {
+class MainEvent {
   private eventMap:Map<EMainEventKey, number[]>;
 
   constructor() {
@@ -18,20 +14,24 @@ class MainEvent implements IMainEvent {
   }
 
   emit(name: EMainEventKey, params: unknown): void {
-    let ids = this.eventMap.get(name) || [];
+    // 1、处理其他进程的事件
+    const ids = this.eventMap.get(name) || [];
 
-    // 拿到所有相关的窗口
+    // 1.1拿到所有相关的窗口
     const allWins = BrowserWindow.getAllWindows()
       .filter((win) => ids.findIndex((id) => id === win.webContents.getProcessId()) !== -1);
 
-    // 派发事件
-    ids = allWins.map((win) => {
+    // 1.2派发事件
+    const nIds = allWins.map((win) => {
       win.webContents.send('mainEvent--emit', { name, params });
       return win.webContents.getProcessId();
     });
+    // 1.3保存存在的id
+    this.eventMap.set(name, nIds);
 
-    // 保存存在的id
-    this.eventMap.set(name, ids);
+    // 2、处理主进程事件
+    const fns = callbackMap.get(name) || [];
+    fns.forEach((fn) => fn(params));
   }
 
   off(name: EMainEventKey, processId: number): void {
@@ -78,4 +78,37 @@ ipcMain.on('mainEvent', (event, { name, type, params }) => {
   }
 });
 
-export default mainEvent;
+// -------------------主进程调用方法-------------------
+
+function on(name: EMainEventKey, callBack: Function) {
+  const fns = callbackMap.get(name) || [];
+  if (fns.findIndex((fn) => fn === callBack) !== -1) {
+    return;
+  }
+
+  fns.push(callBack);
+
+  callbackMap.set(name, fns);
+}
+
+function off(name: EMainEventKey, callBack: Function) {
+  const fns = callbackMap.get(name) || [];
+  const index = fns.findIndex((fn) => fn === callBack);
+  if (index === -1) {
+    return;
+  }
+
+  fns.splice(index, 1);
+
+  callbackMap.set(name, fns);
+}
+
+function emit(name: EMainEventKey, params: unknown) {
+  mainEvent.emit(name, params);
+}
+// -------------------主进程调用方法-------------------
+export default {
+  on,
+  off,
+  emit,
+};
