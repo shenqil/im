@@ -1,6 +1,6 @@
 import connect from './connect';
 
-export enum IIFriendStatus {
+export enum EFriendStatus {
   FriendSubscribe = 1,
   FriendUnsubscribe = 2,
   FriendRefuse = 3,
@@ -22,13 +22,18 @@ export interface IFriendOperateParam {
   toUserId:string
 }
 
-export interface IQuasiFriend {
+export interface IQuasiFriendStatus{
   id:string,
   userID1:string,
   userID2:string,
-  status1:IIFriendStatus,
-  status2:IIFriendStatus,
+  status1:EFriendStatus,
+  status2:EFriendStatus,
   updatedAt:number
+}
+
+export interface IQuasiFriend {
+  info:IFriendInfo
+  status:IQuasiFriendStatus
 }
 
 export interface IFriend {
@@ -64,16 +69,16 @@ async function search(keywords:string):Promise<IFriendInfo | undefined> {
 async function myFriendList():Promise<Array<IFriendInfo>> {
   const res = await connect.sendMsgWaitReply({
     topic: 'friend/myFriends',
-    message: Date.now().toString(),
+    message: connect.getManifest?.userID || Date.now().toString(),
     opts: {
       qos: 0,
       retain: false,
     },
-  });
-  if (!res) {
-    return [];
-  }
-  return JSON.parse(res as string);
+  }) as string;
+
+  const { Data } = JSON.parse(res);
+
+  return Data || [];
 }
 
 /**
@@ -82,16 +87,16 @@ async function myFriendList():Promise<Array<IFriendInfo>> {
 async function quasiFriendList() {
   const res = await connect.sendMsgWaitReply({
     topic: 'friend/quasiFriends',
-    message: Date.now().toString(),
+    message: connect.getManifest?.userID || Date.now().toString(),
     opts: {
       qos: 0,
       retain: false,
     },
-  });
-  if (!res) {
-    return [];
-  }
-  return JSON.parse(res as string);
+  }) as string;
+
+  const { Data } = JSON.parse(res);
+
+  return Data || [];
 }
 
 /**

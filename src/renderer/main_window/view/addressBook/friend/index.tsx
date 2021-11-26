@@ -3,6 +3,14 @@ import { mainBridge } from '@renderer/public/ipcRenderer';
 import styles from './index.scss';
 
 const Friend = function () {
+  mainBridge.server.friendSrv.getMyFriendList()
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+
   function openAddFriendWin() {
     mainBridge.wins.addFriend.openWin();
   }
