@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import { Input, Button } from 'antd';
 import 'antd/dist/antd.css';
 import '../public/css/index.scss';
-import { mainBridge } from '@renderer/public/ipcRenderer';
+import { mainBridge, mainEvent, EMainEventKey } from '@renderer/public/ipcRenderer';
 import styles from './index.scss';
 
 const App = function () {
@@ -12,12 +12,17 @@ const App = function () {
     if (!value) {
       return;
     }
-    const res = await mainBridge.server.friendSrv.search(value);
-    if (res) {
-      await mainBridge.wins.businessCard.show({
-        isCursorPoint: false,
-        friendInfo: res,
-      });
+
+    try {
+      const res = await mainBridge.server.friendSrv.search(value);
+      if (res) {
+        await mainBridge.wins.businessCard.show({
+          isCursorPoint: false,
+          friendInfo: res,
+        });
+      }
+    } catch (error) {
+      mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'error', msg: `${error}` });
     }
 
     mainBridge.wins.addFriend.closeWin();

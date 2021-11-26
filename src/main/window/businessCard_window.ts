@@ -58,9 +58,9 @@ export class BusinessCardWindow extends BaseWIN implements IBusinessCardWindow {
 
     this.win?.once('ready-to-show', () => {
       this.win?.show();
-      this.win?.on('blur', () => {
-        this.win?.hide();
-      });
+      // this.win?.on('blur', () => {
+      //   this.win?.hide();
+      // });
     });
   }
 

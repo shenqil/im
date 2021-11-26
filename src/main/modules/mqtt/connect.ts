@@ -23,7 +23,7 @@ class MQTTConnect implements IMQTTConnect {
 
   private eventMap:Map<string, Function>;
 
-  private replyTimeOut = 10000;
+  private replyTimeOut = 5000;
 
   private username:string;
 

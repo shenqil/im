@@ -40,12 +40,21 @@ const App = function () {
     });
   }, []);
 
-  function addFriend() {
-    mainEvent.emit(EMainEventKey.UnifiedPrompt, {
-      type: 'success',
-      msg: '添加好友',
-    });
-    console.log('添加好友');
+  async function addFriend() {
+    try {
+      await mainBridge.server.friendSrv.add(cardInfo.id);
+      mainEvent.emit(EMainEventKey.UnifiedPrompt, {
+        type: 'success',
+        msg: '发送成功',
+      });
+    } catch (error) {
+      mainEvent.emit(EMainEventKey.UnifiedPrompt, {
+        type: 'error',
+        msg: `${error}`,
+      });
+    }
+
+    mainBridge.wins.businessCard.win?.hide();
   }
 
   return (

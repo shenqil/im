@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
-import { IFriendInfo, IFriendOperateParam, IQuasiFriend } from '../modules/mqtt/interface';
+import { IFriendInfo, IQuasiFriend } from '../modules/mqtt/interface';
 import mqtt from '../modules/mqtt/index';
+import userSrv from './userSrv';
 
 export interface IFriendInfoSrv extends IFriendInfo{
   isFriend:boolean
@@ -10,9 +11,9 @@ export interface IFriendSrv {
   search(keywords:string):Promise<IFriendInfoSrv | undefined>
   myFriendList():Promise<Array<IFriendInfo>>
   quasiFriendList():Promise<Array<IQuasiFriend>>
-  add(params:IFriendOperateParam):Promise<unknown>
-  ignore(params:IFriendOperateParam):Promise<unknown>
-  remove(params:IFriendOperateParam):Promise<unknown>
+  add(userId:string):Promise<unknown>
+  ignore(userId:string):Promise<unknown>
+  remove(userId:string):Promise<unknown>
 }
 
 class FriendSrv implements IFriendSrv {
@@ -37,16 +38,19 @@ class FriendSrv implements IFriendSrv {
     return mqtt.friend.quasiFriendList();
   }
 
-  add(params:IFriendOperateParam): Promise<unknown> {
-    return mqtt.friend.add(params);
+  async add(userId:string): Promise<unknown> {
+    const userInfo = await userSrv.getUserInfo();
+    return mqtt.friend.add({ formUserId: userInfo.id, toUserId: userId });
   }
 
-  ignore(params: IFriendOperateParam): Promise<unknown> {
-    return mqtt.friend.ignore(params);
+  async ignore(userId:string): Promise<unknown> {
+    const userInfo = await userSrv.getUserInfo();
+    return mqtt.friend.ignore({ formUserId: userInfo.id, toUserId: userId });
   }
 
-  remove(params:IFriendOperateParam): Promise<unknown> {
-    return mqtt.friend.remove(params);
+  async remove(userId:string): Promise<unknown> {
+    const userInfo = await userSrv.getUserInfo();
+    return mqtt.friend.remove({ formUserId: userInfo.id, toUserId: userId });
   }
 }
 
