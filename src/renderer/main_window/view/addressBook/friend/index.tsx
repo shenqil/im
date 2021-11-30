@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { mainBridge } from '@renderer/public/ipcRenderer';
+import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hooks';
+import { selectFriendList, fetchFriendListAsync } from '@renderer/main_window/store/friend';
 import styles from './index.scss';
 
-const Friend = function () {
-  mainBridge.server.friendSrv.getMyFriendList()
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+const Friend:FC = function () {
+  const friendList = useAppSelector(selectFriendList);
+  const dispatch = useAppDispatch();
+  if (friendList.length === 0) {
+    dispatch(fetchFriendListAsync());
+  }
+
+  console.log(friendList, 'friendList');
 
   function openAddFriendWin() {
     mainBridge.wins.addFriend.openWin();

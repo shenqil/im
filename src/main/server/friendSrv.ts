@@ -1,4 +1,6 @@
 /* eslint-disable class-methods-use-this */
+import ipcEvent from '@main/ipcMain/event';
+import { EMainEventKey } from '@main/ipcMain/eventInterface';
 import { IFriendInfo, IQuasiFriend, EFriendStatus } from '../modules/mqtt/interface';
 import mqtt from '../modules/mqtt/index';
 import userSrv from './userSrv';
@@ -38,6 +40,7 @@ class FriendSrv implements IFriendSrv {
   // 改变好友列表唯一入口
   changeFriends(list:IFriendInfo[]) {
     this.friends = [...list];
+    ipcEvent.emit(EMainEventKey.MyFriendChange, this.friends);
   }
 
   // 改变准好友列表唯一入口

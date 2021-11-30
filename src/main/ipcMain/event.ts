@@ -1,21 +1,27 @@
+/* eslint-disable class-methods-use-this */
 import { ipcMain, BrowserWindow } from 'electron';
 import { EMainEventKey } from './eventInterface';
 
+const paramsMap:Map<EMainEventKey, unknown> = new Map();
 const callbackMap:Map<string, Array<Function>> = new Map();
+const processMap:Map<EMainEventKey, number[]> = new Map();
+
+function clearParamsMap(name:EMainEventKey) {
+  const fns = callbackMap.get(name) || [];
+  const ids = processMap.get(name) || [];
+
+  if (fns.length + ids.length === 0) {
+    paramsMap.delete(name);
+  }
+}
 
 /**
  * 事件中心
  * */
 class MainEvent {
-  private eventMap:Map<EMainEventKey, number[]>;
-
-  constructor() {
-    this.eventMap = new Map();
-  }
-
   emit(name: EMainEventKey, params: unknown): void {
     // 1、处理其他进程的事件
-    const ids = this.eventMap.get(name) || [];
+    const ids = processMap.get(name) || [];
 
     // 1.1拿到所有相关的窗口
     const allWins = BrowserWindow.getAllWindows()
@@ -27,15 +33,18 @@ class MainEvent {
       return win.webContents.getProcessId();
     });
     // 1.3保存存在的id
-    this.eventMap.set(name, nIds);
+    processMap.set(name, nIds);
 
     // 2、处理主进程事件
     const fns = callbackMap.get(name) || [];
     fns.forEach((fn) => fn(params));
+
+    // 3、保存最后一次数据
+    paramsMap.set(name, params);
   }
 
   off(name: EMainEventKey, processId: number): void {
-    const ids = this.eventMap.get(name) || [];
+    const ids = processMap.get(name) || [];
     // 不存在
     const index = ids.findIndex((id) => id === processId);
     if (index === -1) {
@@ -44,11 +53,13 @@ class MainEvent {
 
     ids.splice(index, 1);
 
-    this.eventMap.set(name, ids);
+    processMap.set(name, ids);
+
+    clearParamsMap(name);
   }
 
   on(name: EMainEventKey, processId: number): void {
-    const ids = this.eventMap.get(name) || [];
+    const ids = processMap.get(name) || [];
     // 已存在
     if (ids.findIndex((id) => id === processId) !== -1) {
       return;
@@ -56,7 +67,7 @@ class MainEvent {
 
     ids.push(processId);
 
-    this.eventMap.set(name, ids);
+    processMap.set(name, ids);
   }
 }
 
@@ -64,9 +75,16 @@ const mainEvent = new MainEvent();
 
 ipcMain.on('mainEvent', (event, { name, type, params }) => {
   switch (type) {
-    case 'on':
+    case 'on': {
       mainEvent.on(name, event.processId);
+      // 监听返回一次数据
+      const dataParams = paramsMap.get(name);
+      if (dataParams !== undefined) {
+        event.reply('mainEvent--emit', { name, params: dataParams });
+      }
       break;
+    }
+
     case 'off':
       mainEvent.off(name, event.processId);
       break;
@@ -89,6 +107,11 @@ function on(name: EMainEventKey, callBack: Function) {
   fns.push(callBack);
 
   callbackMap.set(name, fns);
+
+  // 调用一次
+  if (paramsMap.get(name) !== undefined) {
+    callBack(paramsMap.get(name));
+  }
 }
 
 function off(name: EMainEventKey, callBack: Function) {
@@ -101,6 +124,8 @@ function off(name: EMainEventKey, callBack: Function) {
   fns.splice(index, 1);
 
   callbackMap.set(name, fns);
+
+  clearParamsMap(name);
 }
 
 function emit(name: EMainEventKey, params: unknown) {

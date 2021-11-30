@@ -1,23 +1,27 @@
 import React, { FC } from 'react';
 import { renderRoutes, RouteConfigComponentProps } from 'react-router-config';
-import { connect } from 'react-redux';
-import IStore, { IUserInfoState, IDomainState } from '@renderer/main_window/store/interface';
-import actions, { IUserInfoActions } from '../store/userInfo/actions';
+import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hooks';
+import { selectUserInfo, fetchUserInfoAsync } from '@renderer/main_window/store/user';
+import { selectFileServer } from '@renderer/main_window/store/domain';
 import styles from './sideLayout.scss';
-import Navigation from './components/Navigation/index';
-import Avatar from '../components/Avatar/index';
+import Navigation from './components/Navigation';
+import Avatar from '../components/Avatar';
 
-interface IProps extends RouteConfigComponentProps, IUserInfoState, IDomainState, IUserInfoActions {
+interface IProps extends RouteConfigComponentProps{
 
 }
 
 const SideLayout:FC<IProps> = function (props) {
   const {
-    route, fetchUserInfo, userInfo, fileServer,
+    route,
   } = props;
 
+  const userInfo = useAppSelector(selectUserInfo);
+  const fileServer = useAppSelector(selectFileServer);
+  const dispatch = useAppDispatch();
+
   if (!userInfo) {
-    fetchUserInfo();
+    dispatch(fetchUserInfoAsync());
   }
 
   let avatar = '';
@@ -46,10 +50,4 @@ const SideLayout:FC<IProps> = function (props) {
   );
 };
 
-const mapStateToPropsParam = (state:IStore) => ({
-  ...state.userInfo,
-  ...state.domain,
-});
-const mapDispatchToPropsParam = actions;
-
-export default connect(mapStateToPropsParam, mapDispatchToPropsParam)(SideLayout);
+export default SideLayout;

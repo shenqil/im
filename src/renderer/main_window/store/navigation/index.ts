@@ -1,8 +1,5 @@
-import { Action } from 'redux';
-
-export enum ENavigationType {
-  activa = 'ACTIVA',
-}
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { RootState } from '../index';
 
 export interface INavigationItem {
   key:string,
@@ -17,12 +14,7 @@ export interface INavigationState {
   activa:INavigationItem
 }
 
-export interface INavigationAction extends Action{
-  type:ENavigationType
-  payload:INavigationItem[] | INavigationItem
-}
-
-const defaultState:INavigationState = {
+const initialState: INavigationState = {
   list: [
     {
       name: '消息',
@@ -55,22 +47,23 @@ const defaultState:INavigationState = {
   },
 };
 
-function reducer(state = defaultState, action:INavigationAction) {
-  switch (action.type) {
-    case ENavigationType.activa: {
-      if (!Array.isArray(action.payload)) {
-        return {
-          activa: action.payload,
-          list: [...state.list],
-        };
-      }
-      break;
-    }
-    default:
-      break;
-  }
+export const navigationSlice = createSlice({
+  name: 'navigation',
+  initialState,
+  reducers: {
+    changeActiva(state, action:PayloadAction<INavigationItem>) {
+      return {
+        ...state,
+        activa: action.payload,
+      };
+    },
+  },
+});
 
-  return state;
-}
+export const { changeActiva } = navigationSlice.actions;
 
-export default reducer;
+export const selectNavigationList = (state: RootState) => state.navigation.list;
+
+export const selectNavigationActiva = (state: RootState) => state.navigation.activa;
+
+export default navigationSlice.reducer;

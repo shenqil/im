@@ -1,13 +1,23 @@
-import { combineReducers, createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
-import navigation from './navigation/index';
-import userInfo from './userInfo/index';
+import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import domainReducer from './domain';
+import userReducer from './user';
+import friendReducer from './friend';
+import navigationReducer from './navigation';
 
-const reducer = combineReducers({
-  navigation,
-  userInfo,
+export const store = configureStore({
+  reducer: {
+    domain: domainReducer,
+    user: userReducer,
+    navigation: navigationReducer,
+    friend: friendReducer,
+  },
 });
 
-const store = createStore(reducer, applyMiddleware(thunk));
-
-export default store;
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppThunk<ReturnType = void> = ThunkAction<
+ReturnType,
+RootState,
+unknown,
+Action<string>
+>;
