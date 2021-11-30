@@ -28,6 +28,13 @@ export const friendSlice = createSlice({
       friendList: action.payload,
     }),
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchFriendListAsync.fulfilled, (state, action) => ({
+        ...state,
+        friendList: action.payload,
+      }));
+  },
 });
 
 export const { changeFriendList } = friendSlice.actions;

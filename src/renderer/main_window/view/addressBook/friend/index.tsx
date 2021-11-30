@@ -1,17 +1,15 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { mainBridge } from '@renderer/public/ipcRenderer';
-import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hooks';
-import { selectFriendList, fetchFriendListAsync } from '@renderer/main_window/store/friend';
+import { useAppSelector } from '@renderer/main_window/store/hooks';
+import { selectFriendList } from '@renderer/main_window/store/friend';
 import styles from './index.scss';
 
 const Friend:FC = function () {
   const friendList = useAppSelector(selectFriendList);
-  const dispatch = useAppDispatch();
-  if (friendList.length === 0) {
-    dispatch(fetchFriendListAsync());
-  }
 
-  console.log(friendList, 'friendList');
+  useEffect(() => {
+    console.log(friendList, 'friendList');
+  }, [friendList]);
 
   function openAddFriendWin() {
     mainBridge.wins.addFriend.openWin();
@@ -29,6 +27,7 @@ const Friend:FC = function () {
 
       <div className={styles.friend__container}>
         好友内容
+        {JSON.stringify(friendList)}
       </div>
     </div>
   );
