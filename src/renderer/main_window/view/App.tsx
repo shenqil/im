@@ -1,15 +1,14 @@
 import React from 'react';
-import { HashRouter as Router } from 'react-router-dom';
-import { renderRoutes } from 'react-router-config';
+import { HashRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import routes from '../router';
 import { store } from '../store';
+import SideLayout from '../layout/SideLayout';
 
 const App = function () {
   return (
     <Provider store={store}>
       <Router>
-        {renderRoutes(routes)}
+        <Route component={SideLayout} />
       </Router>
     </Provider>
   );

@@ -1,21 +1,15 @@
 import React, { FC } from 'react';
-import { renderRoutes, RouteConfigComponentProps } from 'react-router-config';
+import Msg from '@renderer/main_window/view/msg';
+import AddressBook from '@renderer/main_window/view/addressBook';
+import { Route } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hooks';
 import { selectUserInfo, fetchUserInfoAsync } from '@renderer/main_window/store/user';
 import { selectFileServer } from '@renderer/main_window/store/domain';
-import styles from './sideLayout.scss';
 import Navigation from './components/Navigation';
 import Avatar from '../components/Avatar';
+import styles from './sideLayout.scss';
 
-interface IProps extends RouteConfigComponentProps{
-
-}
-
-const SideLayout:FC<IProps> = function (props) {
-  const {
-    route,
-  } = props;
-
+const SideLayout:FC = function () {
   const userInfo = useAppSelector(selectUserInfo);
   const fileServer = useAppSelector(selectFileServer);
   const dispatch = useAppDispatch();
@@ -44,7 +38,8 @@ const SideLayout:FC<IProps> = function (props) {
       </div>
       {/* 内容区 */}
       <div className={styles.container}>
-        {route && renderRoutes(route.routes)}
+        <Route path="/" exact component={Msg} />
+        <Route path="/addressBook" component={AddressBook} />
       </div>
     </div>
   );
