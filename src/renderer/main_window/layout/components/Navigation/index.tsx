@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hooks';
 import {
   selectNavigationActiva, selectNavigationList, changeActiva, INavigationItem,
@@ -25,6 +26,12 @@ const Navigation = function () {
   const navList = useAppSelector(selectNavigationList);
   const navActiva = useAppSelector(selectNavigationActiva);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate(navActiva.path);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navActiva]);
 
   /**
    * 选中的导航栏发生变化
