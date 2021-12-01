@@ -11,8 +11,19 @@ interface IFriendItem {
 }
 const FriendItem = function (props:IFriendItem) {
   const { friendInfo } = props;
+
+  function showBusinessCard() {
+    mainBridge.wins.businessCard.show({
+      isCursorPoint: true,
+      friendInfo: {
+        ...friendInfo,
+        isFriend: true,
+      },
+    });
+  }
+
   return (
-    <div className={styles['friend-item']}>
+    <div className={styles['friend-item']} onClick={showBusinessCard} aria-hidden="true">
       <div className={styles['friend-item__avatar']}>
         <Avatar url={friendInfo.avatar} />
       </div>

@@ -1,7 +1,7 @@
 .friend {
   width: 100%;
   height: 100%;
-  padding: 0 16px;
+  padding: 0 8px;
 
   &__header {
     width: 100%;
@@ -10,6 +10,7 @@
     flex-flow: row;
     justify-content: space-between;
     align-items: center;
+    padding: 0 8px;
     &-title{
       font-size: 18px;
       color: #171a1d;
@@ -34,10 +35,11 @@
 .friend-group-item {
   width: 100%;
   margin-top: 10px;
+
   &__title{
     width: 100%;
     font-size: 12px;
-    padding-bottom: 6px;
+    margin: 0 8px 6px;
     color: #c8c8ca;
     border-bottom: 2px solid #eaebed;
   }
@@ -53,7 +55,11 @@
   flex-flow: row;
   justify-content: flex-start;
   align-items: center;
-  padding: 10px 0;
+  padding: 10px 8px;
+  border-radius: 3px;
+  &:hover {
+    background-color: #eaebed;
+  }
   &__avatar{
     width: 38px;
     height: 38px;
