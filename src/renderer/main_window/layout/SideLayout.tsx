@@ -3,23 +3,16 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hooks';
 import { selectUserInfo, fetchUserInfoAsync } from '@renderer/main_window/store/user';
-import { selectFileServer } from '@renderer/main_window/store/domain';
 import Navigation from './components/Navigation';
 import Avatar from '../components/Avatar';
 import styles from './sideLayout.scss';
 
 const SideLayout = function () {
   const userInfo = useAppSelector(selectUserInfo);
-  const fileServer = useAppSelector(selectFileServer);
   const dispatch = useAppDispatch();
 
   if (!userInfo) {
     dispatch(fetchUserInfoAsync());
-  }
-
-  let avatar = '';
-  if (userInfo?.avatar && fileServer) {
-    avatar = `${fileServer}${userInfo.avatar}`;
   }
 
   return (
@@ -27,7 +20,7 @@ const SideLayout = function () {
       {/* 侧边导航 */}
       <div className={styles.navigation}>
         <div className={styles.avatar}>
-          <Avatar url={avatar} />
+          <Avatar url={userInfo?.avatar || ''} />
         </div>
 
         <div className={styles.content}>

@@ -28,6 +28,13 @@ export const userSlice = createSlice({
       userInfo: action.payload,
     }),
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUserInfoAsync.fulfilled, (state, action) => ({
+        ...state,
+        userInfo: action.payload,
+      }));
+  },
 });
 
 export const { chanegUserInfo } = userSlice.actions;
