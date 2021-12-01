@@ -46,6 +46,7 @@ class FriendSrv implements IFriendSrv {
   // 改变准好友列表唯一入口
   changeQuasiFriends(list:IQuasiFriendSrv[]) {
     this.quasiFriends = list;
+    ipcEvent.emit(EMainEventKey.QuasiFriendChange, this.quasiFriends);
   }
 
   async getMyFriendList(): Promise<IFriendInfo[]> {

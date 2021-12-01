@@ -1,13 +1,19 @@
 import { mainEvent, EMainEventKey, mainBridge } from '@renderer/public/ipcRenderer';
-import { IFriendInfo } from '@main/modules/mqtt/interface';
+import type { IFriendInfo } from '@main/modules/mqtt/interface';
+import type { IQuasiFriendSrv } from '@main/server/interface';
 import { store } from '@renderer/main_window/store';
-import { changeFriendList } from '@renderer/main_window/store/friend';
+import { changeFriendList, changeQuasiFriendList } from '@renderer/main_window/store/friend';
 
 // 监听好友列表变化
 mainEvent.on(EMainEventKey.MyFriendChange, (list:IFriendInfo[]) => {
   store.dispatch(changeFriendList(list));
 });
-
 mainBridge.server.friendSrv.getMyFriendList();
+
+// 监听准好友变化
+mainEvent.on(EMainEventKey.QuasiFriendChange, (list:IQuasiFriendSrv[]) => {
+  store.dispatch(changeQuasiFriendList(list));
+});
+mainBridge.server.friendSrv.getQuasiFriendList();
 
 export default {};

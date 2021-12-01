@@ -203,11 +203,23 @@ class MQTTConnect implements IMQTTConnect {
    * 所有消息监听
    * */
   private onMessage(topic:string, message:Buffer) {
-    const key = topic.split('/').pop() || '';
+    const topicAry = topic.split('/');
+    // 检查主题固定头
+    if (topicAry.length === 0 || topicAry[0] !== this.clientPrefix) {
+      return;
+    }
+    topicAry.shift();
+    // 检查消息接收人
+    if (topicAry.length === 0 || topicAry[0] !== this.username) {
+      return;
+    }
+    topicAry.shift();
+
+    // 检查是否是已有处理函数
+    const key = topicAry.slice(-1)[0] || '';
     if (this.trigger(key, message.toString())) {
       return;
     }
-
     console.log('收到未处理的消息：', topic, message.toString());
   }
 

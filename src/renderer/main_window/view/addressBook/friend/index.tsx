@@ -3,48 +3,25 @@ import { mainBridge } from '@renderer/public/ipcRenderer';
 import { useAppSelector } from '@renderer/main_window/store/hooks';
 import { selectGroupedFriendList } from '@renderer/main_window/store/friend';
 import { IFriendInfo } from '@main/modules/mqtt/interface';
-import Avatar from '@renderer/main_window/components/Avatar';
+import FriendItem from '../components/FriendItem';
 import styles from './index.scss';
-
-interface IFriendItem {
-  friendInfo:IFriendInfo
-}
-const FriendItem = function (props:IFriendItem) {
-  const { friendInfo } = props;
-
-  function showBusinessCard() {
-    mainBridge.wins.businessCard.show({
-      isCursorPoint: true,
-      friendInfo: {
-        ...friendInfo,
-        isFriend: true,
-      },
-    });
-  }
-
-  return (
-    <div className={styles['friend-item']} onClick={showBusinessCard} aria-hidden="true">
-      <div className={styles['friend-item__avatar']}>
-        <Avatar url={friendInfo.avatar} />
-      </div>
-
-      <div className={styles['friend-item__info']}>
-        <div className={styles['friend-item__info-real-name']}>
-          {friendInfo.realName}
-        </div>
-        <div className={styles['friend-item__info-nick-name']}>
-          {friendInfo.userName}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 interface IFriendGroupItemProps {
   groupItem:{ pinyin:string, list:Array<IFriendInfo> }
 }
 const FriendGroupItem = function (props:IFriendGroupItemProps) {
   const { groupItem } = props;
+
+  function showBusinessCard(info:IFriendInfo) {
+    mainBridge.wins.businessCard.show({
+      isCursorPoint: true,
+      friendInfo: {
+        ...info,
+        isFriend: true,
+      },
+    });
+  }
+
   return (
     <div className={styles['friend-group-item']}>
       <div className={styles['friend-group-item__title']}>
@@ -52,7 +29,16 @@ const FriendGroupItem = function (props:IFriendGroupItemProps) {
       </div>
 
       <div className={styles['friend-group-item__container']}>
-        {groupItem.list.map((item) => (<FriendItem friendInfo={item} key={item.id} />))}
+        {groupItem.list.map((item) => (
+          <div
+            key={item.id}
+            onClick={() => showBusinessCard(item)}
+            aria-hidden="true"
+            className={styles['friend-group-item__container-item']}
+          >
+            <FriendItem friendInfo={item} />
+          </div>
+        ))}
       </div>
     </div>
   );

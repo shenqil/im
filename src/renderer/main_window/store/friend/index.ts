@@ -1,21 +1,31 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IFriendInfo } from '@main/modules/mqtt/interface';
+import type { IFriendInfo } from '@main/modules/mqtt/interface';
+import type { IQuasiFriendSrv } from '@main/server/interface';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import { pinyin } from 'pinyin-pro';
 import type { RootState } from '../index';
 
 export interface IFriendState {
   friendList:Array<IFriendInfo>
+  quasiFriendList:Array<IQuasiFriendSrv>
 }
 
 const initialState:IFriendState = {
   friendList: [],
+  quasiFriendList: [],
 };
 
 export const fetchFriendListAsync = createAsyncThunk(
   'friend/fetchFriendList',
   async () => {
-    const response = await mainBridge.server.friendSrv.getMyFriendList();
+    const response = await mainBridge.server.friendSrv.myFriendList();
+    return response;
+  },
+);
+export const fetchQuasiFriendListAsync = createAsyncThunk(
+  'friend/fetchQuasiFriendList',
+  async () => {
+    const response = await mainBridge.server.friendSrv.quasiFriendList();
     return response;
   },
 );
@@ -28,19 +38,29 @@ export const friendSlice = createSlice({
       ...state,
       friendList: action.payload,
     }),
+    changeQuasiFriendList: (state, action:PayloadAction<IQuasiFriendSrv[]>) => ({
+      ...state,
+      quasiFriendList: action.payload,
+    }),
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchFriendListAsync.fulfilled, (state, action) => ({
         ...state,
         friendList: action.payload,
+      }))
+      .addCase(fetchQuasiFriendListAsync.fulfilled, (state, action) => ({
+        ...state,
+        quasiFriendList: action.payload,
       }));
   },
 });
 
-export const { changeFriendList } = friendSlice.actions;
+export const { changeFriendList, changeQuasiFriendList } = friendSlice.actions;
 
+// 好友列表
 export const selectFriendList = (state: RootState) => state.friend.friendList;
+// 带字母分组的好友列表
 export const selectGroupedFriendList = (state: RootState) => {
   const groupedFriendList:Array<{ pinyin:string, list:Array<IFriendInfo> }> = [];
 
@@ -68,5 +88,8 @@ export const selectGroupedFriendList = (state: RootState) => {
 
   return groupedFriendList.sort((a, b) => a.pinyin.charCodeAt(0) - b.pinyin.charCodeAt(0));
 };
+
+// 准好友列表
+export const selectQuasiFriendList = (state:RootState) => state.friend.quasiFriendList;
 
 export default friendSlice.reducer;
