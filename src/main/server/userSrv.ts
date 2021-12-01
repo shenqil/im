@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import mqtt from '../modules/mqtt/index';
+import mqtt from '../modules/mqtt';
 import { IUserInfo, IToken } from '../modules/mqtt/interface';
 import SQ3 from '../modules/sqlite3';
 import { ESQ3CommonKey } from '../modules/sqlite3/interface';

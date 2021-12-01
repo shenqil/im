@@ -105,7 +105,7 @@ class MQTTConnect implements IMQTTConnect {
   /**
    * 初始化
    * */
-  async init() {
+  private async init() {
     // 先订阅属于自己的消息
     await this.subscribeSelfTopic();
 
@@ -116,7 +116,7 @@ class MQTTConnect implements IMQTTConnect {
   /**
    * 获取主清单
    * */
-  async fetchManifest():Promise<IManifest> {
+  private async fetchManifest():Promise<IManifest> {
     const res = await this.sendMsgWaitReply({
       topic: 'manifest/get',
       message: '',
@@ -217,9 +217,10 @@ class MQTTConnect implements IMQTTConnect {
 
     // 检查是否是已有处理函数
     const key = topicAry.slice(-1)[0] || '';
-    if (this.trigger(key, message.toString())) {
+    if (this.trigger(key, message.toString(), true)) {
       return;
     }
+
     console.log('收到未处理的消息：', topic, message.toString());
   }
 
@@ -233,13 +234,15 @@ class MQTTConnect implements IMQTTConnect {
   /**
    * 触发一次监听
    */
-  trigger(key:string, params:unknown) {
+  trigger(key:string, params:unknown, once = false) {
     if (!this.eventMap.has(key)) {
       return false;
     }
 
     const fn = this.eventMap.get(key);
-    this.eventMap.delete(key);
+    if (once) {
+      this.eventMap.delete(key);
+    }
 
     if (typeof fn !== 'function') {
       return false;
