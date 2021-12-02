@@ -31,6 +31,10 @@ export class AddFriendWindow extends BaseWIN implements IAddFriendWindow {
         this.closeWin();
       });
     });
+
+    this.win?.once('close', () => {
+      mainWin.win?.focus();
+    });
   }
 }
 
