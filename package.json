@@ -68,6 +68,7 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@reduxjs/toolkit": "^1.6.2",
     "antd": "^4.17.2",
     "lodash": "^4.17.21",

@@ -3,6 +3,7 @@ import { useAppSelector } from '@renderer/main_window/store/hooks';
 import { selectQuasiFriendList } from '@renderer/main_window/store/friend';
 import type { IQuasiFriendSrv } from '@main/server/interface';
 import { message, Button } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import FriendItem from '../components/FriendItem';
 import styles from './index.scss';
@@ -83,16 +84,25 @@ interface IQuasiFriendItemProps {
 const QuasiFriendItem = function (props:IQuasiFriendItemProps) {
   const { quasiFriend } = props;
 
+  function ignore() {
+    mainBridge.server.friendSrv.ignore(quasiFriend.info.id)
+      .catch((err) => message.error(`${err}`));
+  }
+
   return (
     <div className={styles['quasi-friend-item']}>
       <div className={styles['quasi-friend-item__info']}>
         <FriendItem friendInfo={quasiFriend.info} isFriend={false} isRightMenu={false} />
       </div>
 
-      <div className={styles['quasi-friend-item__action']}>
+      <div className={`scroll ${styles['quasi-friend-item__action']}`}>
         <QuasiFriendStatus
           quasiFriend={quasiFriend}
         />
+
+        <div className={styles['quasi-friend-item__action-close']} onClick={() => ignore()} aria-hidden="true">
+          <CloseOutlined />
+        </div>
       </div>
     </div>
   );
