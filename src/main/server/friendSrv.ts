@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 /* eslint-disable class-methods-use-this */
 import ipcEvent from '@main/ipcMain/event';
 import { EMainEventKey } from '@main/ipcMain/eventInterface';
@@ -35,6 +36,9 @@ class FriendSrv implements IFriendSrv {
   constructor() {
     this.friends = [];
     this.quasiFriends = [];
+
+    // 监听事件
+    mqtt.friend.onFriendChange(this.onFriendChange.bind(this));
   }
 
   // 改变好友列表唯一入口
@@ -65,6 +69,21 @@ class FriendSrv implements IFriendSrv {
     return this.quasiFriends;
   }
 
+  toQuasiFriendSrv(item:IQuasiFriend):IQuasiFriendSrv {
+    let [selfStatus, friendStatus] = [item.status.status1, item.status.status2];
+
+    if (item.info.id === item.status.userID1) {
+      [selfStatus, friendStatus] = [friendStatus, selfStatus];
+    }
+
+    return {
+      info: item.info,
+      status: item.status,
+      selfStatus,
+      friendStatus,
+    };
+  }
+
   // --------------------- 接口调用 ----------------------
   async search(keywords:string):Promise<IFriendInfoSrv | undefined> {
     const friendInfo = await mqtt.friend.search(keywords);
@@ -88,21 +107,12 @@ class FriendSrv implements IFriendSrv {
   async quasiFriendList(): Promise<IQuasiFriendSrv[]> {
     const list = await mqtt.friend.quasiFriendList();
 
-    const newList = list.map((item) => {
-      let [selfStatus, friendStatus] = [item.status.status1, item.status.status2];
-
-      if (item.info.id === item.status.userID1) {
-        [selfStatus, friendStatus] = [friendStatus, selfStatus];
-      }
-
-      return {
-        info: item.info,
-        status: item.status,
-        selfStatus,
-        friendStatus,
-      };
-    });
+    const newList = list.map((item) => this.toQuasiFriendSrv(item));
     this.changeQuasiFriends(newList);
+
+    // 监听事件
+    mqtt.friend.onFriendChange(this.onFriendChange.bind(this));
+
     return newList;
   }
 
@@ -121,6 +131,52 @@ class FriendSrv implements IFriendSrv {
     return mqtt.friend.remove({ formUserId: userInfo.id, toUserId: userId });
   }
   // -------------------- 接口调用 -----------------------
+
+  // -------------------- 事件监听 -----------------------
+  private onFriendChange(friend:IQuasiFriend) {
+    // 1.更新准好友
+    const quasiFriendItem = this.toQuasiFriendSrv(friend);
+    const quasiFriendList = this.quasiFriends;
+
+    const index = quasiFriendList.findIndex((item) => item.info.id === quasiFriendItem.info.id);
+    if (index !== -1) {
+      if (quasiFriendItem.status.status1 === EFriendStatus.FriendUnsubscribe
+        && quasiFriendItem.status.status2 === EFriendStatus.FriendUnsubscribe) {
+        // 删除
+        quasiFriendList.splice(index, 1);
+      } else {
+        // 更新
+        quasiFriendList.splice(index, 1, quasiFriendItem);
+      }
+    } else {
+      // 添加
+      quasiFriendList.unshift(quasiFriendItem);
+    }
+    quasiFriendList.sort((a, b) => a.status.updatedAt - b.status.updatedAt);
+
+    this.changeQuasiFriends(quasiFriendList);
+
+    // 2.更新好友列表
+    const friendList = this.friends;
+    const friendIndex = friendList.findIndex((item) => item.id === friend.info.id);
+    if (friend.status.status1 === EFriendStatus.FriendSubscribe
+      && friend.status.status2 === EFriendStatus.FriendSubscribe) {
+      // 添加
+      if (friendIndex === -1) {
+        friendList.push(friend.info);
+      } else {
+        friendList.splice(friendIndex, 1, friend.info);
+      }
+      this.changeFriends(friendList);
+    } else {
+      // 删除
+      if (friendIndex !== -1) {
+        friendList.splice(friendIndex, 1);
+        this.changeFriends(friendList);
+      }
+    }
+  }
+  // -------------------- 事件监听 -----------------------
 }
 
 export default new FriendSrv();

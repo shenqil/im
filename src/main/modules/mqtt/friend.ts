@@ -1,4 +1,4 @@
-import connect from './connect';
+import connect, { EEventName } from './connect';
 
 export enum EFriendStatus {
   FriendSubscribe = 1,
@@ -43,6 +43,7 @@ export interface IFriend {
   add(params:IFriendOperateParam):Promise<unknown>
   ignore(params:IFriendOperateParam):Promise<unknown>
   remove(params:IFriendOperateParam):Promise<unknown>
+  onFriendChange(callback:Function):void
 }
 
 /**
@@ -140,6 +141,14 @@ async function remove(params:IFriendOperateParam):Promise<unknown> {
     },
   });
 }
+
+/**
+ * 监听事件
+ * */
+function onFriendChange(callback:Function) {
+  connect.listen(EEventName.friendChange, callback);
+}
+
 export default {
   search,
   myFriendList,
@@ -147,4 +156,5 @@ export default {
   add,
   ignore,
   remove,
+  onFriendChange,
 };

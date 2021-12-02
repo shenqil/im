@@ -2,6 +2,10 @@
 import mqtt, { IClientPublishOptions, PacketCallback } from 'mqtt';
 import { v4 as uuidv4 } from 'uuid';
 
+export enum EEventName {
+  friendChange = 'FRIEND_CHANGE',
+}
+
 export interface IManifest {
   userID:string
 }
@@ -221,7 +225,28 @@ class MQTTConnect implements IMQTTConnect {
       return;
     }
 
+    // 检查是否是好友关系相关的消息
+    if (this.onFriendMsg(topicAry, message)) {
+      return;
+    }
+
     console.log('收到未处理的消息：', topic, message.toString());
+  }
+
+  private onFriendMsg(topicAry:string[], message:Buffer) {
+    if (topicAry[0] !== 'friend' || topicAry.length < 2) {
+      return false;
+    }
+
+    switch (topicAry[1]) {
+      case 'change': {
+        this.trigger(EEventName.friendChange, JSON.parse(message.toString()));
+        return true;
+      }
+
+      default:
+        return false;
+    }
   }
 
   /**
@@ -234,7 +259,7 @@ class MQTTConnect implements IMQTTConnect {
   /**
    * 触发一次监听
    */
-  trigger(key:string, params:unknown, once = false) {
+  private trigger(key:string, params:unknown, once = false) {
     if (!this.eventMap.has(key)) {
       return false;
     }
@@ -260,7 +285,7 @@ class MQTTConnect implements IMQTTConnect {
   /**
    * 删除一个监听
    */
-  remove(key:string) {
+  private remove(key:string) {
     return this.eventMap.delete(key);
   }
 

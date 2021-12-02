@@ -44,6 +44,11 @@ const QuasiFriendStatus = function (props:IQuasiFriendStatusProps) {
   }
 
   function computed() {
+    if (selfStatus === EFriendStatus.FriendSubscribe
+      && friendStatus === EFriendStatus.FriendSubscribe) {
+      return <div className={styles['quasi-friend-status__label']}>已添加</div>;
+    }
+
     if (selfStatus !== EFriendStatus.FriendSubscribe
       && friendStatus === EFriendStatus.FriendSubscribe) {
       return <Button loading={loading} type="primary" size="small" onClick={() => handelAddFriend()}>同意</Button>;
