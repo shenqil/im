@@ -12,16 +12,6 @@ interface IFriendGroupItemProps {
 const FriendGroupItem = function (props:IFriendGroupItemProps) {
   const { groupItem } = props;
 
-  function showBusinessCard(info:IFriendInfo) {
-    mainBridge.wins.businessCard.show({
-      isCursorPoint: true,
-      friendInfo: {
-        ...info,
-        isFriend: true,
-      },
-    });
-  }
-
   return (
     <div className={styles['friend-group-item']}>
       <div className={styles['friend-group-item__title']}>
@@ -32,11 +22,9 @@ const FriendGroupItem = function (props:IFriendGroupItemProps) {
         {groupItem.list.map((item) => (
           <div
             key={item.id}
-            onClick={() => showBusinessCard(item)}
-            aria-hidden="true"
             className={styles['friend-group-item__container-item']}
           >
-            <FriendItem friendInfo={item} />
+            <FriendItem friendInfo={item} isFriend isRightMenu />
           </div>
         ))}
       </div>

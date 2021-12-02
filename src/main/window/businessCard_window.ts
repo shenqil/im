@@ -4,13 +4,14 @@ import BaseWIN, { IBaseWIN } from './base';
 import mainWin from './main_window';
 import { centerPoint } from './utils';
 
-interface IBusinessCardClick {
+export interface IBusinessCardClick {
   x:number,
   y:number
 }
 
 export interface IBusinessCardParams{
-  isCursorPoint:boolean
+  point?:IBusinessCardClick
+  isCursorPoint?:boolean
   friendInfo:IFriendInfoSrv
 }
 
@@ -69,7 +70,12 @@ export class BusinessCardWindow extends BaseWIN implements IBusinessCardWindow {
     this.friendInfo = params.friendInfo;
 
     // 计算名片显示的位置
-    if (params.isCursorPoint) {
+    if (params.point) {
+      this.position = {
+        x: params.point.x,
+        y: params.point.y,
+      };
+    } else if (params.isCursorPoint) {
       const point = screen.getCursorScreenPoint();
       this.position = {
         x: point.x,

@@ -101,6 +101,9 @@ class FriendSrv implements IFriendSrv {
   async myFriendList(): Promise<IFriendInfo[]> {
     const list = await mqtt.friend.myFriendList();
     this.changeFriends(list);
+
+    // 监听事件
+    mqtt.friend.onFriendChange(this.onFriendChange.bind(this));
     return list;
   }
 
@@ -109,9 +112,6 @@ class FriendSrv implements IFriendSrv {
 
     const newList = list.map((item) => this.toQuasiFriendSrv(item));
     this.changeQuasiFriends(newList);
-
-    // 监听事件
-    mqtt.friend.onFriendChange(this.onFriendChange.bind(this));
 
     return newList;
   }
@@ -140,17 +140,16 @@ class FriendSrv implements IFriendSrv {
 
     const index = quasiFriendList.findIndex((item) => item.info.id === quasiFriendItem.info.id);
     if (index !== -1) {
-      if (quasiFriendItem.status.status1 === EFriendStatus.FriendUnsubscribe
-        && quasiFriendItem.status.status2 === EFriendStatus.FriendUnsubscribe) {
-        // 删除
-        quasiFriendList.splice(index, 1);
-      } else {
-        // 更新
-        quasiFriendList.splice(index, 1, quasiFriendItem);
-      }
+      // 更新
+      quasiFriendList.splice(index, 1, quasiFriendItem);
     } else {
       // 添加
       quasiFriendList.unshift(quasiFriendItem);
+    }
+    if (quasiFriendItem.status.status1 === EFriendStatus.FriendUnsubscribe
+      && quasiFriendItem.status.status2 === EFriendStatus.FriendUnsubscribe) {
+      // 删除
+      quasiFriendList.splice(index, 1);
     }
     quasiFriendList.sort((a, b) => a.status.updatedAt - b.status.updatedAt);
 

@@ -2,10 +2,12 @@ import { ipcMain } from 'electron';
 import './event';
 import server from '../server';
 import wins from '../window';
+import menu from '../menu';
 
 const modules:any = {
   server,
   wins,
+  menu,
 };
 
 ipcMain.on('mainBridgeEvent', async (event, { id, keys, args }) => {
