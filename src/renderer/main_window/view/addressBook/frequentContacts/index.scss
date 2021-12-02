@@ -1,0 +1,33 @@
+.frequent-contacts {
+  width: 100%;
+  height: 100%;
+  padding: 0 8px 10px;
+
+  &__header {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    flex-flow: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 8px;
+    font-size: 18px;
+    color: #171a1d;
+  }
+
+  &__container{
+    width: 100%;
+    height: calc(100% - 70px);
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &-item{
+      width: 100%;
+      padding: 10px 8px;
+      border-radius: 3px;
+      &:hover {
+        background-color: #eaebed;
+      }
+    }
+  }
+}

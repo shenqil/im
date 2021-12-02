@@ -92,4 +92,7 @@ export const selectGroupedFriendList = (state: RootState) => {
 // 准好友列表
 export const selectQuasiFriendList = (state:RootState) => state.friend.quasiFriendList;
 
+// 常用联系人
+export const selectFrequentContacts = (state: RootState) => state.friend.friendList;
+
 export default friendSlice.reducer;
