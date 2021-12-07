@@ -110,25 +110,26 @@ class MQTTConnect implements IMQTTConnect {
    * 初始化
    * */
   private async init() {
-    // 先订阅属于自己的消息
-    await this.subscribeSelfTopic();
-
     // 获取主清单
     this.manifest = await this.fetchManifest();
+
+    // 先订阅属于自己的消息
+    await this.subscribeSelfTopic();
   }
 
   /**
    * 获取主清单
    * */
   private async fetchManifest():Promise<IManifest> {
-    const res = await this.sendMsgWaitReply({
-      topic: 'manifest/get',
+    const msgId = uuidv4(undefined);
+    const res = await this.sendMsgWaitReplyBase({
+      topic: `${this.serverPrefix}/manifest/get/${this.username}/${msgId}`,
       message: '',
       opts: {
         qos: 0,
         retain: false,
       },
-    });
+    }, msgId);
     return JSON.parse(res as string);
   }
 
@@ -137,11 +138,11 @@ class MQTTConnect implements IMQTTConnect {
    * */
   subscribeSelfTopic() {
     return new Promise((resolve, reject) => {
-      if (!this.username) {
-        reject(new Error('用户名称不存在'));
+      if (!this.getUserID) {
+        reject(new Error('用户ID不存在'));
         return;
       }
-      this.client?.subscribe(`${this.clientPrefix}/${this.username}/#`, (err:Error) => {
+      this.client?.subscribe(`${this.clientPrefix}/${this.getUserID}/#`, (err:Error) => {
         if (err) {
           reject(err);
           return;
@@ -178,8 +179,8 @@ class MQTTConnect implements IMQTTConnect {
     return new Promise((resolve, reject) => {
       let timeHandle: NodeJS.Timeout;
 
-      if (!this.getUserName) {
-        reject(new Error('用户未登录，不存在username'));
+      if (!this.getUserID) {
+        reject(new Error('用户未登录，不存在userID'));
         return;
       }
 
@@ -191,7 +192,33 @@ class MQTTConnect implements IMQTTConnect {
       });
 
       // 发送
-      msg.topic = `${this.serverPrefix}/${msg.topic}/${this.getUserName}/${msgId}`;
+      msg.topic = `${this.serverPrefix}/${msg.topic}/${this.getUserID}/${msgId}`;
+      this.sendMsg(msg);
+
+      // 超时
+      timeHandle = setTimeout(() => {
+        clearTimeout(timeHandle);
+        this.remove(msgId);
+        reject(new Error('数据接受超时'));
+      }, this.replyTimeOut);
+    });
+  }
+
+  /**
+   * 发送一条消息，并等待对方回复
+   * */
+  sendMsgWaitReplyBase(msg:IMsg, msgId:string) {
+    return new Promise((resolve, reject) => {
+      let timeHandle: NodeJS.Timeout;
+
+      // 监听回调
+      this.listen(msgId, (res:unknown) => {
+        // 清除定时器
+        clearTimeout(timeHandle);
+        resolve(res);
+      });
+
+      // 发送
       this.sendMsg(msg);
 
       // 超时
@@ -214,7 +241,7 @@ class MQTTConnect implements IMQTTConnect {
     }
     topicAry.shift();
     // 检查消息接收人
-    if (topicAry.length === 0 || topicAry[0] !== this.username) {
+    if (topicAry.length === 0 || topicAry[0] !== this.getUserID) {
       return;
     }
     topicAry.shift();
@@ -301,6 +328,13 @@ class MQTTConnect implements IMQTTConnect {
    * */
   get getUserName() {
     return this.username;
+  }
+
+  /**
+   * 获取用户ID
+   * */
+  get getUserID() {
+    return this.manifest?.userID || '';
   }
 }
 
