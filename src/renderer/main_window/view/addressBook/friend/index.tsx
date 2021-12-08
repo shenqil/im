@@ -18,7 +18,7 @@ const FriendGroupItem = function (props:IFriendGroupItemProps) {
         {groupItem.pinyin}
       </div>
 
-      <div className={`scroll ${styles['friend-group-item__container']}`}>
+      <div className={styles['friend-group-item__container']}>
         {groupItem.list.map((item) => (
           <div
             key={item.id}
@@ -49,7 +49,7 @@ const Friend = function () {
         <i className={`iconfont icon-tianjiahaoyou ${styles['friend__header-add']}`} onClick={openAddFriendWin} aria-hidden="true" />
       </div>
 
-      <div className={styles.friend__container}>
+      <div className={`scroll ${styles.friend__container}`}>
         {
           friendList.map((item) => (<FriendGroupItem groupItem={item} key={item.pinyin} />))
         }
