@@ -32,10 +32,10 @@ const BusinessCard = function () {
   });
 
   useEffect(() => {
-    window.addEventListener('focus', async () => {
-      const res = await mainBridge.wins.modal.getFriendInfo();
-      setCardInfo(res);
-    });
+    mainBridge.wins.modal.getFriendInfo()
+      .then((res) => {
+        setCardInfo(res);
+      });
   }, []);
 
   async function addFriend() {

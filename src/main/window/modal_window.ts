@@ -80,6 +80,9 @@ export class ModalWindow extends BaseWIN implements IModalWindow {
       this.win?.on('blur', () => {
         this.win?.hide();
       });
+      this.win?.on('hide', () => {
+        ipcMainEvent.emit(EMainEventKey.ModalRouteChange, '/');
+      });
     });
   }
 

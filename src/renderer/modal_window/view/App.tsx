@@ -9,10 +9,11 @@ import BusinessCard from './businessCard';
 const Layout = function () {
   const navigate = useNavigate();
   useEffect(() => {
-    console.log('init');
-    mainEvent.on(EMainEventKey.ModalRouteChange, (routeName:string) => {
-      navigate(routeName);
-      mainBridge.wins.modal.win?.show();
+    mainEvent.on(EMainEventKey.ModalRouteChange, (routePath:string) => {
+      navigate(routePath);
+      if (routePath !== '/') {
+        mainBridge.wins.modal.win?.show();
+      }
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
