@@ -110,11 +110,15 @@ class MQTTConnect implements IMQTTConnect {
    * 初始化
    * */
   private async init() {
+    const userNameTopic = `${this.username}/#`;
+
     // 获取主清单
+    await this.subscribeTopic(userNameTopic);
     this.manifest = await this.fetchManifest();
 
     // 先订阅属于自己的消息
-    await this.subscribeSelfTopic();
+    await this.subscribeTopic(`${this.getUserID}/#`);
+    this.unsubscribeTopic(userNameTopic);
   }
 
   /**
@@ -136,13 +140,24 @@ class MQTTConnect implements IMQTTConnect {
   /**
    * 订阅属于自己的主题
    * */
-  subscribeSelfTopic() {
+  subscribeTopic(topic:string) {
     return new Promise((resolve, reject) => {
-      if (!this.getUserID) {
-        reject(new Error('用户ID不存在'));
-        return;
-      }
-      this.client?.subscribe(`${this.clientPrefix}/${this.getUserID}/#`, (err:Error) => {
+      this.client?.subscribe(`${this.clientPrefix}/${topic}`, (err:Error) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve('');
+      });
+    });
+  }
+
+  /**
+   * 取消订阅主题
+   * */
+  unsubscribeTopic(topic:string) {
+    return new Promise((resolve, reject) => {
+      this.client?.unsubscribe(`${this.clientPrefix}/${topic}`, (err:Error) => {
         if (err) {
           reject(err);
           return;
@@ -234,14 +249,18 @@ class MQTTConnect implements IMQTTConnect {
    * 所有消息监听
    * */
   private onMessage(topic:string, message:Buffer) {
+    // console.log('收到消息：', topic, message.toString());
     const topicAry = topic.split('/');
     // 检查主题固定头
     if (topicAry.length === 0 || topicAry[0] !== this.clientPrefix) {
+      console.error('主题固定头不正确');
       return;
     }
     topicAry.shift();
     // 检查消息接收人
-    if (topicAry.length === 0 || topicAry[0] !== this.getUserID) {
+    if (topicAry.length === 0
+      || (topicAry[0] !== this.getUserID && topicAry[0] !== this.username)) {
+      console.error('接收人不属于自己');
       return;
     }
     topicAry.shift();
