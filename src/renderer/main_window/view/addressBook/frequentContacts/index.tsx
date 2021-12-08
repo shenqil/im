@@ -13,7 +13,7 @@ const FrequentContacts = function () {
         常用联系人
       </div>
 
-      <div className={styles['frequent-contacts__container']}>
+      <div className={`scroll ${styles['frequent-contacts__container']}`}>
         {
           friendList.map((item) => (
             <div key={item.id} className={styles['frequent-contacts__container-item']}>

@@ -18,7 +18,7 @@ const FriendGroupItem = function (props:IFriendGroupItemProps) {
         {groupItem.pinyin}
       </div>
 
-      <div className={styles['friend-group-item__container']}>
+      <div className={`scroll ${styles['friend-group-item__container']}`}>
         {groupItem.list.map((item) => (
           <div
             key={item.id}
