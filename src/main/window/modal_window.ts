@@ -24,6 +24,8 @@ export interface IModalWindow extends IBaseWIN {
   getFriendInfo():Promise<IFriendInfoSrv>
 
   showAddFriend():void
+
+  showAddMember():void
 }
 export class ModalWindow extends BaseWIN implements IModalWindow {
   // 公共
@@ -162,6 +164,22 @@ export class ModalWindow extends BaseWIN implements IModalWindow {
     this.show();
   }
   // ---------------------------- 添加好友弹窗逻辑--------------------------------------
+
+  // ---------------------------- 群组添加成员弹窗--------------------------------------
+  showAddMember() {
+    this.routePath = '/addMember';
+    this.width = 550;
+    this.height = 484;
+
+    // 计算位置
+    const [x, y] = centerPoint(this.width, this.height);
+    this.position = {
+      x, y,
+    };
+
+    this.show();
+  }
+  // ---------------------------- 群组添加成员弹窗--------------------------------------
 }
 
 export default new ModalWindow('modal_window');

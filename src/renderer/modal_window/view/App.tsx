@@ -5,6 +5,7 @@ import {
 import { mainEvent, EMainEventKey, mainBridge } from '@renderer/public/ipcRenderer';
 import AddFriend from './addFriend';
 import BusinessCard from './businessCard';
+import AddMember from './addMember';
 
 const Layout = function () {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const App = function () {
           <Route path="/" element={<div />} />
           <Route path="/addFriend" element={<AddFriend />} />
           <Route path="/businessCard" element={<BusinessCard />} />
+          <Route path="/addMember" element={<AddMember />} />
         </Route>
       </Routes>
     </HashRouter>
