@@ -36,7 +36,7 @@ const Friend = function () {
   const friendList = useAppSelector(selectGroupedFriendList);
 
   function openAddFriendWin() {
-    mainBridge.wins.addFriend.openWin();
+    mainBridge.wins.modal.showAddFriend();
   }
 
   return (

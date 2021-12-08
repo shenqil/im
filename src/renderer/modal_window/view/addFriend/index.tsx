@@ -1,12 +1,9 @@
 import React, { ChangeEvent } from 'react';
-import { render } from 'react-dom';
 import { Input, Button } from 'antd';
-import 'antd/dist/antd.css';
-import '../public/css/index.scss';
 import { mainBridge, mainEvent, EMainEventKey } from '@renderer/public/ipcRenderer';
 import styles from './index.scss';
 
-const App = function () {
+const AddFriend = function () {
   let value:string = '';
   async function handleOk() {
     if (!value) {
@@ -16,7 +13,8 @@ const App = function () {
     try {
       const res = await mainBridge.server.friendSrv.search(value);
       if (res) {
-        await mainBridge.wins.businessCard.show({
+        await mainBridge.wins.modal.hidden();
+        await mainBridge.wins.modal.showBusinessCard({
           isCursorPoint: false,
           friendInfo: res,
         });
@@ -24,12 +22,10 @@ const App = function () {
     } catch (error) {
       mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'error', msg: `${error}` });
     }
-
-    mainBridge.wins.addFriend.closeWin();
   }
 
   function handCancel() {
-    mainBridge.wins.addFriend.closeWin();
+    mainBridge.wins.modal.hidden();
   }
 
   function onChange(e:ChangeEvent<HTMLInputElement>) {
@@ -56,4 +52,4 @@ const App = function () {
   );
 };
 
-render(<App />, document.getElementById('root'));
+export default AddFriend;

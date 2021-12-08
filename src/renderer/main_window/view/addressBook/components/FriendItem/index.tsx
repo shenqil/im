@@ -18,7 +18,7 @@ const FriendItem = function (props:IFriendItem) {
   }
 
   function showBusinessCard(isCursorPoint = true) {
-    mainBridge.wins.businessCard.show({
+    mainBridge.wins.modal.showBusinessCard({
       isCursorPoint,
       friendInfo: {
         ...friendInfo,

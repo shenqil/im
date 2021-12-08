@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { render } from 'react-dom';
 import { mainBridge, mainEvent, EMainEventKey } from '@renderer/public/ipcRenderer';
 import { IFriendInfoSrv } from '@main/server/interface';
 import defaultImg from '@renderer/public/img/avatar.png';
-import '@renderer/public/css/index.scss';
 
 import styles from './index.scss';
 
@@ -22,7 +20,7 @@ const BusinessCardItem = function (props: { label: string; content: string; }) {
   );
 };
 
-const App = function () {
+const BusinessCard = function () {
   const [cardInfo, setCardInfo] = useState<IFriendInfoSrv>({
     id: '',
     avatar: '',
@@ -35,7 +33,7 @@ const App = function () {
 
   useEffect(() => {
     window.addEventListener('focus', async () => {
-      const res = await mainBridge.wins.businessCard.getFriendInfo();
+      const res = await mainBridge.wins.modal.getFriendInfo();
       setCardInfo(res);
     });
   }, []);
@@ -54,7 +52,7 @@ const App = function () {
       });
     }
 
-    mainBridge.wins.businessCard.win?.hide();
+    mainBridge.wins.modal.hidden();
   }
 
   return (
@@ -93,4 +91,4 @@ const App = function () {
   );
 };
 
-render(<App />, document.getElementById('root'));
+export default BusinessCard;
