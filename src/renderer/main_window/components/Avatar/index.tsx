@@ -1,8 +1,8 @@
 import React from 'react';
 import { selectFileServer } from '@renderer/main_window/store/domain';
 import { useAppSelector } from '@renderer/main_window/store/hooks';
+import defaultImg from '@renderer/public/img/avatar.png';
 import styles from './index.scss';
-import defaultImg from '../../../public/img/avatar.png';
 /**
  * 头像
  * */
