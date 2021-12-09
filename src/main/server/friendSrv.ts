@@ -44,6 +44,9 @@ class FriendSrv implements IFriendSrv {
   // 改变好友列表唯一入口
   changeFriends(list:IFriendInfo[]) {
     this.friends = [...list];
+    for (const info of list) {
+      userSrv.cacheUserInfo(info);
+    }
     ipcEvent.emit(EMainEventKey.MyFriendChange, this.friends);
   }
 

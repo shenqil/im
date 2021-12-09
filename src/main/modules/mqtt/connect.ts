@@ -4,6 +4,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 export enum EEventName {
   friendChange = 'FRIEND_CHANGE',
+  groupCreate = 'GROUP_CREATE',
+  groupDelete = 'GROUP_DELETE',
+  groupUpdate = 'GROUP_UPDATE',
+  groupAddMembers = 'GROUP_ADDMEMBERS',
+  groupDelMembers = 'GROUP_DELMEMBERS',
+  groupExitGroup = 'GROUP_EXITGROUP',
 }
 
 export interface IManifest {
@@ -276,9 +282,17 @@ class MQTTConnect implements IMQTTConnect {
       return;
     }
 
+    // 群组关系发生变化
+    if (this.onGroupMsg(topicAry, message)) {
+      return;
+    }
+
     console.log('收到未处理的消息：', topic, message.toString());
   }
 
+  /**
+   * 好友关系变动
+   * */
   private onFriendMsg(topicAry:string[], message:Buffer) {
     if (topicAry[0] !== 'friend' || topicAry.length < 2) {
       return false;
@@ -287,6 +301,50 @@ class MQTTConnect implements IMQTTConnect {
     switch (topicAry[1]) {
       case 'change': {
         this.trigger(EEventName.friendChange, JSON.parse(message.toString()));
+        return true;
+      }
+
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * 群组变动
+   * */
+  private onGroupMsg(topicAry:string[], message:Buffer) {
+    if (topicAry[0] !== 'group' || topicAry.length < 2) {
+      return false;
+    }
+
+    switch (topicAry[1]) {
+      case 'create': {
+        this.trigger(EEventName.groupCreate, JSON.parse(message.toString()));
+        return true;
+      }
+
+      case 'delete': {
+        this.trigger(EEventName.groupDelete, JSON.parse(message.toString()));
+        return true;
+      }
+
+      case 'update': {
+        this.trigger(EEventName.groupUpdate, JSON.parse(message.toString()));
+        return true;
+      }
+
+      case 'addMembers': {
+        this.trigger(EEventName.groupAddMembers, JSON.parse(message.toString()));
+        return true;
+      }
+
+      case 'delMembers': {
+        this.trigger(EEventName.groupDelMembers, JSON.parse(message.toString()));
+        return true;
+      }
+
+      case 'exitGroup': {
+        this.trigger(EEventName.groupExitGroup, JSON.parse(message.toString()));
         return true;
       }
 

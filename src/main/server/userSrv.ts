@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import mqtt from '../modules/mqtt';
-import { IUserInfo, IToken } from '../modules/mqtt/interface';
+import type { IUserInfo, IToken, IFriendInfo } from '../modules/mqtt/interface';
 import SQ3 from '../modules/sqlite3';
 import { ESQ3CommonKey } from '../modules/sqlite3/interface';
 
@@ -23,6 +23,14 @@ class UserSrv implements IUserSrv {
 
   private userInfo: IUserInfo | undefined;
 
+  private allUserInfoList:Map<string, IFriendInfo>; // 所有用户信息
+
+  constructor() {
+    this.allUserInfoList = new Map();
+  }
+
+  // ================================ 接口 ================================
+
   async getToken(): Promise<IToken> {
     if (this.token) {
       return Object.freeze(this.token);
@@ -41,6 +49,10 @@ class UserSrv implements IUserSrv {
     this.userInfo = await mqtt.user.fetchInfo();
 
     return Object.freeze(this.userInfo);
+  }
+
+  async getFriendInfo(iDs:string[]):Promise<IFriendInfo[]> {
+    return mqtt.user.getFriendInfo(iDs);
   }
 
   async getUserLoginInfo():Promise<ILoginInfo > {
@@ -64,6 +76,24 @@ class UserSrv implements IUserSrv {
       loginInfo.autoLogin = false;
     }
     return SQ3.common.saveData(ESQ3CommonKey.userLoginInfo, JSON.stringify(loginInfo));
+  }
+
+  // ================================ 接口 ================================
+
+  //  ================================ 缓存用户信息 =========================
+  cacheUserInfo(info:IFriendInfo) {
+    this.allUserInfoList.set(info.id, info);
+  }
+
+  async getCacheUserInfo(userId:string):Promise<IFriendInfo> {
+    let info = this.allUserInfoList.get(userId);
+    if (!info) {
+      const res = await this.getFriendInfo([userId]);
+      // eslint-disable-next-line prefer-destructuring
+      info = res[0];
+      this.allUserInfoList.set(info.id, info);
+    }
+    return info;
   }
 }
 

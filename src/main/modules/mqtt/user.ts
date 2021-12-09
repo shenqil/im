@@ -1,4 +1,5 @@
 import connect from './connect';
+import type { IFriendInfo } from './friend';
 
 export interface IUserRole {
   userId: string,
@@ -28,6 +29,7 @@ export interface IToken {
 export interface IUser {
   fetchInfo():Promise<IUserInfo>
   fetchToken():Promise<IToken>
+  getFriendInfo(iDs:string[]):Promise<IFriendInfo[]>
 }
 
 /**
@@ -60,7 +62,23 @@ async function fetchToken():Promise<IToken> {
   return JSON.parse(res as string);
 }
 
+/**
+ * 获取好友信息
+ * */
+async function getFriendInfo(iDs:string[]):Promise<IFriendInfo[]> {
+  const res = await connect.sendMsgWaitReply({
+    topic: 'user/userInfo',
+    message: JSON.stringify(iDs),
+    opts: {
+      qos: 0,
+      retain: false,
+    },
+  });
+  return JSON.parse(res as string);
+}
+
 export default {
   fetchInfo: fetchUserInfo,
   fetchToken,
+  getFriendInfo,
 };
