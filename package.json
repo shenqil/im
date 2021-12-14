@@ -4,6 +4,7 @@
   "description": "electron_demo",
   "main": "main.ts",
   "scripts": {
+    "dev":"npm run start",
     "start": "cross-env NODE_ENV=development node ./build/scripts/start.js",
     "start:render": "cross-env NODE_ENV=development webpack --config ./build/configs/webpack.dev.js",
     "start:preload": "cross-env NODE_ENV=development webpack --config ./build/configs/webpack.preload.js",

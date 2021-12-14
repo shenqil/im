@@ -6,7 +6,7 @@ export interface IDomainState {
 }
 
 const initialState:IDomainState = {
-  fileServer: 'http://localhost:8080/files/files/',
+  fileServer: window.domainConfig.fileServer,
 };
 
 export const domainSlice = createSlice({
