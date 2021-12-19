@@ -20,6 +20,7 @@ ipcMain.on('mainBridgeEvent', async (event, { id, keys, args }) => {
       id, result,
     });
   } catch (error) {
+    console.error(error);
     event.reply('mainBridgeEvent--error', {
       id, error,
     });

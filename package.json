@@ -4,7 +4,7 @@
   "description": "electron_demo",
   "main": "main.ts",
   "scripts": {
-    "dev":"npm run start",
+    "dev": "npm run start",
     "start": "cross-env NODE_ENV=development node ./build/scripts/start.js",
     "start:render": "cross-env NODE_ENV=development webpack --config ./build/configs/webpack.dev.js",
     "start:preload": "cross-env NODE_ENV=development webpack --config ./build/configs/webpack.preload.js",
@@ -87,6 +87,7 @@
     "redux-thunk": "^2.4.1",
     "sqlite3": "^5.0.2",
     "throttle-debounce": "^3.0.1",
+    "tus-js-client": "^2.3.0",
     "uuid": "^8.3.2"
   }
 }
