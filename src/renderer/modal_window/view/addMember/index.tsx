@@ -2,7 +2,7 @@ import React, { ChangeEvent, useState, useEffect } from 'react';
 import { Input, Radio, Button } from 'antd';
 import { mainBridge, mainEvent, EMainEventKey } from '@renderer/public/ipcRenderer';
 import defaultImg from '@renderer/public/img/avatar.png';
-import { IFriendInfo } from '@main/modules/mqtt/interface';
+import type { IFriendInfo, IGroupInfo, IUserInfo } from '@main/modules/mqtt/interface';
 import {
   CloseCircleOutlined,
 } from '@ant-design/icons';
@@ -47,6 +47,8 @@ const AddMember = function () {
   const [friendList, setFriendList] = useState<IFriendInfo[]>([]);
   const [selectList, setSelectList] = useState<IFriendInfo[]>([]);
   const [allList, setAllList] = useState<IFriendInfo[]>([]);
+  const [userInfo, setUserInfo] = useState<IUserInfo | undefined>();
+  const [disable, setDisable] = useState<boolean>(false);
 
   useEffect(() => {
     mainBridge.server.friendSrv.getMyFriendList()
@@ -57,7 +59,103 @@ const AddMember = function () {
       .catch((err) => {
         mainEvent.emit(EMainEventKey.UnifiedPrompt, `${err}`);
       });
+
+    mainBridge.server.userSrv.getUserInfo()
+      .then((res) => {
+        setUserInfo(res);
+      })
+      .catch((err) => {
+        mainEvent.emit(EMainEventKey.UnifiedPrompt, `${err}`);
+      });
   }, []);
+
+  useEffect(() => {
+    if (selectList.length === 0) {
+      setDisable(true);
+    } else {
+      setDisable(false);
+    }
+  }, [selectList]);
+
+  function getGroupName() {
+    const nameAry = selectList.map((item) => item.realName).splice(0, 3);
+    nameAry.unshift(userInfo?.realName || '');
+    return nameAry.join(',');
+  }
+
+  function createImage(id:string):Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.setAttribute('crossOrigin', 'anonymous');
+      try {
+        img.src = `${window.domainConfig.fileServer}${id}`;
+        img.onload = function () {
+          resolve(img);
+        };
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  function syntImages(ids:string[]):Promise<string> {
+    const canvas = document.createElement('canvas');
+    canvas.width = 120;
+    canvas.height = 120;
+    const ctx = canvas.getContext('2d');
+
+    return new Promise((resolve, reject) => {
+      Promise.all(ids.map((id) => createImage(id))).then((res) => {
+        if (res.length === 2) {
+          ctx?.drawImage(res[0], 0, 0, 60, 120);
+          ctx?.drawImage(res[1], 60, 0, 60, 120);
+        } else if (res.length === 3) {
+          ctx?.drawImage(res[0], 0, 0, 60, 120);
+          ctx?.drawImage(res[1], 60, 0, 60, 60);
+          ctx?.drawImage(res[2], 60, 60, 60, 60);
+        } else {
+          ctx?.drawImage(res[0], 0, 0, 60, 60);
+          ctx?.drawImage(res[1], 60, 0, 60, 60);
+          ctx?.drawImage(res[2], 0, 60, 60, 60);
+          ctx?.drawImage(res[3], 60, 60, 60, 60);
+        }
+
+        resolve(canvas.toDataURL('image/jpeg', 0.6));
+      }).catch((error) => {
+        reject(error);
+      });
+    });
+  }
+
+  async function uploadImg():Promise<string> {
+    const ids = selectList.map((item) => item.avatar);
+    ids.unshift(userInfo?.avatar || '');
+    const b64 = await syntImages(ids);
+
+    return mainBridge.server.fileSrv.upload(b64);
+  }
+
+  function getMemberIDs() {
+    const idAry = selectList.map((item) => item.id);
+    idAry.unshift(userInfo?.id || '');
+    return idAry;
+  }
+
+  async function handOk() {
+    const avatar = await uploadImg();
+    const param:IGroupInfo = {
+      id: Date.now().toString(),
+      groupName: getGroupName(),
+      brief: '',
+      avatar,
+      owner: userInfo?.id || '',
+      creator: userInfo?.id || '',
+      createdAt: Date.now(),
+      MemberIDs: getMemberIDs(),
+    };
+    // mainBridge.server.groupSrv.create(param);
+    console.log(param);
+  }
 
   function handCancel() {
     mainBridge.wins.modal.hidden();
@@ -152,6 +250,8 @@ const AddMember = function () {
               className={styles['add-member__right-footer-btn']}
               type="primary"
               size="small"
+              onClick={() => handOk()}
+              disabled={disable}
             >
               确认
             </Button>
