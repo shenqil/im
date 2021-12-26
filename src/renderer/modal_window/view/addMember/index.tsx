@@ -142,19 +142,26 @@ const AddMember = function () {
   }
 
   async function handOk() {
-    const avatar = await uploadImg();
-    const param:IGroupInfo = {
-      id: Date.now().toString(),
-      groupName: getGroupName(),
-      brief: '',
-      avatar,
-      owner: userInfo?.id || '',
-      creator: userInfo?.id || '',
-      createdAt: Date.now(),
-      MemberIDs: getMemberIDs(),
-    };
-    // mainBridge.server.groupSrv.create(param);
-    console.log(param);
+    try {
+      const avatar = await uploadImg();
+      const param:IGroupInfo = {
+        id: Date.now().toString(),
+        groupName: getGroupName(),
+        brief: '',
+        avatar,
+        owner: userInfo?.id || '',
+        creator: userInfo?.id || '',
+        MemberIDs: getMemberIDs(),
+      };
+      mainBridge.server.groupSrv.create(param);
+    } catch (error) {
+      console.error(error);
+      mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'error', msg: '创建失败' });
+    }
+
+    mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'success', msg: '群组创建成功' });
+
+    mainBridge.wins.modal.hidden();
   }
 
   function handCancel() {

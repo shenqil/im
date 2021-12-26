@@ -7,7 +7,7 @@ export interface IGroupInfo {
   avatar : string
   owner : string
   creator: string
-  createdAt :number
+  createdAt ?:number
   MemberIDs: string []
 }
 

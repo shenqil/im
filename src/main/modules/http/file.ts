@@ -1,4 +1,4 @@
-import tus from 'tus-js-client';
+import { Upload } from 'tus-js-client';
 
 import { Readable } from 'stream';
 
@@ -50,7 +50,7 @@ export interface IFile {
  * */
 export async function uploadFile(file:IUploadFileInfo) {
   return new Promise((resolve, reject) => {
-    const upload = new tus.Upload(file.stream, {
+    const upload = new Upload(file.stream, {
       endpoint: 'http://localhost:8080/files/files/',
       retryDelays: [0, 3000, 5000, 10000, 20000],
       metadata: {
@@ -63,7 +63,7 @@ export async function uploadFile(file:IUploadFileInfo) {
         reject(error);
       },
       onSuccess() {
-        resolve(upload.url);
+        resolve(upload.url?.split('files/')?.pop() || '');
       },
     });
 
