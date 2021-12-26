@@ -1,8 +1,40 @@
 import React from 'react';
 import { mainBridge } from '@renderer/public/ipcRenderer';
+import { useAppSelector } from '@renderer/main_window/store/hooks';
+import { selectGroupList } from '@renderer/main_window/store/group';
+import type { IGroupInfo } from '@main/modules/mqtt/interface';
+import Avatar from '@renderer/main_window/components/Avatar';
 import styles from './index.scss';
 
+interface IGroupItemProps {
+  groupInfo:IGroupInfo
+}
+const GroupItem = function (props:IGroupItemProps) {
+  const { groupInfo } = props;
+
+  return (
+    <div className={styles['group-item']}>
+      <div className={styles['group-item__avatar']}>
+        <Avatar url={groupInfo.avatar} />
+      </div>
+
+      <div className={styles['group-item__info']}>
+        <div className={styles['group-item__info-title']}>
+          {groupInfo.groupName}
+        </div>
+
+        <div className={styles['group-item__info-member']}>
+          {groupInfo.memberIDs.length}
+          人
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Group = function () {
+  const groupList = useAppSelector(selectGroupList);
+
   function openAddGroupMemberWin() {
     mainBridge.wins.modal.showAddMember();
   }
@@ -18,7 +50,9 @@ const Group = function () {
       </div>
 
       <div className={`scroll ${styles.group__container}`}>
-        group
+        {
+          groupList.map((item) => (<GroupItem groupInfo={item} key={item.id} />))
+        }
       </div>
     </div>
   );

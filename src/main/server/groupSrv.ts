@@ -2,18 +2,13 @@
 import ipcEvent from '@main/ipcMain/event';
 import { EMainEventKey } from '@main/ipcMain/eventInterface';
 import {
-  IGroupInfo, IGroupMemberChangeParams, IFriendInfo,
+  IGroupInfo, IGroupMemberChangeParams,
 } from '../modules/mqtt/interface';
 import mqtt from '../modules/mqtt/index';
-import userSrv from './userSrv';
-
-export interface IGroupInfoSrv extends IGroupInfo{
-  memberList:IFriendInfo[]
-}
 
 export interface IGroupSrv {
-  getMyGroupList():Promise<IGroupInfoSrv[]>,
-  myGroupList():Promise<IGroupInfoSrv[]>,
+  getMyGroupList():Promise<IGroupInfo[]>,
+  myGroupList():Promise<IGroupInfo[]>,
   create(params:IGroupInfo):Promise<unknown>
   remove(groupId:string):Promise<unknown>
   update(params:IGroupInfo):Promise<unknown>
@@ -23,7 +18,7 @@ export interface IGroupSrv {
 }
 
 class GroupSrv implements IGroupSrv {
-  private groups:IGroupInfoSrv[];
+  private groups:IGroupInfo[];
 
   constructor() {
     this.groups = [];
@@ -31,12 +26,12 @@ class GroupSrv implements IGroupSrv {
   }
 
   // 改变群列表唯一入口
-  changeGroups(list:IGroupInfoSrv[]) {
+  changeGroups(list:IGroupInfo[]) {
     this.groups = [...list];
     ipcEvent.emit(EMainEventKey.MyGroupChange, list);
   }
 
-  async getMyGroupList():Promise<IGroupInfoSrv[]> {
+  async getMyGroupList():Promise<IGroupInfo[]> {
     if (this.groups.length === 0) {
       await this.myGroupList();
     }
@@ -44,36 +39,15 @@ class GroupSrv implements IGroupSrv {
     return this.groups;
   }
 
-  async toGroupInfoSrv(info:IGroupInfo):Promise<IGroupInfoSrv> {
-    const item:IGroupInfoSrv = {
-      ...info,
-      memberList: [],
-    };
-
-    for (const memberID of info.MemberIDs) {
-      // eslint-disable-next-line no-await-in-loop
-      const memberInfo = await userSrv.getCacheUserInfo(memberID);
-      item.memberList.push(memberInfo);
-    }
-
-    return item;
-  }
-
   // ======================= 接口 ============================
-  async myGroupList():Promise<IGroupInfoSrv[]> {
-    const resultList = [];
-
+  async myGroupList():Promise<IGroupInfo[]> {
     const list = await mqtt.group.myGroupList();
-    for (const groupItem of list) {
-      // eslint-disable-next-line no-await-in-loop
-      const item = await this.toGroupInfoSrv(groupItem);
-      resultList.push(item);
-    }
-    this.changeGroups(resultList);
+
+    this.changeGroups(list);
     // 监听事件
     this.initEvent();
 
-    return resultList;
+    return list;
   }
 
   async create(params:IGroupInfo):Promise<unknown> {
@@ -111,8 +85,7 @@ class GroupSrv implements IGroupSrv {
     mqtt.group.onGroupExit(this.onGroupExit.bind(this));
   }
 
-  async onGroupCreate(info:IGroupInfo) {
-    const groupItem = await this.toGroupInfoSrv(info);
+  async onGroupCreate(groupItem:IGroupInfo) {
     const index = this.groups.findIndex((item) => item.id === groupItem.id);
     if (index !== -1) {
       this.groups.splice(index, 1, groupItem);
@@ -131,8 +104,7 @@ class GroupSrv implements IGroupSrv {
     }
   }
 
-  async onGroupUpdate(info:IGroupInfo) {
-    const groupItem = await this.toGroupInfoSrv(info);
+  async onGroupUpdate(groupItem:IGroupInfo) {
     const index = this.groups.findIndex((item) => item.id === groupItem.id);
     if (index !== -1) {
       this.groups.splice(index, 1, groupItem);
@@ -149,18 +121,11 @@ class GroupSrv implements IGroupSrv {
       return;
     }
 
-    const ids = new Set(groupItem.MemberIDs);
+    const ids = new Set(groupItem.memberIDs);
     for (const iterator of params.list) {
       ids.add(iterator.id);
     }
-    groupItem.MemberIDs = Array.from(ids);
-    groupItem.memberList = [];
-
-    for (const memberID of groupItem.MemberIDs) {
-      // eslint-disable-next-line no-await-in-loop
-      const memberInfo = await userSrv.getCacheUserInfo(memberID);
-      groupItem.memberList.push(memberInfo);
-    }
+    groupItem.memberIDs = Array.from(ids);
 
     this.changeGroups(this.groups);
   }
@@ -172,19 +137,12 @@ class GroupSrv implements IGroupSrv {
     }
 
     const ids:string[] = [];
-    for (const id of groupItem.MemberIDs) {
+    for (const id of groupItem.memberIDs) {
       if (params.list.findIndex((item) => item.id === id) === -1) {
         ids.push(id);
       }
     }
-    groupItem.MemberIDs = ids;
-    groupItem.memberList = [];
-
-    for (const memberID of groupItem.MemberIDs) {
-      // eslint-disable-next-line no-await-in-loop
-      const memberInfo = await userSrv.getCacheUserInfo(memberID);
-      groupItem.memberList.push(memberInfo);
-    }
+    groupItem.memberIDs = ids;
 
     this.changeGroups(this.groups);
   }

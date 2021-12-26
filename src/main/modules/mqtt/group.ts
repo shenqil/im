@@ -8,7 +8,7 @@ export interface IGroupInfo {
   owner : string
   creator: string
   createdAt ?:number
-  MemberIDs: string []
+  memberIDs: string []
 }
 
 export interface IGroupMemberInfo{

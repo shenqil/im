@@ -2,7 +2,7 @@ import React from 'react';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import { useAppSelector } from '@renderer/main_window/store/hooks';
 import { selectGroupedFriendList } from '@renderer/main_window/store/friend';
-import { IFriendInfo } from '@main/modules/mqtt/interface';
+import type { IFriendInfo } from '@main/modules/mqtt/interface';
 import FriendItem from '../components/FriendItem';
 import styles from './index.scss';
 

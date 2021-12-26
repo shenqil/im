@@ -2,6 +2,7 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import domainReducer from './domain';
 import userReducer from './user';
 import friendReducer from './friend';
+import groupReducer from './group';
 import navigationReducer from './navigation';
 
 export const store = configureStore({
@@ -10,6 +11,7 @@ export const store = configureStore({
     user: userReducer,
     navigation: navigationReducer,
     friend: friendReducer,
+    group: groupReducer,
   },
 });
 
