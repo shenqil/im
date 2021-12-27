@@ -105,6 +105,11 @@ class SQ3Base {
      * this.createTable(sentence);
     */
   async createTable(tablename: string, param: Array<string>) {
+    if (this.createTabelStatus === 'success') {
+      this.depCreateTabelMap.forEach(([r]) => r(''));
+      this.depCreateTabelMap = [];
+      return;
+    }
     this.createTabelStatus = 'pendding';
     await awaitSqlite3Init();
     const sqldata = param.join(',');
@@ -113,11 +118,15 @@ class SQ3Base {
       this.db?.exec(sentence, (err) => {
         if (err) {
           this.createTabelStatus = err;
+          this.depCreateTabelMap.forEach(([,r]) => r(err));
           reject(err);
         } else {
           this.createTabelStatus = 'success';
+          this.depCreateTabelMap.forEach(([r]) => r(''));
           resolve('');
         }
+
+        this.depCreateTabelMap = [];
       });
     });
   }
