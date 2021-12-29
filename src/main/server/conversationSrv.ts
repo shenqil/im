@@ -3,7 +3,7 @@ import type { IConversationInfo } from '@main/modules/sqlite3/interface';
 import userSrv from './userSrv';
 
 export interface IConversationSrv {
-  get():Promise<Readonly<IConversationInfo[]>>,
+  get():Promise<IConversationInfo[]>,
   set(list:IConversationInfo[]):Promise<unknown>
 }
 
@@ -28,7 +28,7 @@ class ConversationSrv implements IConversationSrv {
     return '';
   }
 
-  async get():Promise<Readonly<IConversationInfo[]>> {
+  async get():Promise<IConversationInfo[]> {
     await this.check();
 
     if (!this.list.length) {
