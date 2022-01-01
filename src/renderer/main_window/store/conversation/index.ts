@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { IConversationInfo } from '@main/modules/sqlite3/interface';
 import { mainBridge } from '@renderer/public/ipcRenderer';
+import type { IFriendInfo } from '@main/modules/mqtt/interface';
 import type { RootState } from '../index';
 
 export interface IConversationState {
@@ -61,6 +62,12 @@ export const conversationSlice = createSlice({
         list,
       };
     },
+    gotoConversation: (state, action:PayloadAction<IFriendInfo>) => {
+      console.log(action.payload, 'IFriendInfo');
+      return {
+        ...state,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -76,12 +83,13 @@ export const {
   changeConversationList,
   updateConversation,
   removeConversation,
+  gotoConversation,
 } = conversationSlice.actions;
 
 // 会话列表
-export const conversationList = (state:RootState) => state.conversation.list;
+export const selectConversationList = (state:RootState) => state.conversation.list;
 // 排序后的会话列表
-export const conversationSortList = (state:RootState) => {
+export const selectConversationSortList = (state:RootState) => {
   const { list } = state.conversation;
   const placedTopList:IConversationInfo[] = [];
   const nomarlList:IConversationInfo[] = [];

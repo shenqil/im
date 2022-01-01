@@ -57,10 +57,22 @@ export const navigationSlice = createSlice({
         activa: action.payload,
       };
     },
+    changeActivaWithKey(state, action:PayloadAction<string>) {
+      const nav = state.list.find((item) => item.key === action.payload);
+      // 不存在，或者当前已选中，直接返回
+      if (!nav || state.activa.key === action.payload) {
+        return state;
+      }
+
+      return {
+        ...state,
+        activa: nav,
+      };
+    },
   },
 });
 
-export const { changeActiva } = navigationSlice.actions;
+export const { changeActiva, changeActivaWithKey } = navigationSlice.actions;
 
 export const selectNavigationList = (state: RootState) => state.navigation.list;
 

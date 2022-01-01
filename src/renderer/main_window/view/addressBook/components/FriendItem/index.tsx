@@ -14,7 +14,7 @@ const FriendItem = function (props:IFriendItem) {
   const { friendInfo, isFriend, isRightMenu } = props;
 
   function sendMsg() {
-    console.log('发送消息');
+    mainBridge.server.conversationSrv.gotoConversation(friendInfo);
   }
 
   function showBusinessCard(isCursorPoint = true) {

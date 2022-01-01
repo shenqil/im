@@ -55,6 +55,11 @@ const BusinessCard = function () {
     mainBridge.wins.modal.hidden();
   }
 
+  async function gotoConversation() {
+    await mainBridge.server.conversationSrv.gotoConversation(cardInfo);
+    mainBridge.wins.modal.hidden();
+  }
+
   return (
     <div className={styles['business-card']}>
       <div className={styles['business-card__top']}>
@@ -81,7 +86,7 @@ const BusinessCard = function () {
           ? (
             <>
               <i className={`iconfont icon-hanhan-01-01 ${styles['business-card__footer-icon']}`} />
-              <i className={`iconfont icon-xiaoxi ${styles['business-card__footer-icon']}`} />
+              <i className={`iconfont icon-xiaoxi ${styles['business-card__footer-icon']}`} onClick={() => gotoConversation()} aria-hidden="true" />
             </>
           )
           : (<i className={`iconfont icon-tianjiahaoyou1 ${styles['business-card__footer-icon']}`} onClick={() => addFriend()} aria-hidden="true" />)}
