@@ -109,5 +109,7 @@ export const selectConversationSortList = (state:RootState) => {
 
   return [...placedTopList, ...nomarlList];
 };
+// 当前选中的会话id
+export const selectActivaId = (state:RootState) => state.conversation.activaId;
 
 export default conversationSlice.reducer;

@@ -51,6 +51,7 @@ class ConversationSrv implements IConversationSrv {
 
     if (!this.list.length) {
       this.list = await SQ3.conversation.get(this.userId);
+      ipcEvent.emit(EMainEventKey.ConversationChange, this.list);
     }
 
     return this.list;
@@ -81,6 +82,7 @@ class ConversationSrv implements IConversationSrv {
       conversation = {
         id: info.id,
         name: info.realName,
+        avatar: info.avatar,
         lastTime: Date.now(),
         unreadNum: 0,
         noDisturd: false,
@@ -91,6 +93,7 @@ class ConversationSrv implements IConversationSrv {
       this.list.unshift(conversation);
     } else {
       conversation.name = info.realName;
+      conversation.avatar = info.avatar;
     }
     // 保存更改得列表
     await this.set(this.list);

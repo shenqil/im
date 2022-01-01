@@ -8,6 +8,7 @@ export enum EConversationType {
 export interface IConversationInfo {
   id: string,
   name: string,
+  avatar:string,
   lastTime: number, // 最后一次操作的时间
   unreadNum: number, // 未读消息
   noDisturd: boolean, // 不打扰
