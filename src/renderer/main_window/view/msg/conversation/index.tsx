@@ -100,7 +100,7 @@ const ConversationItem:FC<IConversationItemProps> = function (props:IConversatio
           </div>
           <div className={styles['conversation-item__icon']}>
             {
-              !conversationInfo.noDisturd
+              conversationInfo.noDisturd
               && (
               <img
                 className={styles['conversation-item__icon-no']}
@@ -123,10 +123,51 @@ const ConversationItem:FC<IConversationItemProps> = function (props:IConversatio
 
 const Conversation:FC = function () {
   const conversationList = useAppSelector(selectConversationSortList);
+
+  function rightClick(item:IConversationInfo) {
+    mainBridge.menu.rightMenu.show([
+      {
+        label: item.placedTop ? '取消置顶' : '置顶',
+        id: 'placedTop',
+      },
+      {
+        label: item.noDisturd ? '开启新消息提醒' : '消息免打扰',
+        id: 'noDisturd',
+      },
+      {
+        label: '删除聊天',
+        id: 'delConversation',
+      },
+    ])
+      .then((res) => {
+        console.log(res);
+        if (!res || !res.id) {
+          return;
+        }
+        switch (res.id) {
+          case 'placedTop':
+
+            break;
+          case 'noDisturd':
+
+            break;
+          case 'delConversation':
+
+            break;
+          default:
+            break;
+        }
+      });
+  }
+
   return (
     <div className={`scroll ${styles.conversation}`}>
       {conversationList.map((item) => (
-        <div key={item.id} className={styles.conversation__item}>
+        <div
+          key={item.id}
+          className={styles.conversation__item}
+          onContextMenu={() => rightClick(item)}
+        >
           <ConversationItem conversationInfo={item} />
         </div>
       ))}
