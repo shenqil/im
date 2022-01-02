@@ -1,22 +1,15 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC } from 'react';
 import type { IConversationInfo } from '@main/modules/sqlite3/interface';
-import { useAppSelector } from '@renderer/main_window/store/hooks';
-import { selectGroupList } from '@renderer/main_window/store/group';
-import { IGroupInfo } from '@main/modules/mqtt/interface';
+import type { IGroupInfo } from '@main/modules/mqtt/interface';
 import styles from './index.scss';
 
 interface IConversationHeaderProps {
   conversationInfo:IConversationInfo
+  groupInfo:IGroupInfo | undefined
+  onRightClick:Function
 }
 const ConversationHeader:FC<IConversationHeaderProps> = function (props) {
-  const { conversationInfo } = props;
-  const groupList = useAppSelector(selectGroupList);
-  const [groupInfo, setGroupInfo] = useState<IGroupInfo | undefined>(undefined);
-
-  useEffect(() => {
-    const info = groupList.find((item) => item.id === conversationInfo.id);
-    setGroupInfo(info);
-  }, [conversationInfo, groupList]);
+  const { conversationInfo, groupInfo, onRightClick } = props;
 
   return (
     <div className={styles['conversation-header']}>
@@ -37,7 +30,14 @@ const ConversationHeader:FC<IConversationHeaderProps> = function (props) {
           )
         }
       </div>
-      <div className={styles['conversation-header__right']}>
+      <div
+        className={styles['conversation-header__right']}
+        onClick={(e) => {
+          e.stopPropagation();
+          onRightClick();
+        }}
+        aria-hidden="true"
+      >
         <i className="icon-qita iconfont" />
       </div>
     </div>
