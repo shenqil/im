@@ -12,8 +12,12 @@ interface IGroupItemProps {
 const GroupItem = function (props:IGroupItemProps) {
   const { groupInfo } = props;
 
+  function handleClick() {
+    mainBridge.server.conversationSrv.gotoConversation(groupInfo);
+  }
+
   return (
-    <div className={styles['group-item']}>
+    <div className={styles['group-item']} onClick={() => handleClick()} aria-hidden="true">
       <div className={styles['group-item__avatar']}>
         <Avatar url={groupInfo.avatar} />
       </div>

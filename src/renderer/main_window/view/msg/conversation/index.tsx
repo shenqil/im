@@ -140,19 +140,21 @@ const Conversation:FC = function () {
       },
     ])
       .then((res) => {
-        console.log(res);
         if (!res || !res.id) {
           return;
         }
+        const newItem = { ...item };
         switch (res.id) {
           case 'placedTop':
-
+            newItem.placedTop = !item.placedTop;
+            mainBridge.server.conversationSrv.updateConversationInfo(newItem);
             break;
           case 'noDisturd':
-
+            newItem.noDisturd = !item.noDisturd;
+            mainBridge.server.conversationSrv.updateConversationInfo(newItem);
             break;
           case 'delConversation':
-
+            mainBridge.server.conversationSrv.removeConversationInfo(item.id);
             break;
           default:
             break;
