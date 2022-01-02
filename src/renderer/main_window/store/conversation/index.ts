@@ -111,5 +111,13 @@ export const selectConversationSortList = (state:RootState) => {
 };
 // 当前选中的会话id
 export const selectActivaId = (state:RootState) => state.conversation.activaId;
+// 当前选中的会话
+export const selectActivaConversation = (state:RootState) => {
+  const { list } = state.conversation;
+  const id = state.conversation.activaId;
+
+  const conversation = list.find((item) => item.id === id);
+  return conversation;
+};
 
 export default conversationSlice.reducer;

@@ -13,5 +13,10 @@
   &__right{
     width: calc(100% - 251px);
     height: 100%;
+
+    &-head{
+      width: 100%;
+      height: 46px;
+    }
   }
 }
