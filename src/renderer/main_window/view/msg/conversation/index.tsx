@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useLayoutEffect } from 'react';
 import { useAppSelector } from '@renderer/main_window/store/hooks';
 import { selectConversationSortList, selectActivaId } from '@renderer/main_window/store/conversation';
 import type { IConversationInfo } from '@main/modules/sqlite3/interface';
@@ -72,7 +72,7 @@ const ConversationItem:FC<IConversationItemProps> = function (props:IConversatio
 
   return (
     <div
-      className={`${styles['conversation-item']} ${activaId === conversationInfo.id && styles['conversation-item--activa']}`}
+      className={`${styles['conversation-item']} ${activaId === conversationInfo.id && 'scroll__item--activa'}`}
       onClick={() => handleActiva()}
       aria-hidden="true"
     >
@@ -123,6 +123,11 @@ const ConversationItem:FC<IConversationItemProps> = function (props:IConversatio
 
 const Conversation:FC = function () {
   const conversationList = useAppSelector(selectConversationSortList);
+
+  useLayoutEffect(() => {
+    const activaDom = document.querySelector('.scroll__item--activa');
+    activaDom?.scrollIntoView();
+  }, []);
 
   function rightClick(item:IConversationInfo) {
     mainBridge.menu.rightMenu.show([

@@ -24,6 +24,10 @@ body {
   overflow-y: overlay;
 }
 
+.scroll__item--activa{
+  background-color: #eaebed;
+}
+
 .scroll::-webkit-scrollbar {
   background: none;
   width: 6px;
