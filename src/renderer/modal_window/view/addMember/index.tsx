@@ -170,19 +170,18 @@ const AddMember = function () {
           creator: userInfo?.id || '',
           memberIDs: getMemberIDs(),
         };
-        mainBridge.server.groupSrv.create(param);
+        await mainBridge.server.groupSrv.create(param);
+        mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'success', msg: '群组创建成功' });
       } else {
         // 更新
         groupInfo.memberIDs = getMemberIDs();
-        mainBridge.server.groupSrv.update(groupInfo);
+        await mainBridge.server.groupSrv.update(groupInfo);
+        mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'success', msg: '群组更新成功' });
       }
     } catch (error) {
       console.error(error);
-      mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'error', msg: '创建失败' });
+      mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'error', msg: '操作失败' });
     }
-
-    mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'success', msg: '群组创建成功' });
-
     mainBridge.wins.modal.hidden();
   }
 

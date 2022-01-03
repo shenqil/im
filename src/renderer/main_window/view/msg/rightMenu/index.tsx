@@ -3,8 +3,12 @@ import type { IGroupInfo, IFriendInfo } from '@main/modules/mqtt/interface';
 import type { IConversationInfo, IUserBaseInfo } from '@main/modules/sqlite3/interface';
 import { CloseOutlined } from '@ant-design/icons';
 import Avatar from '@renderer/main_window/components/Avatar';
-import { Switch, message, Input } from 'antd';
+import {
+  Switch, message, Input, Button,
+} from 'antd';
 import { mainBridge } from '@renderer/public/ipcRenderer';
+import { useAppSelector } from '@renderer/main_window/store/hooks';
+import { selectUserInfo } from '@renderer/main_window/store/user';
 import styles from './index.scss';
 
 enum EConversationType {
@@ -40,9 +44,11 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
   const {
     conversationInfo, groupInfo, friendInfo, handleRightMenu,
   } = props;
+  const userInfo = useAppSelector(selectUserInfo);
   const [memberList, setMemberList] = useState<IUserBaseInfo[]>([]);
   const [groupNameEdit, setGroupNameEdit] = useState(false);
   const [groupName, setGroupName] = useState('');
+  const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
     if (conversationInfo.type === EConversationType.group) {
@@ -61,6 +67,14 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
       setMemberList([]);
     }
   }, [conversationInfo, groupInfo]);
+
+  useEffect(() => {
+    if (groupInfo && userInfo?.id === groupInfo?.id) {
+      setIsOwner(true);
+    } else {
+      setIsOwner(false);
+    }
+  }, [userInfo, groupInfo]);
 
   function handlePlacedTop() {
     const newConversationInfo = { ...conversationInfo };
@@ -135,26 +149,26 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
           </div>
           <div className={styles['right-menu__header-name']}>
             {
-              groupNameEdit
-                ? (
-                  <Input
-                    className={styles['right-menu__header-name-input']}
-                    value={groupName}
-                    maxLength={20}
-                    onChange={(e) => setGroupName(e.target.value.trim())}
-                    onKeyDown={(e) => {
-                      if (e.code === 'Enter') {
-                        handleEditName();
-                      }
-                    }}
-                    size="small"
-                  />
-                )
-                : (
-                  <div className={styles['right-menu__header-name-text']}>
-                    {groupInfo?.groupName || friendInfo?.realName || ''}
-                  </div>
-                )
+             isOwner && groupNameEdit
+               ? (
+                 <Input
+                   className={styles['right-menu__header-name-input']}
+                   value={groupName}
+                   maxLength={20}
+                   onChange={(e) => setGroupName(e.target.value.trim())}
+                   onKeyDown={(e) => {
+                     if (e.code === 'Enter') {
+                       handleEditName();
+                     }
+                   }}
+                   size="small"
+                 />
+               )
+               : (
+                 <div className={styles['right-menu__header-name-text']}>
+                   {groupInfo?.groupName || friendInfo?.realName || ''}
+                 </div>
+               )
             }
 
             <div className={styles['right-menu__header-name-icon']}>
@@ -172,7 +186,7 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
 
         {/* 群成员 */}
         {
-        groupInfo && (
+        isOwner && groupInfo && (
           <div className={styles['right-menu__member']}>
             <div className={styles['right-menu__member-title']}>
               <div className={styles['right-menu__member-title-text']}>
@@ -224,6 +238,9 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
             </div>
           </div>
         </div>
+
+        {/* 删除区域 */}
+        <Button>Default Button</Button>
       </div>
 
     </div>
