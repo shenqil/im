@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { ChangeEvent, useState, useEffect } from 'react';
 import { Input, Radio, Button } from 'antd';
 import { mainBridge, mainEvent, EMainEventKey } from '@renderer/public/ipcRenderer';
@@ -51,31 +52,26 @@ const AddMember = function () {
   const [disable, setDisable] = useState<boolean>(false);
   const [groupInfo, setGroupInfo] = useState<IGroupInfo | undefined>(undefined);
 
+  async function init() {
+    const fList = await mainBridge.server.friendSrv.getMyFriendList();
+    setAllList(fList);
+    setFriendList(fList);
+
+    const uInfo = await mainBridge.server.userSrv.getUserInfo();
+    setUserInfo(uInfo);
+
+    const gInfo = await mainBridge.wins.modal.getGroupInfo();
+    setGroupInfo(gInfo);
+
+    if (gInfo) {
+      const ids = gInfo.memberIDs.filter((id) => id !== uInfo.id);
+      const list = await mainBridge.server.userSrv.getCacheUserInfo(ids);
+      setSelectList(list);
+    }
+  }
+
   useEffect(() => {
-    mainBridge.wins.modal.getGroupInfo()
-      .then((res) => {
-        setGroupInfo(res);
-        if (res) {
-          mainBridge.server.userSrv.getCacheUserInfo(res.memberIDs)
-            .then((list) => {
-              setSelectList(list);
-            });
-        }
-      });
-
-    mainBridge.server.friendSrv.getMyFriendList()
-      .then((res) => {
-        setAllList(res);
-        setFriendList(res);
-      })
-      .catch((err) => {
-        mainEvent.emit(EMainEventKey.UnifiedPrompt, `${err}`);
-      });
-
-    mainBridge.server.userSrv.getUserInfo()
-      .then((res) => {
-        setUserInfo(res);
-      })
+    init()
       .catch((err) => {
         mainEvent.emit(EMainEventKey.UnifiedPrompt, `${err}`);
       });
@@ -88,6 +84,13 @@ const AddMember = function () {
       setDisable(false);
     }
   }, [selectList]);
+
+  useEffect(() => {
+    console.log(userInfo?.id, selectList);
+    const list = selectList.filter((item) => !userInfo?.id || item.id !== userInfo?.id);
+    console.log(list);
+    setSelectList([...list]);
+  }, [userInfo]);
 
   function getGroupName() {
     const nameAry = selectList.map((item) => item.realName).splice(0, 3);
