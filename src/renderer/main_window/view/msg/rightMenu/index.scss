@@ -44,14 +44,24 @@
 
     &-name{
       display: flex;
-      flex-grow: 1;
-      min-width: 0;
+      flex-flow: row;
+      justify-content: flex-start;
+      align-items: center;
 
       &-text{
-        width: 100%;
         font-size: 14px;
         color: #000000;
         @include ellipsis(1);
+      }
+
+      &-input{
+        width: 180px;
+      }
+
+      &-icon{
+        margin-left: 12px;
+        font-size: 14px;
+        color: #171a1d;
       }
     }
   }
@@ -93,5 +103,26 @@
       justify-content: space-between;
       align-items: center;
     }
+  }
+}
+
+.member-item{
+  width: 66px;
+  height: 75px;
+  padding:7px 14px;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  align-items: center;
+  &__avatar{
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+  }
+  &__name{
+    width: 100%;
+    font-size: 14px;
+    color: #757778;
+    @include ellipsis(1);
   }
 }
