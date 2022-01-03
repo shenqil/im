@@ -65,7 +65,7 @@ const Msg:FC = function () {
                 <ConversationHeader
                   conversationInfo={conversationInfo}
                   groupInfo={groupInfo}
-                  onRightClick={() => setShowRightMenu(!showRightMenu)}
+                  handleRightMenu={() => setShowRightMenu(!showRightMenu)}
                 />
               </div>
               <div className={styles['msg__right-box']}>
@@ -86,6 +86,7 @@ const Msg:FC = function () {
           <RightMenu
             groupInfo={groupInfo}
             friendInfo={friendInfo}
+            handleRightMenu={() => setShowRightMenu(!showRightMenu)}
           />
         )
       }

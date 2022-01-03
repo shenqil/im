@@ -6,10 +6,10 @@ import styles from './index.scss';
 interface IConversationHeaderProps {
   conversationInfo:IConversationInfo
   groupInfo:IGroupInfo | undefined
-  onRightClick:Function
+  handleRightMenu:Function
 }
 const ConversationHeader:FC<IConversationHeaderProps> = function (props) {
-  const { conversationInfo, groupInfo, onRightClick } = props;
+  const { conversationInfo, groupInfo, handleRightMenu } = props;
 
   return (
     <div className={styles['conversation-header']}>
@@ -34,7 +34,7 @@ const ConversationHeader:FC<IConversationHeaderProps> = function (props) {
         className={styles['conversation-header__right']}
         onClick={(e) => {
           e.stopPropagation();
-          onRightClick();
+          handleRightMenu();
         }}
         aria-hidden="true"
       >
