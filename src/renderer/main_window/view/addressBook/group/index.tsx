@@ -40,7 +40,7 @@ const Group = function () {
   const groupList = useAppSelector(selectGroupList);
 
   function openAddGroupMemberWin() {
-    mainBridge.wins.modal.showAddMember();
+    mainBridge.wins.modal.showAddMember(undefined);
   }
 
   return (

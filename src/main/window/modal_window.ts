@@ -1,4 +1,5 @@
 import { IFriendInfoSrv } from '@main/server/interface';
+import type { IGroupInfo } from '@main/modules/mqtt/interface';
 import { screen } from 'electron';
 import ipcMainEvent from '@main/ipcMain/event';
 import { EMainEventKey } from '@main/ipcMain/eventInterface';
@@ -25,7 +26,8 @@ export interface IModalWindow extends IBaseWIN {
 
   showAddFriend():void
 
-  showAddMember():void
+  showAddMember(info:IGroupInfo | undefined):void
+  getGroupInfo():Promise<IGroupInfo | undefined>
 }
 export class ModalWindow extends BaseWIN implements IModalWindow {
   // 公共
@@ -39,6 +41,9 @@ export class ModalWindow extends BaseWIN implements IModalWindow {
 
   // 名片专用
   private friendInfo:IFriendInfoSrv;
+
+  // 添加群成员专用
+  private groupInfo:IGroupInfo | undefined;
 
   constructor(name: string) {
     super(name);
@@ -166,7 +171,8 @@ export class ModalWindow extends BaseWIN implements IModalWindow {
   // ---------------------------- 添加好友弹窗逻辑--------------------------------------
 
   // ---------------------------- 群组添加成员弹窗--------------------------------------
-  showAddMember() {
+  showAddMember(info:IGroupInfo | undefined) {
+    this.groupInfo = info;
     this.routePath = '/addMember';
     this.width = 550;
     this.height = 484;
@@ -178,6 +184,10 @@ export class ModalWindow extends BaseWIN implements IModalWindow {
     };
 
     this.show();
+  }
+
+  async getGroupInfo():Promise<IGroupInfo | undefined> {
+    return this.groupInfo;
   }
   // ---------------------------- 群组添加成员弹窗--------------------------------------
 }

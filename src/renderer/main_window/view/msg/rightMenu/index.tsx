@@ -89,6 +89,10 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
     }
   }
 
+  async function handleAddMember() {
+    mainBridge.wins.modal.showAddMember(groupInfo);
+  }
+
   function hideEdit() {
     setGroupNameEdit(false);
   }
@@ -178,6 +182,7 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
 
               <i
                 className={`iconfont icon-tianjiaqunzu-52 ${styles['right-menu__member-title-add']}`}
+                onClick={() => handleAddMember()}
                 aria-hidden="true"
               />
             </div>

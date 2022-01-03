@@ -49,8 +49,20 @@ const AddMember = function () {
   const [allList, setAllList] = useState<IFriendInfo[]>([]);
   const [userInfo, setUserInfo] = useState<IUserInfo | undefined>();
   const [disable, setDisable] = useState<boolean>(false);
+  const [groupInfo, setGroupInfo] = useState<IGroupInfo | undefined>(undefined);
 
   useEffect(() => {
+    mainBridge.wins.modal.getGroupInfo()
+      .then((res) => {
+        setGroupInfo(res);
+        if (res) {
+          mainBridge.server.userSrv.getCacheUserInfo(res.memberIDs)
+            .then((list) => {
+              setSelectList(list);
+            });
+        }
+      });
+
     mainBridge.server.friendSrv.getMyFriendList()
       .then((res) => {
         setAllList(res);
@@ -143,17 +155,24 @@ const AddMember = function () {
 
   async function handOk() {
     try {
-      const avatar = await uploadImg();
-      const param:IGroupInfo = {
-        id: Date.now().toString(),
-        groupName: getGroupName(),
-        brief: '',
-        avatar,
-        owner: userInfo?.id || '',
-        creator: userInfo?.id || '',
-        MemberIDs: getMemberIDs(),
-      };
-      mainBridge.server.groupSrv.create(param);
+      if (!groupInfo) {
+        // 创建
+        const avatar = await uploadImg();
+        const param:IGroupInfo = {
+          id: Date.now().toString(),
+          groupName: getGroupName(),
+          brief: '',
+          avatar,
+          owner: userInfo?.id || '',
+          creator: userInfo?.id || '',
+          memberIDs: getMemberIDs(),
+        };
+        mainBridge.server.groupSrv.create(param);
+      } else {
+        // 更新
+        groupInfo.memberIDs = getMemberIDs();
+        mainBridge.server.groupSrv.update(groupInfo);
+      }
     } catch (error) {
       console.error(error);
       mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'error', msg: '创建失败' });
