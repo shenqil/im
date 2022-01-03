@@ -82,10 +82,11 @@ const Msg:FC = function () {
       </div>
 
       {
-        showRightMenu && (
+        (showRightMenu && conversationInfo) && (
           <RightMenu
             groupInfo={groupInfo}
             friendInfo={friendInfo}
+            conversationInfo={conversationInfo}
             handleRightMenu={() => setShowRightMenu(!showRightMenu)}
           />
         )

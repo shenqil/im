@@ -14,7 +14,6 @@ export interface IUserSrv {
   cacheUserInfo(info:IUserBaseInfo):void
   getCacheUserInfo(ids:string[]):Promise<IUserBaseInfo[]>
 }
-
 export interface ILoginInfo {
   username:string,
   password:string,
@@ -91,6 +90,12 @@ class UserSrv implements IUserSrv {
   // ================================ 接口 ================================
 
   //  ================================ 缓存用户信息 =========================
+  private isObjectChanged(source:Object, comparison:object) {
+    const s = JSON.stringify(source);
+    const c = JSON.stringify({ ...source, ...comparison });
+    return s !== c;
+  }
+
   private userInfoQueue() {
     if (this.cacheUserInfoStatus || !this.cacheUserInfoQueue.length) {
       return;
@@ -112,6 +117,12 @@ class UserSrv implements IUserSrv {
   }
 
   cacheUserInfo(info:IUserBaseInfo) {
+    const oldInfo = this.allUserInfoList.get(info.id);
+    if (oldInfo && this.isObjectChanged(oldInfo, info)) {
+      // 存在且相等
+      return;
+    }
+
     this.allUserInfoList.set(info.id, info);
 
     const index = this.cacheUserInfoQueue.findIndex((item) => item.id === info.id);

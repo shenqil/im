@@ -51,10 +51,10 @@ class SQ3UserInfo extends SQ3Base implements ISQ3UserInfo {
   }
 
   async fetch(ids:string[]):Promise<IUserBaseInfo[]> {
-    const res = await this.sql(`SELECT * FROM ${this.tabelName} WHERE userId IN (?)`, ids.join(','), ESQ3Mode.all) as any;
-    console.log(res);
+    const pls = [...ids];
+    const res = await this.sql(`SELECT * FROM ${this.tabelName} WHERE userId IN (${pls.fill('?')})`, ids, ESQ3Mode.all) as any;
 
-    return [res];
+    return res.map((item:any) => JSON.parse(item.info));
   }
 }
 
