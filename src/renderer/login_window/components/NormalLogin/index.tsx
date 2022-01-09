@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import {
   Form, Input, Button, Checkbox, message,
@@ -52,7 +53,7 @@ const NormalLogin = function () {
       .catch((err) => {
         console.error(err);
       });
-  });
+  }, []);
 
   return (
     <div className={style['normal-login']}>

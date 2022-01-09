@@ -11,7 +11,8 @@ const App = function () {
     <Provider store={store}>
       <HashRouter>
         <Routes>
-          <Route element={<SideLayout />}>
+          <Route path="/" element={<div>未登录</div>} />
+          <Route path="logged" element={<SideLayout />}>
             <Route path="/" element={<Msg />} />
             <Route path="/addressBook" element={<AddressBook />} />
           </Route>

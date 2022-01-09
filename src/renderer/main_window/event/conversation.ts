@@ -1,4 +1,4 @@
-import { mainEvent, EMainEventKey, mainBridge } from '@renderer/public/ipcRenderer';
+import { mainEvent, EMainEventKey } from '@renderer/public/ipcRenderer';
 import { store } from '@renderer/main_window/store';
 import type { IConversationInfo } from '@main/modules/sqlite3/interface';
 import { changeConversationList, changeActivaId } from '@renderer/main_window/store/conversation';
@@ -12,5 +12,3 @@ mainEvent.on(EMainEventKey.ConversationChange, (list:IConversationInfo[]) => {
 mainEvent.on(EMainEventKey.ConversationaAtivaIdChange, (id:string) => {
   store.dispatch(changeActivaId(id));
 });
-mainBridge.server.conversationSrv.get();
-mainBridge.server.conversationSrv.getActivaId();

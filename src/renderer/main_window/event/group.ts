@@ -1,4 +1,4 @@
-import { mainEvent, EMainEventKey, mainBridge } from '@renderer/public/ipcRenderer';
+import { mainEvent, EMainEventKey } from '@renderer/public/ipcRenderer';
 import type { IGroupInfo } from '@main/modules/mqtt/interface';
 import { store } from '@renderer/main_window/store';
 import { changeGroupList } from '@renderer/main_window/store/group';
@@ -8,6 +8,5 @@ mainEvent.on(EMainEventKey.MyGroupChange, (list:IGroupInfo[]) => {
   console.log(list, 'groupList');
   store.dispatch(changeGroupList(list));
 });
-mainBridge.server.groupSrv.getMyGroupList();
 
 export default {};
