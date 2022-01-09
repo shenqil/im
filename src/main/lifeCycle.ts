@@ -22,6 +22,7 @@ export async function beforeLogin() {
  * 主界面已打开,已登录成功
  * */
 export async function afterLogin() {
+  console.log('afterLogin');
   await conversationSrv.get();
   await conversationSrv.getActivaId();
   await friendSrv.myFriendList();

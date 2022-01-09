@@ -18,14 +18,14 @@ const initialState: INavigationState = {
   list: [
     {
       name: '消息',
-      path: '/',
+      path: '/logged/msg',
       key: 'msg',
       icon: 'icon-xiaoxi',
       unreadCount: 0,
     },
     {
       name: '通讯录',
-      path: '/addressBook',
+      path: '/logged/addressBook',
       key: 'addressBook',
       icon: 'icon-tongxunlu',
       unreadCount: 0,
@@ -39,10 +39,10 @@ const initialState: INavigationState = {
     },
   ],
   activa: {
-    name: '消息',
+    name: 'none',
     path: '/',
-    key: 'msg',
-    icon: 'icon-xiaoxi',
+    key: 'none',
+    icon: '',
     unreadCount: 0,
   },
 };
@@ -59,10 +59,13 @@ export const navigationSlice = createSlice({
     },
     changeActivaWithKey(state, action:PayloadAction<string>) {
       const nav = state.list.find((item) => item.key === action.payload);
+
       // 不存在，或者当前已选中，直接返回
       if (!nav || state.activa.key === action.payload) {
         return state;
       }
+
+      window.history.pushState({ page_id: 1, user_id: 5 }, nav.path);
 
       return {
         ...state,

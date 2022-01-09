@@ -1,5 +1,7 @@
 /* eslint-disable class-methods-use-this */
+import { EMainEventKey } from '@main/ipcMain/eventInterface';
 import { beforeLogin, afterLogin } from '@main/lifeCycle';
+import ipcEvent from '@main/ipcMain/event';
 import mqtt from '../modules/mqtt/index';
 import wins from '../window/index';
 
@@ -36,6 +38,7 @@ class ConnectSrv implements IConnectSrv {
       for (const resolve of this.whenMainMenuList) {
         resolve();
       }
+      this.whenMainMenuList = [];
 
       afterLogin();
     }
@@ -56,6 +59,7 @@ class ConnectSrv implements IConnectSrv {
     await mqtt.connect.login(username, password);
     await this.whenMainMenuReady();
     wins.login.win?.hide();
+    ipcEvent.emit(EMainEventKey.RouteChange, 'msg');
     wins.main.win?.show();
     wins.main.win?.focus();
     afterLogin();
