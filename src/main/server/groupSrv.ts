@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import ipcEvent from '@main/ipcMain/event';
 import { EMainEventKey } from '@main/ipcMain/eventInterface';
+import conversationSrv from '@main/server/conversationSrv';
 import {
   IGroupInfo, IGroupMemberChangeParams,
 } from '../modules/mqtt/interface';
@@ -42,6 +43,10 @@ class GroupSrv implements IGroupSrv {
   // ======================= 接口 ============================
   async myGroupList():Promise<IGroupInfo[]> {
     const list = await mqtt.group.myGroupList();
+    // 更新会话
+    for (const groupItem of list) {
+      conversationSrv.updateWithGroupInfo(groupItem);
+    }
 
     this.changeGroups(list);
     // 监听事件
@@ -108,6 +113,7 @@ class GroupSrv implements IGroupSrv {
     const index = this.groups.findIndex((item) => item.id === groupItem.id);
     if (index !== -1) {
       this.groups.splice(index, 1, groupItem);
+      conversationSrv.updateWithGroupInfo(groupItem);
     } else {
       this.groups.push(groupItem);
     }

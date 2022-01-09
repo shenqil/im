@@ -4,6 +4,7 @@ import SQ3 from '@main/modules/sqlite3';
 import { IConversationInfo, EConversationType } from '@main/modules/sqlite3/conversation';
 import type { IFriendInfo, IGroupInfo } from '@main/modules/mqtt/interface';
 import { throttle } from 'throttle-debounce';
+import type { IUserBaseInfo } from '@main/modules/sqlite3/interface';
 import userSrv from './userSrv';
 
 export interface IConversationSrv {
@@ -15,6 +16,9 @@ export interface IConversationSrv {
   getActivaId():Promise<string>
   updateConversationInfo(info:IConversationInfo):Promise<unknown>
   removeConversationInfo(id:string):Promise<unknown>
+
+  updateWithUserInfo(userInfo:IUserBaseInfo):void
+  updateWithGroupInfo(groupInfo:IGroupInfo):void
 }
 
 class ConversationSrv implements IConversationSrv {
@@ -47,6 +51,24 @@ class ConversationSrv implements IConversationSrv {
     }
 
     return '';
+  }
+
+  updateWithUserInfo(userInfo:IUserBaseInfo) {
+    const conversation = this.list.find((item) => item.id === userInfo.id);
+    if (conversation) {
+      conversation.avatar = userInfo.avatar;
+      conversation.name = userInfo.realName;
+      this.set(this.list);
+    }
+  }
+
+  updateWithGroupInfo(groupInfo:IGroupInfo) {
+    const conversation = this.list.find((item) => item.id === groupInfo.id);
+    if (conversation) {
+      conversation.avatar = groupInfo.avatar;
+      conversation.name = groupInfo.groupName;
+      this.set(this.list);
+    }
   }
 
   async get():Promise<IConversationInfo[]> {

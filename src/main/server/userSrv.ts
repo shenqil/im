@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { IUserBaseInfo } from '@main/modules/sqlite3/interface';
+import conversationSrv from '@main/server/conversationSrv';
 import mqtt from '../modules/mqtt';
 import type { IUserInfo, IToken } from '../modules/mqtt/interface';
 import SQ3 from '../modules/sqlite3';
@@ -124,6 +125,7 @@ class UserSrv implements IUserSrv {
     }
 
     this.allUserInfoList.set(info.id, info);
+    conversationSrv.updateWithUserInfo(info);
 
     const index = this.cacheUserInfoQueue.findIndex((item) => item.id === info.id);
     if (index !== -1) {

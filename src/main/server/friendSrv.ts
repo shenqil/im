@@ -2,6 +2,7 @@
 /* eslint-disable class-methods-use-this */
 import ipcEvent from '@main/ipcMain/event';
 import { EMainEventKey } from '@main/ipcMain/eventInterface';
+import conversationSrv from '@main/server/conversationSrv';
 import { IFriendInfo, IQuasiFriend, EFriendStatus } from '../modules/mqtt/interface';
 import mqtt from '../modules/mqtt/index';
 import userSrv from './userSrv';
@@ -105,6 +106,9 @@ class FriendSrv implements IFriendSrv {
     const list = await mqtt.friend.myFriendList();
     this.changeFriends(list);
 
+    for (const friendInfo of list) {
+      conversationSrv.updateWithUserInfo(friendInfo);
+    }
     // 监听事件
     mqtt.friend.onFriendChange(this.onFriendChange.bind(this));
     return list;
