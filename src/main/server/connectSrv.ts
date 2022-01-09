@@ -39,8 +39,6 @@ class ConnectSrv implements IConnectSrv {
         resolve();
       }
       this.whenMainMenuList = [];
-
-      afterLogin();
     }
   }
 
@@ -62,7 +60,7 @@ class ConnectSrv implements IConnectSrv {
     ipcEvent.emit(EMainEventKey.RouteChange, 'msg');
     wins.main.win?.show();
     wins.main.win?.focus();
-    afterLogin();
+    await afterLogin();
   }
 
   /**
