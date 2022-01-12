@@ -1,9 +1,12 @@
+/* eslint-disable no-continue */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { ChangeEvent, useState, useEffect } from 'react';
 import { Input, Radio, Button } from 'antd';
 import { mainBridge, mainEvent, EMainEventKey } from '@renderer/public/ipcRenderer';
 import defaultImg from '@renderer/public/img/avatar.png';
-import type { IFriendInfo, IGroupInfo, IUserInfo } from '@main/modules/mqtt/interface';
+import type {
+  IFriendInfo, IGroupInfo, IUserInfo, IGroupMemberInfo,
+} from '@main/modules/mqtt/interface';
 import {
   CloseCircleOutlined,
 } from '@ant-design/icons';
@@ -52,6 +55,10 @@ const AddMember = function () {
   const [disable, setDisable] = useState<boolean>(false);
   const [groupInfo, setGroupInfo] = useState<IGroupInfo | undefined>(undefined);
 
+  // 增减成员使用
+  const [groupOldMember, setGroupOldMember] = useState<IGroupMemberInfo[]>([]); // 得到最开始的群群成员
+
+  // 数据初始化
   async function init() {
     const fList = await mainBridge.server.friendSrv.getMyFriendList();
     setAllList(fList);
@@ -67,9 +74,12 @@ const AddMember = function () {
       const ids = gInfo.memberIDs.filter((id) => id !== uInfo.id);
       const list = await mainBridge.server.userSrv.getCacheUserInfo(ids);
       setSelectList(list);
+      setGroupOldMember(list.map((item) => ({
+        id: item.id,
+        name: item.realName,
+      })));
     }
   }
-
   useEffect(() => {
     init()
       .catch((err) => {
@@ -77,6 +87,7 @@ const AddMember = function () {
       });
   }, []);
 
+  // 监听选中的群成员，不得少于1
   useEffect(() => {
     if (selectList.length === 0) {
       setDisable(true);
@@ -85,19 +96,14 @@ const AddMember = function () {
     }
   }, [selectList]);
 
-  useEffect(() => {
-    console.log(userInfo?.id, selectList);
-    const list = selectList.filter((item) => !userInfo?.id || item.id !== userInfo?.id);
-    console.log(list);
-    setSelectList([...list]);
-  }, [userInfo]);
-
+  // 根据成员拼接群名称
   function getGroupName() {
     const nameAry = selectList.map((item) => item.realName).splice(0, 3);
     nameAry.unshift(userInfo?.realName || '');
     return nameAry.join(',');
   }
 
+  // 创建一个图片元素
   function createImage(id:string):Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -113,6 +119,7 @@ const AddMember = function () {
     });
   }
 
+  // 拼接群图片
   function syntImages(ids:string[]):Promise<string> {
     const canvas = document.createElement('canvas');
     canvas.width = 120;
@@ -142,6 +149,7 @@ const AddMember = function () {
     });
   }
 
+  // 上传图片
   async function uploadImg():Promise<string> {
     const ids = selectList.map((item) => item.avatar);
     ids.unshift(userInfo?.avatar || '');
@@ -150,12 +158,53 @@ const AddMember = function () {
     return mainBridge.server.fileSrv.upload(b64);
   }
 
+  // 得到所有群成员
   function getMemberIDs() {
     const idAry = selectList.map((item) => item.id);
     idAry.unshift(userInfo?.id || '');
     return idAry;
   }
 
+  // 变动群成员时，计算添加和删除的成员id
+  function compareGroupMembers():{ addList:IGroupMemberInfo[], delList:IGroupMemberInfo[] } {
+    const addList = [];
+    const delList = [];
+
+    for (const newItem of selectList) {
+      let flag = false;
+      for (const oldItem of groupOldMember) {
+        if (newItem.id === oldItem.id) {
+          flag = true;
+          continue;
+        }
+      }
+
+      if (!flag) {
+        addList.push({
+          name: newItem.realName,
+          id: newItem.id,
+        });
+      }
+    }
+
+    for (const oldItem of groupOldMember) {
+      let flag = false;
+      for (const newItem of selectList) {
+        if (newItem.id === oldItem.id) {
+          flag = true;
+          continue;
+        }
+      }
+
+      if (!flag) {
+        delList.push(oldItem);
+      }
+    }
+
+    return { addList, delList };
+  }
+
+  // 提交更改
   async function handOk() {
     try {
       if (!groupInfo) {
@@ -174,9 +223,15 @@ const AddMember = function () {
         mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'success', msg: '群组创建成功' });
       } else {
         // 更新
-        groupInfo.memberIDs = getMemberIDs();
-        await mainBridge.server.groupSrv.update(groupInfo);
-        mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'success', msg: '群组更新成功' });
+        const { addList, delList } = compareGroupMembers();
+        if (addList.length) {
+          await mainBridge.server.groupSrv.addMembers(groupInfo.id, addList);
+        }
+
+        if (delList.length) {
+          await mainBridge.server.groupSrv.delMembers(groupInfo.id, delList);
+        }
+        mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'success', msg: '群组成员成功' });
       }
     } catch (error) {
       console.error(error);
@@ -185,10 +240,12 @@ const AddMember = function () {
     mainBridge.wins.modal.hidden();
   }
 
+  // 取消更改
   function handCancel() {
     mainBridge.wins.modal.hidden();
   }
 
+  // 根据输入框，实时过滤列表
   function onChange(e:ChangeEvent<HTMLInputElement>) {
     const { value } = e.target;
     const list:IFriendInfo[] = [];
@@ -205,6 +262,7 @@ const AddMember = function () {
     setFriendList(list);
   }
 
+  // 添加群成员
   function handleClick(member:IFriendInfo) {
     const index = selectList.findIndex((item) => item.id === member.id);
     if (index !== -1) {
@@ -215,6 +273,7 @@ const AddMember = function () {
     setSelectList([...selectList]);
   }
 
+  // 是否被选中
   function isChecked(member:IFriendInfo) {
     const index = selectList.findIndex((item) => item.id === member.id);
     if (index !== -1) {

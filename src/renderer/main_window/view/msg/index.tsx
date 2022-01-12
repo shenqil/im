@@ -36,17 +36,6 @@ const Msg:FC = function () {
     }
   }, [conversationInfo, groupList, friendList]);
 
-  function handleHideRightMenu() {
-    setShowRightMenu(false);
-  }
-
-  useEffect(() => {
-    window.addEventListener('click', handleHideRightMenu);
-    return () => {
-      window.removeEventListener('click', handleHideRightMenu);
-    };
-  }, []);
-
   return (
     <div className={styles.msg}>
       <div className={styles.msg__left}>

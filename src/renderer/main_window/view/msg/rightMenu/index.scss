@@ -104,6 +104,14 @@
       align-items: center;
     }
   }
+
+  &__bottom{
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+  }
 }
 
 .member-item{

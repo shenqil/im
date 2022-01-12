@@ -3,9 +3,10 @@ import ipcEvent from '@main/ipcMain/event';
 import { EMainEventKey } from '@main/ipcMain/eventInterface';
 import conversationSrv from '@main/server/conversationSrv';
 import {
-  IGroupInfo, IGroupMemberChangeParams,
+  IGroupInfo, IGroupMemberInfo, IGroupMemberChangeParams,
 } from '../modules/mqtt/interface';
 import mqtt from '../modules/mqtt/index';
+import userSrv from './userSrv';
 
 export interface IGroupSrv {
   getMyGroupList():Promise<IGroupInfo[]>,
@@ -13,9 +14,9 @@ export interface IGroupSrv {
   create(params:IGroupInfo):Promise<unknown>
   remove(groupId:string):Promise<unknown>
   update(params:IGroupInfo):Promise<unknown>
-  addMembers(params:IGroupMemberChangeParams):Promise<unknown>
-  delMembers(params:IGroupMemberChangeParams):Promise<unknown>
-  exit(params:IGroupMemberChangeParams):Promise<unknown>
+  addMembers(groupId:string, members:IGroupMemberInfo[]):Promise<unknown>
+  delMembers(groupId:string, members:IGroupMemberInfo[]):Promise<unknown>
+  exit(groupId:string):Promise<unknown>
 }
 
 class GroupSrv implements IGroupSrv {
@@ -67,16 +68,37 @@ class GroupSrv implements IGroupSrv {
     return mqtt.group.update(params);
   }
 
-  async addMembers(params:IGroupMemberChangeParams):Promise<unknown> {
-    return mqtt.group.addMembers(params);
+  async addMembers(groupId:string, members:IGroupMemberInfo[]):Promise<unknown> {
+    const userInfo = await userSrv.getUserInfo();
+    return mqtt.group.addMembers({
+      fromId: userInfo.id,
+      fromName: userInfo.realName,
+      groupId,
+      list: members,
+    });
   }
 
-  async delMembers(params:IGroupMemberChangeParams):Promise<unknown> {
-    return mqtt.group.delMembers(params);
+  async delMembers(groupId:string, members:IGroupMemberInfo[]):Promise<unknown> {
+    const userInfo = await userSrv.getUserInfo();
+    return mqtt.group.delMembers({
+      fromId: userInfo.id,
+      fromName: userInfo.realName,
+      groupId,
+      list: members,
+    });
   }
 
-  async exit(params:IGroupMemberChangeParams):Promise<unknown> {
-    return mqtt.group.exit(params);
+  async exit(groupId:string):Promise<unknown> {
+    const userInfo = await userSrv.getUserInfo();
+    return mqtt.group.exit({
+      fromId: userInfo.id,
+      fromName: userInfo.realName,
+      groupId,
+      list: [{
+        name: userInfo.realName,
+        id: userInfo.id,
+      }],
+    });
   }
   // ======================= 接口 ============================
 
