@@ -31,11 +31,26 @@ const BusinessCard = function () {
     isFriend: false,
   });
 
+  async function init() {
+    const cardId = await mainBridge.wins.modal.getCardId();
+    const friendList = await mainBridge.server.friendSrv.getMyFriendList();
+    const infos = await mainBridge.server.userSrv.getCacheUserInfo([cardId], true);
+
+    if (!infos.length) {
+      return;
+    }
+
+    const info = infos[0];
+    const isFriend = friendList.findIndex((item) => item.id === info.id) !== -1;
+
+    setCardInfo({
+      ...info,
+      isFriend,
+    });
+  }
+
   useEffect(() => {
-    mainBridge.wins.modal.getFriendInfo()
-      .then((res) => {
-        setCardInfo(res);
-      });
+    init();
   }, []);
 
   async function addFriend() {

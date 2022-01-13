@@ -92,7 +92,7 @@ const QuasiFriendItem = function (props:IQuasiFriendItemProps) {
   return (
     <div className={styles['quasi-friend-item']}>
       <div className={styles['quasi-friend-item__info']}>
-        <FriendItem friendInfo={quasiFriend.info} isFriend={false} isRightMenu={false} />
+        <FriendItem friendInfo={quasiFriend.info} isRightMenu={false} />
       </div>
 
       <div className={`scroll ${styles['quasi-friend-item__action']}`}>

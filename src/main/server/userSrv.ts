@@ -13,7 +13,7 @@ export interface IUserSrv {
   saveUserLoginInfo(params:ILoginInfo):Promise<unknown>
 
   cacheUserInfo(info:IUserBaseInfo):void
-  getCacheUserInfo(ids:string[]):Promise<IUserBaseInfo[]>
+  getCacheUserInfo(ids:string[], noCache?:boolean):Promise<IUserBaseInfo[]>
 }
 export interface ILoginInfo {
   username:string,
@@ -136,49 +136,53 @@ class UserSrv implements IUserSrv {
     this.userInfoQueue();
   }
 
-  async getCacheUserInfo(ids:string[]):Promise<IUserBaseInfo[]> {
+  async getCacheUserInfo(ids:string[], noCache = false):Promise<IUserBaseInfo[]> {
     const resultInfo = [];
     // 分三步，第一步取内存，第二步取本地数据库，第三步取服务器
     const overIds1 = [];
-    // 1.取内存
-    for (const id of ids) {
-      const info = this.allUserInfoList.get(id);
-      if (info) {
-        resultInfo.push(info);
-      } else {
-        overIds1.push(id);
-      }
-    }
-    if (!overIds1.length) {
-      return resultInfo;
-    }
-
-    // 2.取本地数据库
     const overIds2 = [];
-    const sq3List = await SQ3.userInfo.fetch([...overIds1]);
-    // 2.1缓存
-    for (const iterator of sq3List) {
-      this.allUserInfoList.set(iterator.id, iterator);
-      resultInfo.push(iterator);
-    }
-    // 2.2找出剩余的
-    for (const id of overIds1) {
-      const index = sq3List.findIndex((item) => item.id === id);
-      if (index === -1) {
-        overIds2.push(id);
+
+    if (!noCache) {
+    // 1.取内存
+      for (const id of ids) {
+        const info = this.allUserInfoList.get(id);
+        if (info) {
+          resultInfo.push(info);
+        } else {
+          overIds1.push(id);
+        }
       }
-    }
-    if (!overIds2.length) {
-      return resultInfo;
+      if (!overIds1.length) {
+        return resultInfo;
+      }
+
+      // 2.取本地数据库
+      const sq3List = await SQ3.userInfo.fetch([...overIds1]);
+      // 2.1缓存
+      for (const iterator of sq3List) {
+        this.allUserInfoList.set(iterator.id, iterator);
+        resultInfo.push(iterator);
+      }
+      // 2.2找出剩余的
+      for (const id of overIds1) {
+        const index = sq3List.findIndex((item) => item.id === id);
+        if (index === -1) {
+          overIds2.push(id);
+        }
+      }
+      if (!overIds2.length) {
+        return resultInfo;
+      }
     }
 
     // 3.取服务器
-    const serveList = await this.getUserBaseInfo(overIds2);
+    const serveList = await this.getUserBaseInfo(noCache ? ids : overIds2);
     // 3.1缓存
     for (const iterator of serveList) {
       this.cacheUserInfo(iterator);
       resultInfo.push(iterator);
     }
+    console.log(resultInfo, 'resultInfo');
 
     return resultInfo;
   }

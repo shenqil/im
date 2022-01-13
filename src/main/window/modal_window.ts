@@ -1,4 +1,3 @@
-import { IFriendInfoSrv } from '@main/server/interface';
 import type { IGroupInfo } from '@main/modules/mqtt/interface';
 import { screen } from 'electron';
 import ipcMainEvent from '@main/ipcMain/event';
@@ -15,14 +14,14 @@ export interface IModalClick {
 export interface IBusinessCardParams{
   point?:IModalClick
   isCursorPoint?:boolean
-  friendInfo:IFriendInfoSrv
+  cardId:string
 }
 
 export interface IModalWindow extends IBaseWIN {
   hidden():void
 
   showBusinessCard(params:IBusinessCardParams):void
-  getFriendInfo():Promise<IFriendInfoSrv>
+  getCardId():Promise<string>
 
   showAddFriend():void
 
@@ -40,7 +39,7 @@ export class ModalWindow extends BaseWIN implements IModalWindow {
   private routePath:string; // 路由路径
 
   // 名片专用
-  private friendInfo:IFriendInfoSrv;
+  private cardId:string;
 
   // 添加群成员专用
   private groupInfo:IGroupInfo | undefined;
@@ -56,15 +55,7 @@ export class ModalWindow extends BaseWIN implements IModalWindow {
     this.height = 300;
     this.routePath = '/';
 
-    this.friendInfo = {
-      id: '',
-      avatar: '',
-      userName: '',
-      realName: '',
-      phone: '',
-      email: '',
-      isFriend: false,
-    };
+    this.cardId = '';
   }
 
   openWin() {
@@ -122,7 +113,7 @@ export class ModalWindow extends BaseWIN implements IModalWindow {
     this.height = 300;
 
     // 缓存传入的数据
-    this.friendInfo = params.friendInfo;
+    this.cardId = params.cardId;
 
     // 计算名片显示的位置
     if (params.point) {
@@ -146,8 +137,8 @@ export class ModalWindow extends BaseWIN implements IModalWindow {
     this.show();
   }
 
-  async getFriendInfo() {
-    return this.friendInfo;
+  async getCardId() {
+    return this.cardId;
   }
   // ---------------------------- 名片弹窗逻辑 -----------------------------------------
 

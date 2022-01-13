@@ -17,7 +17,7 @@ const FrequentContacts = function () {
         {
           friendList.map((item) => (
             <div key={item.id} className={styles['frequent-contacts__container-item']}>
-              <FriendItem friendInfo={item} isFriend isRightMenu />
+              <FriendItem friendInfo={item} isRightMenu />
             </div>
           ))
         }

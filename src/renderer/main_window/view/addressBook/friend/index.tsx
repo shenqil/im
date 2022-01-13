@@ -24,7 +24,7 @@ const FriendGroupItem = function (props:IFriendGroupItemProps) {
             key={item.id}
             className={styles['friend-group-item__container-item']}
           >
-            <FriendItem friendInfo={item} isFriend isRightMenu />
+            <FriendItem friendInfo={item} isRightMenu />
           </div>
         ))}
       </div>

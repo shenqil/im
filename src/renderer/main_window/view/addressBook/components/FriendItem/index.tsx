@@ -7,11 +7,10 @@ import styles from './index.scss';
 
 interface IFriendItem {
   friendInfo:IFriendInfo
-  isFriend:boolean,
   isRightMenu:boolean
 }
 const FriendItem = function (props:IFriendItem) {
-  const { friendInfo, isFriend, isRightMenu } = props;
+  const { friendInfo, isRightMenu } = props;
 
   function sendMsg() {
     mainBridge.server.conversationSrv.gotoConversation(friendInfo);
@@ -20,10 +19,7 @@ const FriendItem = function (props:IFriendItem) {
   function showBusinessCard(isCursorPoint = true) {
     mainBridge.wins.modal.showBusinessCard({
       isCursorPoint,
-      friendInfo: {
-        ...friendInfo,
-        isFriend,
-      },
+      cardId: friendInfo.id,
     });
   }
 

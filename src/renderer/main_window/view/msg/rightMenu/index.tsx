@@ -27,6 +27,7 @@ const MemberItem:FC<IMemberItemProps> = function (props) {
 
   const { confirm } = Modal;
 
+  // 删除成员
   function handleDel() {
     confirm({
       icon: <ExclamationCircleOutlined />,
@@ -49,9 +50,22 @@ const MemberItem:FC<IMemberItemProps> = function (props) {
       },
     });
   }
+
+  // 点击头像显示名片
+  function handleAvatar() {
+    mainBridge.wins.modal.showBusinessCard({
+      isCursorPoint: true,
+      cardId: memberInfo.id,
+    });
+  }
+
   return (
     <div className={styles['member-item']}>
-      <div className={styles['member-item__avatar']}>
+      <div
+        className={styles['member-item__avatar']}
+        onClick={() => handleAvatar()}
+        aria-hidden="true"
+      >
         <Avatar url={memberInfo.avatar} />
       </div>
 

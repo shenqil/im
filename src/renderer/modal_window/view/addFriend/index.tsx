@@ -16,7 +16,7 @@ const AddFriend = function () {
         await mainBridge.wins.modal.hidden();
         await mainBridge.wins.modal.showBusinessCard({
           isCursorPoint: false,
-          friendInfo: res,
+          cardId: res.id,
         });
       }
     } catch (error) {
