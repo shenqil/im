@@ -62,6 +62,9 @@ class UserSrv implements IUserSrv {
   }
 
   private async getUserBaseInfo(ids:string[]):Promise<IUserBaseInfo[]> {
+    if (!ids.length) {
+      return [];
+    }
     return mqtt.user.getFriendInfo(ids);
   }
 
@@ -182,7 +185,6 @@ class UserSrv implements IUserSrv {
       this.cacheUserInfo(iterator);
       resultInfo.push(iterator);
     }
-    console.log(resultInfo, 'resultInfo');
 
     return resultInfo;
   }
