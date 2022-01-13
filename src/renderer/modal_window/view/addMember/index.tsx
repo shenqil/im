@@ -5,7 +5,7 @@ import { Input, Radio, Button } from 'antd';
 import { mainBridge, mainEvent, EMainEventKey } from '@renderer/public/ipcRenderer';
 import defaultImg from '@renderer/public/img/avatar.png';
 import type {
-  IFriendInfo, IGroupInfo, IUserInfo, IGroupMemberInfo,
+  IFriendInfo, IGroupInfo, IUserInfo,
 } from '@main/modules/mqtt/interface';
 import {
   CloseCircleOutlined,
@@ -55,9 +55,6 @@ const AddMember = function () {
   const [disable, setDisable] = useState<boolean>(false);
   const [groupInfo, setGroupInfo] = useState<IGroupInfo | undefined>(undefined);
 
-  // 增减成员使用
-  const [groupOldMember, setGroupOldMember] = useState<IGroupMemberInfo[]>([]); // 得到最开始的群群成员
-
   // 数据初始化
   async function init() {
     const fList = await mainBridge.server.friendSrv.getMyFriendList();
@@ -72,12 +69,10 @@ const AddMember = function () {
 
     if (gInfo) {
       const ids = gInfo.memberIDs.filter((id) => id !== uInfo.id);
-      const list = await mainBridge.server.userSrv.getCacheUserInfo(ids);
-      setSelectList(list);
-      setGroupOldMember(list.map((item) => ({
-        id: item.id,
-        name: item.realName,
-      })));
+
+      // 查找不在群组列表的好友
+      const fl = fList.filter((f) => !ids.includes(f.id));
+      setFriendList(fl);
     }
   }
   useEffect(() => {
@@ -165,45 +160,6 @@ const AddMember = function () {
     return idAry;
   }
 
-  // 变动群成员时，计算添加和删除的成员id
-  function compareGroupMembers():{ addList:IGroupMemberInfo[], delList:IGroupMemberInfo[] } {
-    const addList = [];
-    const delList = [];
-
-    for (const newItem of selectList) {
-      let flag = false;
-      for (const oldItem of groupOldMember) {
-        if (newItem.id === oldItem.id) {
-          flag = true;
-          continue;
-        }
-      }
-
-      if (!flag) {
-        addList.push({
-          name: newItem.realName,
-          id: newItem.id,
-        });
-      }
-    }
-
-    for (const oldItem of groupOldMember) {
-      let flag = false;
-      for (const newItem of selectList) {
-        if (newItem.id === oldItem.id) {
-          flag = true;
-          continue;
-        }
-      }
-
-      if (!flag) {
-        delList.push(oldItem);
-      }
-    }
-
-    return { addList, delList };
-  }
-
   // 提交更改
   async function handOk() {
     try {
@@ -222,16 +178,16 @@ const AddMember = function () {
         await mainBridge.server.groupSrv.create(param);
         mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'success', msg: '群组创建成功' });
       } else {
-        // 更新
-        const { addList, delList } = compareGroupMembers();
-        if (addList.length) {
-          await mainBridge.server.groupSrv.addMembers(groupInfo.id, addList);
-        }
-
-        if (delList.length) {
-          await mainBridge.server.groupSrv.delMembers(groupInfo.id, delList);
-        }
-        mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'success', msg: '群组成员成功' });
+        // 增加成员
+        await mainBridge.server.groupSrv
+          .addMembers(
+            groupInfo.id,
+            selectList.map((item) => ({
+              name: item.realName,
+              id: item.id,
+            })),
+          );
+        mainEvent.emit(EMainEventKey.UnifiedPrompt, { type: 'success', msg: '群组添加成员成功' });
       }
     } catch (error) {
       console.error(error);

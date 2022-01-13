@@ -2,10 +2,10 @@
 import React, { FC, useEffect, useState } from 'react';
 import type { IGroupInfo, IFriendInfo } from '@main/modules/mqtt/interface';
 import type { IConversationInfo, IUserBaseInfo } from '@main/modules/sqlite3/interface';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, ExclamationCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import Avatar from '@renderer/main_window/components/Avatar';
 import {
-  Switch, message, Input, Button,
+  Switch, message, Input, Button, Modal, Tag,
 } from 'antd';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import { useAppSelector } from '@renderer/main_window/store/hooks';
@@ -18,10 +18,37 @@ enum EConversationType {
 }
 
 interface IMemberItemProps{
-  memberInfo:IUserBaseInfo
+  conversationInfo:IConversationInfo,
+  memberInfo:IUserBaseInfo,
+  isOwner:boolean
 }
 const MemberItem:FC<IMemberItemProps> = function (props) {
-  const { memberInfo } = props;
+  const { memberInfo, isOwner, conversationInfo } = props;
+
+  const { confirm } = Modal;
+
+  function handleDel() {
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: `确认从群组 "${conversationInfo.name}" 中删除成员: "${memberInfo.realName}" !`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        mainBridge.server.groupSrv
+          .delMembers(conversationInfo.id, [{
+            name: memberInfo.realName,
+            id: memberInfo.id,
+          }])
+          .then(() => {
+            message.success(`群成员: "${memberInfo.realName}" 已删除!`);
+          })
+          .catch((err) => {
+            console.error(err);
+            message.success(`群成员: "${memberInfo.realName}" 删除失败!`);
+          });
+      },
+    });
+  }
   return (
     <div className={styles['member-item']}>
       <div className={styles['member-item__avatar']}>
@@ -31,6 +58,20 @@ const MemberItem:FC<IMemberItemProps> = function (props) {
       <div className={styles['member-item__name']}>
         {memberInfo.realName}
       </div>
+
+      {/* 群主才能删除人员 */}
+      {
+        isOwner && (
+        <div
+          className={styles['member-item__close']}
+          onClick={() => handleDel()}
+          aria-hidden="true"
+        >
+          <CloseCircleOutlined />
+        </div>
+        )
+      }
+
     </div>
   );
 };
@@ -50,6 +91,9 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
   const [groupNameEdit, setGroupNameEdit] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [isOwner, setIsOwner] = useState(false);
+
+  const { confirm } = Modal;
+
   // 置顶
   function handlePlacedTop() {
     const newConversationInfo = { ...conversationInfo };
@@ -125,38 +169,42 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
 
   // 删除群组
   function removeGroup() {
-    mainBridge.server.groupSrv.remove(conversationInfo.id)
-      .then(() => {
-        message.success('群组已解散!');
-      })
-      .catch((err) => {
-        console.error(err);
-        message.success('解散群组时，出现异常错误!');
-      });
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: '确认解散群组!',
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        mainBridge.server.groupSrv.remove(conversationInfo.id)
+          .then(() => {
+            message.success('群组已解散!');
+          })
+          .catch((err) => {
+            console.error(err);
+            message.success('解散群组时，出现异常错误!');
+          });
+      },
+    });
   }
 
   // 退出群组
   function exitGroup() {
-    mainBridge.server.groupSrv.exit(conversationInfo.id)
-      .then(() => {
-        message.success('群组已解散!');
-      })
-      .catch((err) => {
-        console.error(err);
-        message.success('退出群组时，出现异常错误!');
-      });
-  }
-
-  // 删除好友
-  function removeFriend() {
-    mainBridge.server.friendSrv.remove(conversationInfo.id)
-      .then(() => {
-        message.success('好友已删除!');
-      })
-      .catch((err) => {
-        console.error(err);
-        message.success('删除好友时，出现异常错误!');
-      });
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: '确认退出群组!',
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        mainBridge.server.groupSrv.exit(conversationInfo.id)
+          .then(() => {
+            message.success('群组已解散!');
+          })
+          .catch((err) => {
+            console.error(err);
+            message.success('退出群组时，出现异常错误!');
+          });
+      },
+    });
   }
 
   function domClick(ev:MouseEvent) {
@@ -242,11 +290,23 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
             }
 
           </div>
+
+          <div className={styles['right-menu__header-tips']}>
+            {
+              conversationInfo.type === EConversationType.group && !groupInfo
+              && <Tag>您已不再当前群组，或者当前群组已解散</Tag>
+            }
+
+            {
+              conversationInfo.type === EConversationType.single && !friendInfo
+              && <Tag>对方已不在您的好友列表中</Tag>
+            }
+          </div>
         </div>
 
         {/* 群成员 */}
         {
-          isOwner && groupInfo
+          groupInfo
           && (
             <div className={styles['right-menu__member']}>
               <div className={styles['right-menu__member-title']}>
@@ -264,7 +324,14 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
 
               <div className={styles['right-menu__member-container']}>
                 {
-                  memberList.map((item) => <MemberItem key={item.id} memberInfo={item} />)
+                  memberList.map((item) => (
+                    <MemberItem
+                      key={item.id}
+                      isOwner={isOwner}
+                      conversationInfo={conversationInfo}
+                      memberInfo={item}
+                    />
+                  ))
                 }
               </div>
             </div>
@@ -302,25 +369,16 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
 
         {/* 删除区域 */}
         <div className={styles['right-menu__bottom']}>
-
           {
-            conversationInfo.type === EConversationType.single
+            groupInfo
             && (
-              <Button size="large" onClick={() => removeFriend()}>删除好友</Button>
-            )
-          }
-
-          {
-            conversationInfo.type === EConversationType.group
-            && isOwner && (
-              <Button size="large" onClick={() => removeGroup()}>解散群组</Button>
-            )
-          }
-
-          {
-            conversationInfo.type === EConversationType.group
-            && !isOwner && (
-              <Button size="large" onClick={() => exitGroup()}>退出群组</Button>
+              <Button
+                className={styles['right-menu__bottom-btn']}
+                size="large"
+                onClick={() => (isOwner ? removeGroup() : exitGroup())}
+              >
+                {isOwner ? '解散群组' : '退出群组'}
+              </Button>
             )
           }
         </div>

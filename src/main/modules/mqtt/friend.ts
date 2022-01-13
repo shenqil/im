@@ -77,6 +77,10 @@ async function myFriendList():Promise<Array<IFriendInfo>> {
     },
   }) as string;
 
+  if (res === 'null') {
+    return [];
+  }
+
   const { Data } = JSON.parse(res);
 
   return Data || [];
@@ -94,6 +98,10 @@ async function quasiFriendList() {
       retain: false,
     },
   }) as string;
+
+  if (res === 'null') {
+    return [];
+  }
 
   const { Data } = JSON.parse(res);
 

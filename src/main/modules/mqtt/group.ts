@@ -52,6 +52,10 @@ async function myGroupList():Promise<IGroupInfo[]> {
     },
   }) as string;
 
+  if (res === 'null') {
+    return [];
+  }
+
   const { Data } = JSON.parse(res);
 
   return Data || [];

@@ -259,14 +259,13 @@ class MQTTConnect implements IMQTTConnect {
     const topicAry = topic.split('/');
     // 检查主题固定头
     if (topicAry.length === 0 || topicAry[0] !== this.clientPrefix) {
-      console.error('主题固定头不正确');
+      console.error('主题固定头不正确', topic, message.toString());
       return;
     }
     topicAry.shift();
     // 检查消息接收人
     if (topicAry.length === 0
       || (topicAry[0] !== this.getUserID && topicAry[0] !== this.username)) {
-      console.error('接收人不属于自己');
       return;
     }
     topicAry.shift();
