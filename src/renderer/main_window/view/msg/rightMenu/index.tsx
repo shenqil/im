@@ -20,10 +20,13 @@ enum EConversationType {
 interface IMemberItemProps{
   conversationInfo:IConversationInfo,
   memberInfo:IUserBaseInfo,
-  isOwner:boolean
+  isOwner:boolean,
+  isSelf:boolean
 }
 const MemberItem:FC<IMemberItemProps> = function (props) {
-  const { memberInfo, isOwner, conversationInfo } = props;
+  const {
+    memberInfo, isOwner, conversationInfo, isSelf,
+  } = props;
 
   const { confirm } = Modal;
 
@@ -53,6 +56,9 @@ const MemberItem:FC<IMemberItemProps> = function (props) {
 
   // 点击头像显示名片
   function handleAvatar() {
+    if (isSelf) {
+      return;
+    }
     mainBridge.wins.modal.showBusinessCard({
       isCursorPoint: true,
       cardId: memberInfo.id,
@@ -75,7 +81,7 @@ const MemberItem:FC<IMemberItemProps> = function (props) {
 
       {/* 群主才能删除人员 */}
       {
-        isOwner && (
+        isOwner && !isSelf && (
         <div
           className={styles['member-item__close']}
           onClick={() => handleDel()}
@@ -342,6 +348,7 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
                     <MemberItem
                       key={item.id}
                       isOwner={isOwner}
+                      isSelf={item.id === userInfo?.id}
                       conversationInfo={conversationInfo}
                       memberInfo={item}
                     />

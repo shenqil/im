@@ -31,11 +31,13 @@ const BusinessCard = function () {
     isFriend: false,
   });
   const [fileServer] = useState(window.domainConfig.fileServer);
+  const [isSelf, setIsSelf] = useState(false);
 
   async function init() {
     const cardId = await mainBridge.wins.modal.getCardId();
     const friendList = await mainBridge.server.friendSrv.getMyFriendList();
     const infos = await mainBridge.server.userSrv.getCacheUserInfo([cardId], true);
+    const userInfo = await mainBridge.server.userSrv.getUserInfo();
 
     if (!infos.length) {
       return;
@@ -48,6 +50,10 @@ const BusinessCard = function () {
       ...info,
       isFriend,
     });
+
+    if (userInfo.id === info.id) {
+      setIsSelf(true);
+    }
   }
 
   useEffect(() => {
@@ -98,7 +104,7 @@ const BusinessCard = function () {
       </div>
 
       <div className={styles['business-card__footer']}>
-        {cardInfo.isFriend
+        {cardInfo.isFriend || isSelf
           ? (
             <>
               <i className={`iconfont icon-hanhan-01-01 ${styles['business-card__footer-icon']}`} />
