@@ -31,5 +31,11 @@ module.exports = {
   },
   resolve: {
     extensions: [".js", ".ts", ".jsx", ".tsx", ".json"],
+    alias: {
+      "@src/":resolve("./src"),
+      "@main": resolve("./src/main"),
+      "@preload": resolve("./src/preload"),
+      "@renderer": resolve("./src/renderer")
+    },
   },
 };

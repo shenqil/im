@@ -36,12 +36,6 @@ module.exports = merge(base, {
   },
   resolve: {
     // 配置省略文件路径的后缀名
-    extensions: [".tsx", ".ts", ".js"],
-    alias: {
-      "@/":resolve("./src/"),
-      "@main": resolve("./src/main"),
-      "@preload": resolve("./src/preload"),
-      "@renderer": resolve("./src/renderer")
-    },
+    extensions: [".tsx", ".ts", ".js"]
   },
 });

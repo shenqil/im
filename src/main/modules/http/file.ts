@@ -1,6 +1,7 @@
 import { Upload } from 'tus-js-client';
 
 import { Readable } from 'stream';
+import config from '@main/config';
 
 export class Base64Readable extends Readable {
   private b64Offset:number;
@@ -50,8 +51,9 @@ export interface IFile {
  * */
 export async function uploadFile(file:IUploadFileInfo) {
   return new Promise((resolve, reject) => {
+    const { fileServer } = config.sysConfig.domain;
     const upload = new Upload(file.stream, {
-      endpoint: 'http://localhost:8080/files/files/',
+      endpoint: fileServer,
       retryDelays: [0, 3000, 5000, 10000, 20000],
       metadata: {
         filename: file.name,

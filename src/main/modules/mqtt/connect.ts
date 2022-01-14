@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import mqtt, { IClientPublishOptions, PacketCallback } from 'mqtt';
 import { v4 as uuidv4 } from 'uuid';
+import config from '@main/config';
 
 export enum EEventName {
   friendChange = 'FRIEND_CHANGE',
@@ -63,9 +64,10 @@ class MQTTConnect implements IMQTTConnect {
     // 保存登录信息
     this.username = username;
     this.password = password;
+    const { mqttServer } = config.sysConfig.domain;
     return new Promise((resolve, reject) => {
       let timeHandle:NodeJS.Timeout;
-      this.client = mqtt.connect('mqtt://localhost:1883', {
+      this.client = mqtt.connect(mqttServer, {
         protocolVersion: 4,
         clientId: 'PC',
         username,

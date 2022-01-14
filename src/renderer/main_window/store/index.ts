@@ -1,5 +1,5 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import domainReducer from './domain';
+import configReducer from './config';
 import userReducer from './user';
 import friendReducer from './friend';
 import groupReducer from './group';
@@ -8,7 +8,7 @@ import conversationReducer from './conversation';
 
 export const store = configureStore({
   reducer: {
-    domain: domainReducer,
+    config: configReducer,
     user: userReducer,
     navigation: navigationReducer,
     friend: friendReducer,
