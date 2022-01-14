@@ -30,6 +30,7 @@ const BusinessCard = function () {
     email: '',
     isFriend: false,
   });
+  const [fileServer] = useState(window.domainConfig.fileServer);
 
   async function init() {
     const cardId = await mainBridge.wins.modal.getCardId();
@@ -88,7 +89,7 @@ const BusinessCard = function () {
             {cardInfo.userName}
           </div>
         </div>
-        <img src={cardInfo.avatar ? `http://localhost:8080/files/files/${cardInfo.avatar}` : defaultImg} alt="" className={styles['business-card__top-avatar']} />
+        <img src={cardInfo.avatar ? `${fileServer}${cardInfo.avatar}` : defaultImg} alt="" className={styles['business-card__top-avatar']} />
       </div>
 
       <div className={styles['business-card__conainer']}>

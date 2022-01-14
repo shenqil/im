@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IConfig } from '@src/config/interface';
-import sysConfig from '@src/config';
+import { IConfig } from '../../../../config/interface';
+import sysConfig from '../../../../config/index';
 import type { RootState } from '../index';
 
 export interface IConfigState {

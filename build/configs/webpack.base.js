@@ -1,5 +1,5 @@
 const { isProduction } = require("../utils/common");
-
+const { resolve } = require("../utils/common");
 module.exports = {
   output: {
     filename: "[name].built.js",

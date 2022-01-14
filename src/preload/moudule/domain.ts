@@ -1,5 +1,5 @@
 import { contextBridge } from 'electron';
-import config from '@src/config';
+import config from '../../config/index';
 
 contextBridge.exposeInMainWorld('domainConfig', {
   ...config.domain,
