@@ -98,6 +98,7 @@ class MQTTConnect implements IMQTTConnect {
       this.client.on('message', this.onMessage.bind(this));
 
       timeHandle = setTimeout(() => {
+        this.client?.end(true);
         clearTimeout(timeHandle);
         reject(new Error('登陆超时'));
       }, this.replyTimeOut);

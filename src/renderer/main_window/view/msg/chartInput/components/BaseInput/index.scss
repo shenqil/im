@@ -1,0 +1,25 @@
+
+.base-input {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  padding: 0 15px;
+  font-size: 13px;
+  color: #333333;
+
+  &__inner{
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    margin: 0;
+    overflow: hidden;
+    overflow-y: scroll;
+    font-family: inherit;
+    font-size: inherit;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-all;
+  }
+}

@@ -1,0 +1,31 @@
+.emoji{
+  cursor: pointer;
+  &_i {
+    font-size: 20px;
+    color: #979797;
+  }
+
+  :hover {
+    .emoji_i{
+      color: #8692a7;
+    }
+  }
+}
+
+.emoji-content{
+  max-width: 280px;
+  max-height: 200px;
+  &__inner{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 5px;
+  }
+  &__item{
+    width: 30px;
+    height: 30px;
+    padding: 2px;
+    display: block;
+    cursor: pointer;
+  }
+}
