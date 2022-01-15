@@ -6,6 +6,7 @@ export enum EEventName {
   groupAddMembers = 'GROUP_ADDMEMBERS',
   groupDelMembers = 'GROUP_DELMEMBERS',
   groupExitGroup = 'GROUP_EXITGROUP',
+  singleMsgNew = 'SINGLEMSG_NEW',
 }
 
 export default EEventName;

@@ -3,7 +3,8 @@
 import ipcEvent from '@main/ipcMain/event';
 import { EMainEventKey } from '@main/ipcMain/eventInterface';
 import conversationSrv from '@main/server/conversationSrv';
-import { IFriendInfo, IQuasiFriend, EFriendStatus } from '../modules/mqtt/interface';
+import { EFriendStatus } from '@main/modules/mqtt/enum';
+import { IFriendInfo, IQuasiFriend } from '../modules/mqtt/interface';
 import mqtt from '../modules/mqtt/index';
 import userSrv from './userSrv';
 

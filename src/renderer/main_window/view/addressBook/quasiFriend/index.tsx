@@ -5,16 +5,9 @@ import type { IQuasiFriendSrv } from '@main/server/interface';
 import { message, Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { mainBridge } from '@renderer/public/ipcRenderer';
+import { EFriendStatus } from '@main/modules/mqtt/enum';
 import FriendItem from '../components/FriendItem';
 import styles from './index.scss';
-
-enum EFriendStatus {
-  FriendSubscribe = 1,
-  FriendUnsubscribe = 2,
-  FriendRefuse = 3,
-  FriendIgnore = 4,
-  FriendNone = 0,
-}
 
 // 准好友操作状态
 interface IQuasiFriendStatusProps{
