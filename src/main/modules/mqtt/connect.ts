@@ -2,16 +2,7 @@
 import mqtt, { IClientPublishOptions, PacketCallback } from 'mqtt';
 import { v4 as uuidv4 } from 'uuid';
 import config from '@main/config';
-
-export enum EEventName {
-  friendChange = 'FRIEND_CHANGE',
-  groupCreate = 'GROUP_CREATE',
-  groupDelete = 'GROUP_DELETE',
-  groupUpdate = 'GROUP_UPDATE',
-  groupAddMembers = 'GROUP_ADDMEMBERS',
-  groupDelMembers = 'GROUP_DELMEMBERS',
-  groupExitGroup = 'GROUP_EXITGROUP',
-}
+import { EEventName } from './enum';
 
 export interface IManifest {
   userID:string
@@ -229,7 +220,7 @@ class MQTTConnect implements IMQTTConnect {
   }
 
   /**
-   * 发送一条消息，并等待对方回复
+   * 发送一条消息，并等待对方回复，不判断用户id是否存在
    * */
   sendMsgWaitReplyBase(msg:IMsg, msgId:string) {
     return new Promise((resolve, reject) => {
@@ -293,7 +284,7 @@ class MQTTConnect implements IMQTTConnect {
   }
 
   /**
-   * 好友关系变动
+   * 好友关系变动 IMClient/userId/friend/xxx/msgId
    * */
   private onFriendMsg(topicAry:string[], message:Buffer) {
     if (topicAry[0] !== 'friend' || topicAry.length < 2) {
@@ -312,7 +303,7 @@ class MQTTConnect implements IMQTTConnect {
   }
 
   /**
-   * 群组变动
+   * 群组变动 IMClient/group/friend/xxx/msgId
    * */
   private onGroupMsg(topicAry:string[], message:Buffer) {
     if (topicAry[0] !== 'group' || topicAry.length < 2) {
@@ -347,6 +338,25 @@ class MQTTConnect implements IMQTTConnect {
 
       case 'exitGroup': {
         this.trigger(EEventName.groupExitGroup, JSON.parse(message.toString()));
+        return true;
+      }
+
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * 监听单聊消息 IMClient/group/singleMsg/xxx/msgId
+   * */
+  private onSingleMsg(topicAry:string[], message:Buffer) {
+    if (topicAry[0] !== 'singleMsg' || topicAry.length < 2) {
+      return false;
+    }
+
+    switch (topicAry[1]) {
+      case 'new': {
+        this.trigger(EEventName.friendChange, JSON.parse(message.toString()));
         return true;
       }
 

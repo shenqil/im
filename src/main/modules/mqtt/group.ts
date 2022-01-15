@@ -1,4 +1,5 @@
-import connect, { EEventName } from './connect';
+import { EEventName } from '@main/modules/mqtt/enum';
+import connect from './connect';
 
 export interface IGroupInfo {
   id :string
