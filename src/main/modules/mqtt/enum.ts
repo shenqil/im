@@ -9,4 +9,12 @@ export enum EEventName {
   singleMsgNew = 'SINGLEMSG_NEW',
 }
 
+export enum EFriendStatus {
+  FriendSubscribe = 1,
+  FriendUnsubscribe = 2,
+  FriendRefuse = 3,
+  FriendIgnore = 4,
+  FriendNone = 0,
+}
+
 export default EEventName;

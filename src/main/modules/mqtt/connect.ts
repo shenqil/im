@@ -280,20 +280,32 @@ class MQTTConnect implements IMQTTConnect {
       return;
     }
 
+    // 是否是单聊消息
+    if (this.onSingleMsg(topicAry, message)) {
+      return;
+    }
+
     console.log('收到未处理的消息：', topic, message.toString());
   }
 
   /**
-   * 好友关系变动 IMClient/userId/friend/xxx/msgId
+   * 好友关系变动 IMClient/userId/friend/type/msgId
    * */
   private onFriendMsg(topicAry:string[], message:Buffer) {
     if (topicAry[0] !== 'friend' || topicAry.length < 2) {
       return false;
     }
 
+    let payload = {};
+    try {
+      payload = JSON.parse(message.toString());
+    } catch {
+      return false;
+    }
+
     switch (topicAry[1]) {
       case 'change': {
-        this.trigger(EEventName.friendChange, JSON.parse(message.toString()));
+        this.trigger(EEventName.friendChange, payload);
         return true;
       }
 
@@ -303,41 +315,48 @@ class MQTTConnect implements IMQTTConnect {
   }
 
   /**
-   * 群组变动 IMClient/group/friend/xxx/msgId
+   * 群组变动 IMClient/userId/group/type/groupID
    * */
   private onGroupMsg(topicAry:string[], message:Buffer) {
     if (topicAry[0] !== 'group' || topicAry.length < 2) {
       return false;
     }
 
+    let payload = {};
+    try {
+      payload = JSON.parse(message.toString());
+    } catch {
+      return false;
+    }
+
     switch (topicAry[1]) {
       case 'create': {
-        this.trigger(EEventName.groupCreate, JSON.parse(message.toString()));
+        this.trigger(EEventName.groupCreate, payload);
         return true;
       }
 
       case 'delete': {
-        this.trigger(EEventName.groupDelete, JSON.parse(message.toString()));
+        this.trigger(EEventName.groupDelete, payload);
         return true;
       }
 
       case 'update': {
-        this.trigger(EEventName.groupUpdate, JSON.parse(message.toString()));
+        this.trigger(EEventName.groupUpdate, payload);
         return true;
       }
 
       case 'addMembers': {
-        this.trigger(EEventName.groupAddMembers, JSON.parse(message.toString()));
+        this.trigger(EEventName.groupAddMembers, payload);
         return true;
       }
 
       case 'delMembers': {
-        this.trigger(EEventName.groupDelMembers, JSON.parse(message.toString()));
+        this.trigger(EEventName.groupDelMembers, payload);
         return true;
       }
 
       case 'exitGroup': {
-        this.trigger(EEventName.groupExitGroup, JSON.parse(message.toString()));
+        this.trigger(EEventName.groupExitGroup, payload);
         return true;
       }
 
@@ -347,19 +366,25 @@ class MQTTConnect implements IMQTTConnect {
   }
 
   /**
-   * 监听单聊消息 IMClient/group/singleMsg/xxx/msgId
+   * 监听单聊消息 IMClient/userId/singleMsg/type/msgId
    * */
   private onSingleMsg(topicAry:string[], message:Buffer) {
     if (topicAry[0] !== 'singleMsg' || topicAry.length < 2) {
       return false;
     }
 
+    let payload = {};
+    try {
+      payload = JSON.parse(message.toString());
+    } catch {
+      return false;
+    }
+
     switch (topicAry[1]) {
       case 'new': {
-        this.trigger(EEventName.friendChange, JSON.parse(message.toString()));
+        this.trigger(EEventName.singleMsgNew, payload);
         return true;
       }
-
       default:
         return false;
     }
