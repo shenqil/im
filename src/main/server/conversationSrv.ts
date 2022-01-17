@@ -35,6 +35,7 @@ class ConversationSrv implements IConversationSrv {
     this.list = [];
     this.activaId = '';
     this.throttleSave = throttle(1500, false, (list:IConversationInfo[]) => {
+      ipcEvent.emit(EMainEventKey.ConversationChange, list);
       SQ3.conversation.save(this.userId, list)
         .catch(((err) => {
           console.error(err);
@@ -85,7 +86,6 @@ class ConversationSrv implements IConversationSrv {
   async set(list: IConversationInfo[]): Promise<unknown> {
     await this.check();
 
-    ipcEvent.emit(EMainEventKey.ConversationChange, list);
     this.throttleSave(list);
 
     this.list = list;

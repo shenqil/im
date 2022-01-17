@@ -2,10 +2,14 @@ import React, { FC } from 'react';
 import styles from './index.scss';
 import Emoji from './components/Emoji';
 
-const Tools:FC = function () {
+export interface IToolsProps {
+  insertEmoji:Function
+}
+const Tools:FC<IToolsProps> = function (props) {
+  const { insertEmoji } = props;
   return (
     <div className={styles.tools}>
-      <Emoji />
+      <Emoji handleEmojiClick={insertEmoji} />
     </div>
   );
 };
