@@ -1,9 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { IConversationInfo } from '@main/modules/sqlite3/interface';
 import { mainBridge } from '@renderer/public/ipcRenderer';
-import type { IFriendInfo } from '@main/modules/mqtt/interface';
 import type { RootState } from '../index';
 
+/**
+ * 定义会话列表
+ * */
 export interface IConversationState {
   list:Array<IConversationInfo>,
   activaId:String
@@ -34,40 +36,6 @@ export const conversationSlice = createSlice({
       ...state,
       list: action.payload,
     }),
-    updateConversation: (state, action:PayloadAction<IConversationInfo>) => {
-      const info = action.payload;
-      const list = [...state.list];
-      const index = list.findIndex((item) => item.id === info.id);
-      if (index !== -1) {
-        list.splice(index, 1, info);
-      } else {
-        list.unshift(info);
-      }
-
-      return {
-        ...state,
-        list,
-      };
-    },
-    removeConversation: (state, action:PayloadAction<IConversationInfo>) => {
-      const info = action.payload;
-      const list = [...state.list];
-      const index = list.findIndex((item) => item.id === info.id);
-      if (index !== -1) {
-        list.splice(index, 1);
-      }
-
-      return {
-        ...state,
-        list,
-      };
-    },
-    gotoConversation: (state, action:PayloadAction<IFriendInfo>) => {
-      console.log(action.payload, 'IFriendInfo');
-      return {
-        ...state,
-      };
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -81,9 +49,6 @@ export const conversationSlice = createSlice({
 export const {
   changeActivaId,
   changeConversationList,
-  updateConversation,
-  removeConversation,
-  gotoConversation,
 } = conversationSlice.actions;
 
 // 会话列表
