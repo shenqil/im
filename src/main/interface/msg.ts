@@ -23,20 +23,12 @@ export interface ITextPayload {
 }
 
 /**
- * 定义图片结构
- * */
-export interface IImgPayload {
-  path:string // 网络路径
-  localPath?:string // 本地路径
-}
-
-/**
  * 定义文件结构
  * */
 export interface IFilePayload {
   fileRealName: string,
   fileSize: string,
-  fileUrl: string,
+  fileUrl?: string,
   localPath?:string // 本地路径
 }
 
@@ -61,5 +53,5 @@ export interface IMessage{
   msgTime:number,
   charType:ECharType,
   msgType:EMsgType,
-  payload:ITextPayload | IImgPayload | IFilePayload | ICardPayload
+  payload:ITextPayload | IFilePayload | ICardPayload
 }

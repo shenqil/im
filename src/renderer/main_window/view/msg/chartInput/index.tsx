@@ -1,27 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, useRef, useEffect } from 'react';
-import { EMsgType } from '@main/interface/msg';
+import { EMsgType, IFilePayload } from '@main/interface/msg';
 import { useAppSelector } from '@renderer/main_window/store/hooks';
-import { selectActivaConversation } from '@renderer/main_window/store/conversation';
+import { selectActivaConversation, editContentBackupMap } from '@renderer/main_window/store/conversation';
 import styles from './index.scss';
 import BaseInput from './components/BaseInput';
 import Tools from './components/Tools';
 
 export interface EMsgItem {
   type:EMsgType,
-  data:string | File
+  data:string | IFilePayload
 }
-
-// 所有文件映射表
-const fileMap :Map<string, Map<string, File> | undefined> = new Map();
-const innerMap:Map<string, string> = new Map();
 
 const ChartInput:FC = function () {
   const conversationInfo = useAppSelector(selectActivaConversation);
   const curId = useRef('');
   const editPanelRef = useRef<HTMLDivElement>(null); // 定义编辑框的引用
   const lastEditRangeRef = useRef<Range | undefined>(undefined); // 定义最后的光标的引用
-  const fileMapRef = useRef<Map<string, File>>(new Map()); // 定义输入框所有文件内容的映射
 
   /**
    * 获取光标
@@ -90,25 +85,33 @@ const ChartInput:FC = function () {
         } else if (child.nodeName === 'IMG') {
           const imgNode = (child as HTMLImageElement);
           // 2.处理图片类型
-          const hash = imgNode.getAttribute('hash') || '';
-          const data = fileMapRef.current.get(hash);
+          const payload = imgNode.getAttribute('payload') || '';
+
           switch (imgNode.title) {
             case 'img':
               // 2.1图片
-              if (data) {
-                result.push({
-                  type: EMsgType.img,
-                  data,
-                });
+              if (payload) {
+                try {
+                  result.push({
+                    type: EMsgType.img,
+                    data: JSON.parse(payload),
+                  });
+                } catch (error) {
+                  console.error(error);
+                }
               }
               break;
             case 'file':
               // 2.2文件
-              if (data) {
-                result.push({
-                  type: EMsgType.file,
-                  data,
-                });
+              if (payload) {
+                try {
+                  result.push({
+                    type: EMsgType.file,
+                    data: JSON.parse(payload),
+                  });
+                } catch (error) {
+                  console.error(error);
+                }
               }
               break;
             default:
@@ -156,23 +159,21 @@ const ChartInput:FC = function () {
     if (curId.current !== conversationInfo.id) {
       // 存在之前的id,备份
       if (curId.current) {
-        fileMap.set(curId.current, fileMapRef.current);
-        innerMap.set(curId.current, editPanel.innerHTML);
+        editContentBackupMap.set(curId.current, editPanel.innerHTML);
       }
 
       // 清空并获取焦点
       editPanel.innerHTML = '';
       editPanelRef.current?.focus();
 
-      // 拿到最新值
+      // 更新
       curId.current = conversationInfo.id;
-      fileMapRef.current = fileMap.get(curId.current) || new Map();
-      const innerHTML = innerMap.get(curId.current) || '';
+      const innerHTML = editContentBackupMap.get(curId.current) || '';
       if (innerHTML) {
         document.execCommand('insertHTML', false, innerHTML);
       }
 
-      lastEditRangeRef.current = getSelection()?.getRangeAt(0);
+      backupLastEditRange();
     }
   }, [conversationInfo]);
 
@@ -193,9 +194,6 @@ const ChartInput:FC = function () {
       if (editPanel) {
         editPanel.removeEventListener('click', backupLastEditRange);
         editPanel.removeEventListener('blur', backupLastEditRange);
-
-        fileMap.set(curId.current, fileMapRef.current);
-        innerMap.set(curId.current, editPanel.innerHTML);
       }
     };
   }, []);

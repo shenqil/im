@@ -4,6 +4,11 @@ import { mainBridge } from '@renderer/public/ipcRenderer';
 import type { RootState } from '../index';
 
 /**
+ * 输入框编辑内容备份
+ * */
+export const editContentBackupMap:Map<string, string> = new Map();
+
+/**
  * 定义会话列表
  * */
 export interface IConversationState {
@@ -36,6 +41,11 @@ export const conversationSlice = createSlice({
       ...state,
       list: action.payload,
     }),
+    conversationaRemove: (state, action:PayloadAction<string>) => {
+      // 会话删除，清空对应的备份
+      editContentBackupMap.delete(action.payload);
+      return state;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -49,6 +59,7 @@ export const conversationSlice = createSlice({
 export const {
   changeActivaId,
   changeConversationList,
+  conversationaRemove,
 } = conversationSlice.actions;
 
 // 会话列表

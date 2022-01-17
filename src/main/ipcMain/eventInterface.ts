@@ -7,6 +7,7 @@ export enum EMainEventKey {
   MyGroupChange = 'MY_GROUP_CHANGE',
   ConversationChange = 'CONVERSATION_CHANGE',
   ConversationaAtivaIdChange = 'CONVERSATIONA_ATIVA_ID_CHANGE',
+  ConversationaRemove = 'CONVERSATIONA_REMOVE',
 }
 
-export default {};
+export default EMainEventKey;

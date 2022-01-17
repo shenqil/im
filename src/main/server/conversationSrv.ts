@@ -180,6 +180,7 @@ class ConversationSrv implements IConversationSrv {
     }
 
     this.list.splice(index, 1);
+    ipcEvent.emit(EMainEventKey.ConversationaRemove, id);
 
     await this.set(this.list);
   }
