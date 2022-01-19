@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { EMainEventKey } from '@main/ipcMain/eventInterface';
-import { beforeLogin, afterLogin } from '@main/lifeCycle';
+import { beforeLogin, afterLogin, afterSignOut } from '@main/lifeCycle';
 import ipcEvent from '@main/ipcMain/event';
 import mqtt from '../modules/mqtt/index';
 import wins from '../window/index';
@@ -73,6 +73,7 @@ class ConnectSrv implements IConnectSrv {
     wins.main.win?.reload();
     wins.login.win?.show();
     wins.login.win?.focus();
+    await afterSignOut();
   }
 }
 

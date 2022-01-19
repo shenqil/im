@@ -8,9 +8,7 @@ import { dirExists } from '../../utils/fileUtil';
  * 初始化sqlite3
  * */
 let sqlite3DB:Database;
-let sqlite3Status:any = 'pendding';
-const depMap:Array<any> = [];
-async function initSqlite3() {
+export async function init() {
   const dbDir = path.join(app.getPath('userData'), 'db');
   await dirExists(dbDir);
   const dbPath = path.join(dbDir, 'db.db');
@@ -20,38 +18,9 @@ async function initSqlite3() {
       if (err) {
         reject(err);
       } else {
-        resolve(sqlite3Status);
+        resolve('');
       }
     });
-  });
-}
-
-initSqlite3()
-  .then(() => {
-    sqlite3Status = 'success';
-    depMap.forEach(([resolve]) => resolve(sqlite3DB));
-  })
-  .catch((err) => {
-    sqlite3Status = err;
-    depMap.forEach(([,rejetc]) => rejetc(err));
-    console.error(err);
-  });
-
-function awaitSqlite3Init():Promise<Database> {
-  return new Promise((resolve, rejetc) => {
-    switch (sqlite3Status) {
-      case 'pendding':
-        depMap.push([resolve, rejetc]);
-        break;
-
-      case 'success':
-        resolve(sqlite3DB);
-        break;
-
-      default:
-        rejetc(sqlite3Status);
-        break;
-    }
   });
 }
 
@@ -59,7 +28,7 @@ function awaitSqlite3Init():Promise<Database> {
 
 // -------------------------------- sqlite3 基础公共类 -------------------------
 export interface ISQ3Base {
-
+  createTable(tabelName:string, tabelStruct:Array<string>):Promise<unknown>
 }
 
 export enum ESQ3Mode {
@@ -72,78 +41,27 @@ export enum ESQ3Mode {
 /**
  * 基础类
  * */
-class SQ3Base {
+class SQ3Base implements ISQ3Base {
   public db:Database | undefined;
 
-  private depCreateTabelMap:Array<any>;
-
-  private createTabelStatus:string | Error;
-
   constructor() {
-    this.depCreateTabelMap = [];
-    this.createTabelStatus = '';
-    awaitSqlite3Init()
-      .then((db) => {
-        this.db = db;
-      });
+    this.db = sqlite3DB;
   }
 
-  /**
-     * 创建表
-     * @param sentence    CREATE TABLE 语句
-     * @used
-     * let sentence = `
-     * create table if not exists ${this.tableName}(
-     * begin_time varchar(255),
-     * create_time varchar(255),
-     * end_time varchar(255),
-     * play_id varchar(255),
-     * postion_id int(50),
-     * status int(50),
-     * task_id int(50)
-     * );`;
-     * this.createTable(sentence);
-    */
-  async createTable(tablename: string, param: Array<string>) {
-    if (this.createTabelStatus === 'success') {
-      this.depCreateTabelMap.forEach(([r]) => r(''));
-      this.depCreateTabelMap = [];
-      return;
-    }
-    this.createTabelStatus = 'pendding';
-    await awaitSqlite3Init();
-    const sqldata = param.join(',');
-    const sentence = ` create table if not exists ${tablename} (${sqldata});`;
-    await new Promise((resolve, reject) => {
+  createTable(tabelName:string, tabelStruct:Array<string>): Promise<unknown> {
+    return new Promise((resolve, reject) => {
+      if (!tabelName || !tabelStruct) {
+        throw new Error('表名或表结构不存在');
+      }
+      const sqldata = tabelStruct.join(',');
+      const sentence = ` create table if not exists ${tabelName} (${sqldata});`;
       this.db?.exec(sentence, (err) => {
         if (err) {
-          this.createTabelStatus = err;
-          this.depCreateTabelMap.forEach(([,r]) => r(err));
           reject(err);
         } else {
-          this.createTabelStatus = 'success';
-          this.depCreateTabelMap.forEach(([r]) => r(''));
           resolve('');
         }
-
-        this.depCreateTabelMap = [];
       });
-    });
-  }
-
-  private awaitCreateTable() {
-    return new Promise((resolve, reject) => {
-      if (this.createTabelStatus === 'success') {
-        resolve('');
-        return;
-      }
-
-      if (typeof this.createTabelStatus !== 'string') {
-        reject(this.createTabelStatus);
-        return;
-      }
-
-      this.depCreateTabelMap.push([resolve, reject]);
     });
   }
 
@@ -165,9 +83,6 @@ class SQ3Base {
      * 查 : this.sql(`select * from ${this.tableName} where id = ?`, id, 'get/all');
      */
   async sql(sql: string, params: any, mode: ESQ3Mode = ESQ3Mode.all): Promise<unknown> {
-    await awaitSqlite3Init();
-    await this.awaitCreateTable();
-
     // console.info(`SQL: ${mode} ${sql} ${JSON.stringify(params)}`);
 
     return new Promise((resolve, reject) => {

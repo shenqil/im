@@ -40,6 +40,10 @@ class UserSrv implements IUserSrv {
   }
 
   // ================================ 接口 ================================
+  clear() {
+    this.token = undefined;
+    this.userInfo = undefined;
+  }
 
   async getToken(): Promise<IToken> {
     if (this.token) {

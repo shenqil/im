@@ -24,7 +24,16 @@ class GroupSrv implements IGroupSrv {
 
   constructor() {
     this.groups = [];
+  }
+
+  async init() {
+    this.clear();
     this.initEvent();
+    await this.myGroupList();
+  }
+
+  clear() {
+    this.groups = [];
   }
 
   // 改变群列表唯一入口
@@ -50,8 +59,6 @@ class GroupSrv implements IGroupSrv {
     }
 
     this.changeGroups(list);
-    // 监听事件
-    this.initEvent();
 
     return list;
   }

@@ -5,7 +5,6 @@ import { IConversationInfo, EConversationType } from '@main/modules/sqlite3/conv
 import type { IFriendInfo, IGroupInfo } from '@main/modules/mqtt/interface';
 import { throttle } from 'throttle-debounce';
 import type { IUserBaseInfo } from '@main/modules/sqlite3/interface';
-import userSrv from './userSrv';
 
 export interface IConversationSrv {
   get():Promise<IConversationInfo[]>,
@@ -35,6 +34,9 @@ class ConversationSrv implements IConversationSrv {
     this.list = [];
     this.activaId = '';
     this.throttleSave = throttle(1500, false, (list:IConversationInfo[]) => {
+      if (!this.userId) {
+        return;
+      }
       ipcEvent.emit(EMainEventKey.ConversationChange, list);
       SQ3.conversation.save(this.userId, list)
         .catch(((err) => {
@@ -43,15 +45,16 @@ class ConversationSrv implements IConversationSrv {
     });
   }
 
-  private async check():Promise<unknown> {
-    const userInfo = await userSrv.getUserInfo();
+  async init(userId:string) {
+    this.clear();
+    this.userId = userId;
+    await this.get();
+  }
 
-    if (this.userId !== userInfo.id) {
-      this.list = [];
-      this.userId = userInfo.id;
-    }
-
-    return '';
+  clear() {
+    this.list = [];
+    this.activaId = '';
+    this.userId = '';
   }
 
   updateWithUserInfo(userInfo:IUserBaseInfo) {
@@ -73,7 +76,9 @@ class ConversationSrv implements IConversationSrv {
   }
 
   async get():Promise<IConversationInfo[]> {
-    await this.check();
+    if (!this.userId) {
+      return [];
+    }
 
     if (!this.list.length) {
       this.list = await SQ3.conversation.get(this.userId);
@@ -84,12 +89,13 @@ class ConversationSrv implements IConversationSrv {
   }
 
   async set(list: IConversationInfo[]): Promise<unknown> {
-    await this.check();
+    if (!this.userId) {
+      return;
+    }
 
     this.throttleSave(list);
 
     this.list = list;
-    return '';
   }
 
   async setActivaId(id:string) {

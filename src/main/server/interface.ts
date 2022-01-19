@@ -4,14 +4,14 @@ import type { IFriendSrv } from './friendSrv';
 import type { IGroupSrv } from './groupSrv';
 import { IFileSrc } from './fileSrv';
 import { IConversationSrv } from './conversationSrv';
-import { ISingleMsgSrv } from './singleMsgSrv';
+import { IMsgSrv } from './msgSrv';
 
 export * from './userSrv';
 export * from './friendSrv';
 export * from './groupSrv';
 export * from './fileSrv';
 export * from './conversationSrv';
-export * from './singleMsgSrv';
+export * from './msgSrv';
 export default interface IServer{
   connectSrv:IConnectSrv,
   userSrv:IUserSrv,
@@ -19,5 +19,5 @@ export default interface IServer{
   groupSrv:IGroupSrv,
   fileSrv:IFileSrc,
   conversationSrv:IConversationSrv,
-  singleMsgSrv:ISingleMsgSrv
+  msgSrv:IMsgSrv
 }

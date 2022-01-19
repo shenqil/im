@@ -38,9 +38,18 @@ class FriendSrv implements IFriendSrv {
   constructor() {
     this.friends = [];
     this.quasiFriends = [];
+  }
 
+  async init() {
     // 监听事件
     mqtt.friend.onFriendChange(this.onFriendChange.bind(this));
+    await this.myFriendList();
+    await this.quasiFriendList();
+  }
+
+  clear() {
+    this.friends = [];
+    this.quasiFriends = [];
   }
 
   // 改变好友列表唯一入口
@@ -110,8 +119,7 @@ class FriendSrv implements IFriendSrv {
     for (const friendInfo of list) {
       conversationSrv.updateWithUserInfo(friendInfo);
     }
-    // 监听事件
-    mqtt.friend.onFriendChange(this.onFriendChange.bind(this));
+
     return list;
   }
 

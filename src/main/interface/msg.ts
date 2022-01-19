@@ -16,10 +16,12 @@ export enum EMsgType {
 }
 
 /**
- * 定义文本相关结构
+ * 发送消息状态
  * */
-export interface ITextPayload {
-  text:string
+export enum ESendMsgStatus{
+  pending = 'PENDING',
+  fulfilled = 'FULFILLED',
+  rejected = 'REJECTED',
 }
 
 /**
@@ -53,5 +55,7 @@ export interface IMessage{
   msgTime:number,
   charType:ECharType,
   msgType:EMsgType,
-  payload:ITextPayload | IFilePayload | ICardPayload
+  payload:string | IFilePayload | ICardPayload,
+
+  sendMsgStatus?:ESendMsgStatus // 发送状态
 }

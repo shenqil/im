@@ -25,9 +25,6 @@ class SQ3Common extends SQ3Base {
     this.tabelName = 'common';
     this.tabelField = ['key', 'value'];
     this.tabelStruct = ['key varchar(255) PRIMARY KEY NOT NULL', 'value varchar(255) NOT NULL'];
-    this.createTable().catch((err) => {
-      console.error(err);
-    });
   }
 
   async createTable() {

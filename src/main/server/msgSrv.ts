@@ -1,20 +1,24 @@
 /* eslint-disable class-methods-use-this */
-import { IMessage, ECharType, EMsgType } from '@main/interface/msg';
+import {
+  IMessage, ECharType, EMsgType, IFilePayload,
+} from '@main/interface/msg';
 import mqtt from '@main/modules/mqtt';
 import type { IUserInfo, IFriendInfo } from '@main/modules/mqtt/interface';
 import { v4 as uuidv4 } from 'uuid';
 import userSrv from './userSrv';
 import friendSrv from './friendSrv';
 
-export interface ISingleMsgSrv {
-  sendText(toUserId:string, text:string):Promise<unknown>
+export interface IMsgSrv {
+  sendMsg(toId:string, payload:IFilePayload | string):void,
   onReciveNewMsg(msg:IMessage):void
 }
 
-class SingleMsgSrv implements ISingleMsgSrv {
+class MsgSrv implements IMsgSrv {
   private msgMap:Map<string, IMessage>;
 
   private userId: string;
+
+  private msgQueue:Array<IFilePayload | string>;
 
   constructor() {
     this.msgMap = new Map();
@@ -54,9 +58,8 @@ class SingleMsgSrv implements ISingleMsgSrv {
     this.msgMap.clear();
   }
 
-  async sendText(toUserId: string, text: string): Promise<unknown> {
+  private async sendSingleText(friendInfo:IFriendInfo, text: string): Promise<unknown> {
     const userInfo = await this.checkUser();
-    const friendInfo = await this.checkFriend(toUserId);
 
     return mqtt.singleMsg.send({
       charType: ECharType.single,
@@ -75,9 +78,13 @@ class SingleMsgSrv implements ISingleMsgSrv {
     });
   }
 
+  sendMsg(toId:string, payload:IFilePayload | string) {
+
+  }
+
   onReciveNewMsg(msg:IMessage) {
     console.log(msg, 'onReciveNewMsg');
   }
 }
 
-export default new SingleMsgSrv();
+export default new MsgSrv();

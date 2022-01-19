@@ -27,9 +27,6 @@ class SQ3UserInfo extends SQ3Base implements ISQ3UserInfo {
     this.tabelName = 'userInfo';
     this.tabelField = ['userId', 'info'];
     this.tabelStruct = ['userId varchar(255) PRIMARY KEY NOT NULL', 'info varchar(255) NOT NULL'];
-    this.createTable().catch((err) => {
-      console.error(err);
-    });
   }
 
   async createTable() {

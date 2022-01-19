@@ -37,9 +37,6 @@ class SQ3Conversation extends SQ3Base implements ISQ3Conversation {
     this.tabelName = 'conversation';
     this.tabelField = ['userId', 'list'];
     this.tabelStruct = ['userId varchar(255) PRIMARY KEY NOT NULL', 'list varchar(255) NOT NULL'];
-    this.createTable().catch((err) => {
-      console.error(err);
-    });
   }
 
   async createTable() {
