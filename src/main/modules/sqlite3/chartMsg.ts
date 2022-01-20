@@ -1,8 +1,8 @@
-import { IMessage } from '@main/interface/msg';
-import SQ3Base from './base';
+import { IMessage, ESendMsgStatus } from '@main/interface/msg';
+import SQ3Base, { ESQ3Mode } from './base';
 
 export interface ISQ3ChartMsg{
-
+  insert(params:IMessage):Promise<unknown>
 }
 
 /**
@@ -34,11 +34,37 @@ class SQ3ChartMsg extends SQ3Base implements ISQ3ChartMsg {
     ];
   }
 
-  async createTable(tabelName:string) {
-    if (tabelName) {
-      this.tabelName = tabelName;
+  async createTable(userId:string) {
+    if (userId) {
+      this.tabelName = `chart${userId}`;
       await super.createTable(this.tabelName, this.tabelStruct);
     }
+  }
+
+  /**
+   * 插入一条新消息
+   * */
+  async insert(params:IMessage) {
+    const values = [];
+    for (const key of this.tabelField) {
+      values.push(`${(params as any)[key]}`);
+    }
+    await this.sql(
+      `INSERT INFO ${this.tabelName} (${this.tabelField}) VALUES(${new Array(this.tabelField.length).fill('?')})`,
+      values,
+      ESQ3Mode.run,
+    );
+  }
+
+  /**
+   * 更新消息状态
+   * */
+  async updateStatus(msgId:string, sendMsgStatus:ESendMsgStatus) {
+    await this.sql(
+      `UPDATE ${this.tabelName} SET sendMsgStatus=? WHERE msgId=?`,
+      [sendMsgStatus, msgId],
+      ESQ3Mode.run,
+    );
   }
 }
 

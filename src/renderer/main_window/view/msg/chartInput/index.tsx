@@ -1,19 +1,31 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, useRef, useEffect } from 'react';
-import { EMsgType, IFilePayload } from '@main/interface/msg';
-import { useAppSelector } from '@renderer/main_window/store/hooks';
-import { selectActivaConversation, editContentBackupMap } from '@renderer/main_window/store/conversation';
-import styles from './index.scss';
+import {
+  EMsgType, IFilePayload, IMessage, ECharType,
+} from '@main/interface/msg';
+import type { IGroupInfo, IFriendInfo, IUserInfo } from '@main/modules/mqtt/interface';
+import { EConversationType, IConversationInfo } from '@main/modules/sqlite3/interface';
+import { editContentBackupMap } from '@renderer/main_window/store/conversation';
+import { v4 as uuidv4 } from 'uuid';
+import { mainBridge } from '@src/renderer/public/ipcRenderer';
 import BaseInput from './components/BaseInput';
 import Tools from './components/Tools';
+import styles from './index.scss';
 
 export interface EMsgItem {
   type:EMsgType,
   data:string | IFilePayload
 }
-
-const ChartInput:FC = function () {
-  const conversationInfo = useAppSelector(selectActivaConversation);
+export interface IChartInputProps{
+  userInfo:IUserInfo | undefined,
+  conversationInfo:IConversationInfo,
+  groupInfo:IGroupInfo | undefined,
+  friendInfo:IFriendInfo | undefined,
+}
+const ChartInput:FC<IChartInputProps> = function (props) {
+  const {
+    conversationInfo, groupInfo, friendInfo, userInfo,
+  } = props;
   const curId = useRef('');
   const editPanelRef = useRef<HTMLDivElement>(null); // 定义编辑框的引用
   const lastEditRangeRef = useRef<Range | undefined>(undefined); // 定义最后的光标的引用
@@ -52,6 +64,25 @@ const ChartInput:FC = function () {
     document.execCommand('insertHTML', false, img);
 
     backupLastEditRange();
+  }
+
+  /**
+   * 构建一个基础消息结构
+   * */
+  function generateMsg(msgItem:EMsgItem):IMessage {
+    const charType = conversationInfo.type === EConversationType.single
+      ? ECharType.single : ECharType.group;
+    return {
+      charType,
+      msgType: msgItem.type,
+      msgTime: Date.now(),
+      msgId: uuidv4(undefined),
+      formId: userInfo?.id || '',
+      formName: userInfo?.realName || '',
+      toId: conversationInfo.id,
+      toName: conversationInfo.name,
+      payload: msgItem.data,
+    };
   }
 
   /**
@@ -143,8 +174,26 @@ const ChartInput:FC = function () {
    * 发送消息
    * */
   function sendMsg() {
+    // 1.校验信息合法
+    if (!userInfo) {
+      throw new Error('用户信息不存在');
+    }
+    if (conversationInfo.type === EConversationType.single) {
+      if (!friendInfo) {
+        throw new Error('对方非好友');
+      }
+    }
+    if (conversationInfo.type === EConversationType.group) {
+      if (!groupInfo) {
+        throw new Error('你不在群组，或群组已解散');
+      }
+    }
+
+    // 2.拿到数据框的内容
     const res = getInputValue();
-    console.log(res, 'sendMsg');
+
+    // 3.发送
+    res.forEach((item) => mainBridge.server.msgSrv.sendMsg(generateMsg(item)));
   }
 
   /**

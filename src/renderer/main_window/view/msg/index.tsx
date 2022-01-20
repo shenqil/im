@@ -3,6 +3,7 @@ import { useAppSelector } from '@renderer/main_window/store/hooks';
 import { selectActivaConversation } from '@renderer/main_window/store/conversation';
 import { selectGroupList } from '@renderer/main_window/store/group';
 import { selectFriendList } from '@renderer/main_window/store/friend';
+import { selectUserInfo } from '@renderer/main_window/store/user';
 import type { IGroupInfo, IFriendInfo } from '@main/modules/mqtt/interface';
 import styles from './index.scss';
 import Conversation from './conversation';
@@ -17,6 +18,7 @@ export enum EConversationType {
 }
 
 const Msg:FC = function () {
+  const userInfo = useAppSelector(selectUserInfo);
   const conversationInfo = useAppSelector(selectActivaConversation);
   const groupList = useAppSelector(selectGroupList);
   const friendList = useAppSelector(selectFriendList);
@@ -63,7 +65,12 @@ const Msg:FC = function () {
               </div>
               <div className={styles['msg__right-input']}>
                 {/* 输入框 */}
-                <ChartInput />
+                <ChartInput
+                  userInfo={userInfo}
+                  groupInfo={groupInfo}
+                  friendInfo={friendInfo}
+                  conversationInfo={conversationInfo}
+                />
               </div>
             </>
           )
@@ -73,6 +80,7 @@ const Msg:FC = function () {
       {
         (showRightMenu && conversationInfo) && (
           <RightMenu
+            userInfo={userInfo}
             groupInfo={groupInfo}
             friendInfo={friendInfo}
             conversationInfo={conversationInfo}

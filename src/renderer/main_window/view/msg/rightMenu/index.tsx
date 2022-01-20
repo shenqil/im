@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, useEffect, useState } from 'react';
-import type { IGroupInfo, IFriendInfo } from '@main/modules/mqtt/interface';
+import type { IGroupInfo, IFriendInfo, IUserInfo } from '@main/modules/mqtt/interface';
 import type { IConversationInfo, IUserBaseInfo } from '@main/modules/sqlite3/interface';
 import { CloseOutlined, ExclamationCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import Avatar from '@renderer/main_window/components/Avatar';
@@ -8,8 +8,6 @@ import {
   Switch, message, Input, Button, Modal, Tag,
 } from 'antd';
 import { mainBridge } from '@renderer/public/ipcRenderer';
-import { useAppSelector } from '@renderer/main_window/store/hooks';
-import { selectUserInfo } from '@renderer/main_window/store/user';
 import styles from './index.scss';
 
 enum EConversationType {
@@ -97,6 +95,7 @@ const MemberItem:FC<IMemberItemProps> = function (props) {
 };
 
 interface IRightMenuProps {
+  userInfo:IUserInfo | undefined,
   conversationInfo:IConversationInfo,
   groupInfo:IGroupInfo | undefined,
   friendInfo:IFriendInfo | undefined,
@@ -104,9 +103,8 @@ interface IRightMenuProps {
 }
 const RightMenu:FC<IRightMenuProps> = function (props) {
   const {
-    conversationInfo, groupInfo, friendInfo, handleRightMenu,
+    conversationInfo, groupInfo, friendInfo, handleRightMenu, userInfo,
   } = props;
-  const userInfo = useAppSelector(selectUserInfo);
   const [memberList, setMemberList] = useState<IUserBaseInfo[]>([]);
   const [groupNameEdit, setGroupNameEdit] = useState(false);
   const [groupName, setGroupName] = useState('');
