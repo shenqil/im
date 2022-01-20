@@ -5,17 +5,13 @@ import { selectGroupList } from '@renderer/main_window/store/group';
 import { selectFriendList } from '@renderer/main_window/store/friend';
 import { selectUserInfo } from '@renderer/main_window/store/user';
 import type { IGroupInfo, IFriendInfo } from '@main/modules/mqtt/interface';
+import { EConversationType } from '@main/modules/sqlite3/enum';
 import styles from './index.scss';
 import Conversation from './conversation';
 import ConversationHeader from './conversationHeader';
 import ChatBox from './chatBox';
 import ChartInput from './chartInput';
 import RightMenu from './rightMenu';
-
-export enum EConversationType {
-  single = 'SINGLE',
-  group = 'GROUP',
-}
 
 const Msg:FC = function () {
   const userInfo = useAppSelector(selectUserInfo);

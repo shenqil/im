@@ -1,7 +1,7 @@
 import { app } from 'electron';
 import path from 'path';
 import sqlite3, { Database } from 'sqlite3';
-import { dirExists } from '../../utils/fileUtil';
+import { dirExists } from '@main/utils/fileUtil';
 
 // -------------------------------- sqlite3 初始化逻辑 -------------------------
 /**

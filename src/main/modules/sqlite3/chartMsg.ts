@@ -34,7 +34,7 @@ class SQ3ChartMsg extends SQ3Base implements ISQ3ChartMsg {
     ];
   }
 
-  async createTable(userId:string) {
+  async createTable(userId:string | undefined) {
     if (userId) {
       this.tabelName = `chart${userId}`;
       await super.createTable(this.tabelName, this.tabelStruct);

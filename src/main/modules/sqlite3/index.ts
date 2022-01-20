@@ -4,7 +4,7 @@ import ISQ3 from './interface';
 const files = (require as any).context('.', false, /\.ts$/);
 const modules: any = {};
 files.keys().forEach((key: string) => {
-  if (!/(index|interface|base)\.ts$/.test(key)) {
+  if (!/(index|interface|base|enum)\.ts$/.test(key)) {
     modules[key.replace(/(.\/|.ts)/g, '')] = files(key).default;
   }
 });
@@ -20,8 +20,7 @@ export async function sqlite3Init() {
   const list = [];
   for (const key in modules) {
     if (Object.prototype.hasOwnProperty.call(modules, key)) {
-      const { createTable } = modules[key];
-      list.push(createTable());
+      list.push(modules[key].createTable());
     }
   }
 

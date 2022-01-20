@@ -4,10 +4,11 @@ import {
   EMsgType, IFilePayload, IMessage, ECharType,
 } from '@main/interface/msg';
 import type { IGroupInfo, IFriendInfo, IUserInfo } from '@main/modules/mqtt/interface';
-import { EConversationType, IConversationInfo } from '@main/modules/sqlite3/interface';
+import { EConversationType } from '@main/modules/sqlite3/enum';
+import type { IConversationInfo } from '@main/modules/sqlite3/interface';
 import { editContentBackupMap } from '@renderer/main_window/store/conversation';
 import { v4 as uuidv4 } from 'uuid';
-import { mainBridge } from '@src/renderer/public/ipcRenderer';
+import { mainBridge } from '@renderer/public/ipcRenderer';
 import BaseInput from './components/BaseInput';
 import Tools from './components/Tools';
 import styles from './index.scss';

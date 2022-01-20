@@ -1,7 +1,8 @@
 import ipcEvent from '@main/ipcMain/event';
 import { EMainEventKey } from '@main/ipcMain/eventInterface';
 import SQ3 from '@main/modules/sqlite3';
-import { IConversationInfo, EConversationType } from '@main/modules/sqlite3/conversation';
+import { EConversationType } from '@main/modules/sqlite3/enum';
+import { IConversationInfo } from '@main/modules/sqlite3/conversation';
 import type { IFriendInfo, IGroupInfo } from '@main/modules/mqtt/interface';
 import { throttle } from 'throttle-debounce';
 import type { IUserBaseInfo } from '@main/modules/sqlite3/interface';

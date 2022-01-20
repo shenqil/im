@@ -1,9 +1,5 @@
 import SQ3Base, { ESQ3Mode } from './base';
-
-export enum EConversationType {
-  single = 'SINGLE',
-  group = 'GROUP',
-}
+import { EConversationType } from './enum';
 
 export interface IConversationInfo {
   id: string,

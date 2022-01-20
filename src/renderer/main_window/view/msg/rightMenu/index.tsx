@@ -8,12 +8,8 @@ import {
   Switch, message, Input, Button, Modal, Tag,
 } from 'antd';
 import { mainBridge } from '@renderer/public/ipcRenderer';
+import { EConversationType } from '@main/modules/sqlite3/enum';
 import styles from './index.scss';
-
-enum EConversationType {
-  single = 'SINGLE',
-  group = 'GROUP',
-}
 
 interface IMemberItemProps{
   conversationInfo:IConversationInfo,
