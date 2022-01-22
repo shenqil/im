@@ -49,6 +49,10 @@ class SQ3Base implements ISQ3Base {
   }
 
   createTable(tabelName:string, tabelStruct:Array<string>): Promise<unknown> {
+    if (!this.db) {
+      this.db = sqlite3DB;
+    }
+
     return new Promise((resolve, reject) => {
       if (!tabelName || !tabelStruct) {
         throw new Error('表名或表结构不存在');
