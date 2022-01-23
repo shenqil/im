@@ -195,7 +195,7 @@ class MQTTConnect implements IMQTTConnect {
       let timeHandle: NodeJS.Timeout;
 
       if (!this.getUserID) {
-        reject(new Error('用户未登录，不存在userID'));
+        reject(new Error(`主题-${msg.topic}:用户未登录，不存在userID`));
         return;
       }
 
@@ -214,7 +214,7 @@ class MQTTConnect implements IMQTTConnect {
       timeHandle = setTimeout(() => {
         clearTimeout(timeHandle);
         this.remove(msgId);
-        reject(new Error('数据接受超时'));
+        reject(new Error(`主题-${msg.topic}:数据接受超时`));
       }, this.replyTimeOut);
     });
   }
@@ -240,7 +240,7 @@ class MQTTConnect implements IMQTTConnect {
       timeHandle = setTimeout(() => {
         clearTimeout(timeHandle);
         this.remove(msgId);
-        reject(new Error('数据接受超时'));
+        reject(new Error(`主题-${msg.topic}:数据接受超时`));
       }, this.replyTimeOut);
     });
   }
