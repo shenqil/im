@@ -2,12 +2,12 @@ import { EEventName } from '@main/modules/mqtt/enum';
 import { IMessage, ECharType } from '@main/interface/msg';
 import connect from './connect';
 
-export interface ISingleMsg {
-  send(msg:IMessage):void
+export interface IMsg {
+  sendSingleMsg(msg:IMessage):void
   onReciveNewMsg(callback:Function):void
 }
 
-function send(msg:IMessage) {
+function sendSingleMsg(msg:IMessage) {
   return new Promise((resolve, reject) => {
     if (msg.charType !== ECharType.single) {
       reject(Error(`消息类型错误: ${msg.charType}!==${ECharType.single}`));
@@ -36,6 +36,6 @@ function onReciveNewMsg(callback:Function) {
 }
 
 export default {
-  send,
+  sendSingleMsg,
   onReciveNewMsg,
 };

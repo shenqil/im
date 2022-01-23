@@ -14,13 +14,12 @@ class MsgSrv implements IMsgSrv {
   userInfo:IUserInfo | undefined;
 
   constructor() {
-    this.userInfo = undefined;
-    mqtt.singleMsg.onReciveNewMsg(this.onReciveNewMsg.bind(this));
+    this.init(undefined);
   }
 
-  async init(userInfo:IUserInfo) {
+  async init(userInfo:IUserInfo | undefined) {
     this.userInfo = userInfo;
-    mqtt.singleMsg.onReciveNewMsg(this.onReciveNewMsg.bind(this));
+    mqtt.msg.onReciveNewMsg(this.onReciveNewMsg.bind(this));
   }
 
   clear() {
