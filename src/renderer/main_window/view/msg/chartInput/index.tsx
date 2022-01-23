@@ -195,6 +195,13 @@ const ChartInput:FC<IChartInputProps> = function (props) {
 
     // 3.发送
     res.forEach((item) => mainBridge.server.msgSrv.sendMsg(generateMsg(item)));
+
+    // 4.清空输入框
+    if (editPanelRef.current) {
+      editPanelRef.current.innerHTML = '';
+      editPanelRef.current.focus();
+      backupLastEditRange();
+    }
   }
 
   /**

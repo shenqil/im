@@ -2,8 +2,8 @@
  * 聊天类型
  * */
 export enum ECharType {
-  single = 'SINGLE',
-  group = 'GROUP',
+  single = 'singleMsg',
+  group = 'groupMsg',
 }
 
 /**

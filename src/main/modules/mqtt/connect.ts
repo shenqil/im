@@ -2,6 +2,7 @@
 import mqtt, { IClientPublishOptions, PacketCallback } from 'mqtt';
 import { v4 as uuidv4 } from 'uuid';
 import config from '@main/config';
+import { ECharType } from '@main/interface/msg';
 import { EEventName } from './enum';
 
 export interface IManifest {
@@ -369,7 +370,7 @@ class MQTTConnect implements IMQTTConnect {
    * 监听单聊消息 IMClient/userId/singleMsg/type/msgId
    * */
   private onSingleMsg(topicAry:string[], message:Buffer) {
-    if (topicAry[0] !== 'singleMsg' || topicAry.length < 2) {
+    if (topicAry[0] !== ECharType.single || topicAry.length < 2) {
       return false;
     }
 
