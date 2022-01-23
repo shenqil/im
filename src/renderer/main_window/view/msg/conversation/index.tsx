@@ -4,6 +4,7 @@ import { selectConversationSortList, selectActivaId } from '@renderer/main_windo
 import type { IConversationInfo } from '@main/modules/sqlite3/interface';
 import Avatar from '@renderer/main_window/components/Avatar';
 import { mainBridge } from '@renderer/public/ipcRenderer';
+import { EMsgType } from '@main/interface/msg';
 import NoDisturb from './img/no-disturb.png';
 import styles from './index.scss';
 
@@ -14,6 +15,9 @@ const ConversationItem:FC<IConversationItemProps> = function (props:IConversatio
   const { conversationInfo } = props;
   const activaId = useAppSelector(selectActivaId);
 
+  /**
+   * 得到格式化的时间
+   * */
   const formatTime = (time:number) => {
     // 补0
     function zeroize(num:number) {
@@ -66,6 +70,34 @@ const ConversationItem:FC<IConversationItemProps> = function (props:IConversatio
     return `${oldY}-${zeroize(oldM)}-${zeroize(oldD)}`;
   };
 
+  /**
+   * 得到简略消息
+   * */
+  function getContetnt() {
+    const { lastMsg } = conversationInfo;
+    if (!lastMsg) {
+      return '';
+    }
+    switch (lastMsg.msgType) {
+      case EMsgType.text:
+        return (lastMsg.payload as string);
+
+      case EMsgType.img:
+        return '[图片]';
+
+      case EMsgType.file:
+        return '[文件]';
+
+      default:
+        break;
+    }
+
+    return '';
+  }
+
+  /**
+   * 选中某个会话
+   * */
   function handleActiva() {
     mainBridge.server.conversationSrv.setActivaId(conversationInfo.id);
   }
@@ -95,7 +127,7 @@ const ConversationItem:FC<IConversationItemProps> = function (props:IConversatio
         <div className={styles['conversation-item__bottom']}>
           <div className={styles['conversation-item__msg']}>
             <div className={styles['conversation-item__msg-text']}>
-              msg
+              {getContetnt()}
             </div>
           </div>
           <div className={styles['conversation-item__icon']}>
