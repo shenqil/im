@@ -3,6 +3,7 @@ import SQ3Base, { ESQ3Mode } from './base';
 
 export interface ISQ3ChartMsg{
   insert(params:IMessage):Promise<unknown>
+  updateStatus(msgId:string, sendMsgStatus:ESendMsgStatus):Promise<number>
 }
 
 /**
@@ -36,7 +37,7 @@ class SQ3ChartMsg extends SQ3Base implements ISQ3ChartMsg {
 
   async createTable(userId:string | undefined) {
     if (userId) {
-      this.tabelName = `chart__${userId.replaceAll('-', '_')}`;
+      this.tabelName = `chart${userId.replaceAll('-', '_')}`;
       await super.createTable(this.tabelName, this.tabelStruct);
     }
   }
@@ -47,10 +48,10 @@ class SQ3ChartMsg extends SQ3Base implements ISQ3ChartMsg {
   async insert(params:IMessage) {
     const values = [];
     for (const key of this.tabelField) {
-      values.push(`${(params as any)[key]}`);
+      values.push(`${(params as any)[key] || ''}`);
     }
     await this.sql(
-      `INSERT INFO ${this.tabelName} (${this.tabelField}) VALUES(${new Array(this.tabelField.length).fill('?')})`,
+      `INSERT INTO ${this.tabelName} (${this.tabelField}) VALUES(${new Array(this.tabelField.length).fill('?')})`,
       values,
       ESQ3Mode.run,
     );
@@ -60,11 +61,14 @@ class SQ3ChartMsg extends SQ3Base implements ISQ3ChartMsg {
    * 更新消息状态
    * */
   async updateStatus(msgId:string, sendMsgStatus:ESendMsgStatus) {
+    const time = Date.now();
     await this.sql(
-      `UPDATE ${this.tabelName} SET sendMsgStatus=? WHERE msgId=?`,
-      [sendMsgStatus, msgId],
+      `UPDATE ${this.tabelName} SET sendMsgStatus=? , msgTime=? WHERE msgId=?`,
+      [sendMsgStatus, time, msgId],
       ESQ3Mode.run,
     );
+
+    return time;
   }
 }
 

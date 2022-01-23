@@ -8,6 +8,8 @@ export enum EMainEventKey {
   ConversationChange = 'CONVERSATION_CHANGE',
   ConversationaAtivaIdChange = 'CONVERSATIONA_ATIVA_ID_CHANGE',
   ConversationaRemove = 'CONVERSATIONA_REMOVE',
+
+  MsgChange = 'MSG_CHANGE',
 }
 
 export default EMainEventKey;

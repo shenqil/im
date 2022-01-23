@@ -93,7 +93,7 @@ class SQ3Base implements ISQ3Base {
     return new Promise((resolve, reject) => {
       (this.db as any)[mode](sql, params, (err:Error, data:unknown) => {
         if (err) {
-          reject(new Error(`${err}`));
+          reject(new Error(`SQL: ${mode} ${sql} ${JSON.stringify(params)} - ${err}`));
         }
         resolve(data);
       });

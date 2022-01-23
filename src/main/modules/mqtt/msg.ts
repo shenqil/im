@@ -15,7 +15,10 @@ function send(msg:IMessage) {
         qos: 1,
         retain: true,
       },
-      message: JSON.stringify(msg),
+      message: JSON.stringify({
+        ...msg,
+        sendMsgStatus: undefined,
+      }),
       callback(err) {
         if (err) {
           reject(err);

@@ -1,7 +1,10 @@
 /* eslint-disable class-methods-use-this */
-import { IMessage, EMsgType } from '@main/interface/msg';
-import mqtt from '@main/modules/mqtt';
+import { IMessage, EMsgType, ESendMsgStatus } from '@main/interface/msg';
 import type { IUserInfo } from '@main/modules/mqtt/interface';
+import mqtt from '@main/modules/mqtt';
+import sqlite3 from '@main/modules/sqlite3';
+import ipcEvent from '@main/ipcMain/event';
+import { EMainEventKey } from '@main/ipcMain/eventInterface';
 
 export interface IMsgSrv {
   sendMsg(msg:IMessage):Promise<unknown>,
@@ -24,6 +27,38 @@ class MsgSrv implements IMsgSrv {
     this.userInfo = undefined;
   }
 
+  /**
+   * 推给订阅消息变化的服务
+   * */
+  private emitMsg(msg:IMessage) {
+    ipcEvent.emit(EMainEventKey.MsgChange, msg);
+  }
+
+  /**
+   * 保存一条新消息
+   * */
+  private async saveMsg(msg:IMessage) {
+    await sqlite3.chartMsg.insert(msg);
+    this.emitMsg(msg);
+  }
+
+  /**
+   * 更新消息状态
+   * */
+  private async updateMsgStatus(msg:IMessage) {
+    const time = await sqlite3.chartMsg.updateStatus(
+      msg.msgId,
+      msg.sendMsgStatus || ESendMsgStatus.fulfilled,
+    );
+    this.emitMsg({
+      ...msg,
+      msgTime: time,
+    });
+  }
+
+  /**
+   * 发送一条消息
+   * */
   async sendMsg(msg:IMessage) {
     if (!this.userInfo) {
       throw new Error('用户未登录,禁止发送消息');
@@ -32,7 +67,25 @@ class MsgSrv implements IMsgSrv {
     switch (msg.msgType) {
       case EMsgType.text:
       {
-        await mqtt.msg.send(msg);
+        try {
+          this.saveMsg({
+            ...msg,
+            sendMsgStatus: ESendMsgStatus.pending,
+          });
+          await mqtt.msg.send(msg);
+          this.updateMsgStatus({
+            ...msg,
+            sendMsgStatus: ESendMsgStatus.fulfilled,
+          });
+        } catch (error) {
+          console.error(error);
+
+          // 消息发送失败
+          this.updateMsgStatus({
+            ...msg,
+            sendMsgStatus: ESendMsgStatus.rejected,
+          });
+        }
         break;
       }
 
