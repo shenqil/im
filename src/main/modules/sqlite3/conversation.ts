@@ -1,3 +1,4 @@
+import { IMessage } from '@main/interface/msg';
 import SQ3Base, { ESQ3Mode } from './base';
 import { EConversationType } from './enum';
 
@@ -11,9 +12,7 @@ export interface IConversationInfo {
   placedTop: boolean, // 消息置顶
   type: EConversationType, // 会话类型
 
-  editorTextContent: string, // 编辑框内容
-
-  lastMsg?:any, // 最后一条消息
+  lastMsg?:IMessage, // 最后一条消息
 }
 
 export interface ISQ3Conversation{

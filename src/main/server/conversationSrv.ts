@@ -6,6 +6,7 @@ import { IConversationInfo } from '@main/modules/sqlite3/conversation';
 import type { IFriendInfo, IGroupInfo } from '@main/modules/mqtt/interface';
 import { throttle } from 'throttle-debounce';
 import type { IUserBaseInfo } from '@main/modules/sqlite3/interface';
+import { IMessage } from '@main/interface/msg';
 
 export interface IConversationSrv {
   get():Promise<IConversationInfo[]>,
@@ -34,6 +35,8 @@ class ConversationSrv implements IConversationSrv {
     this.userId = '';
     this.list = [];
     this.activaId = '';
+
+    // 节流推送和储存到数据库中
     this.throttleSave = throttle(1500, false, (list:IConversationInfo[]) => {
       if (!this.userId) {
         return;
@@ -44,6 +47,9 @@ class ConversationSrv implements IConversationSrv {
           console.error(err);
         }));
     });
+
+    // 监听消息变化，实时更新会话
+    ipcEvent.on(EMainEventKey.MsgChange, this.updateWithMsg.bind(this));
   }
 
   async init(userId:string) {
@@ -73,6 +79,21 @@ class ConversationSrv implements IConversationSrv {
       conversation.avatar = groupInfo.avatar;
       conversation.name = groupInfo.groupName;
       this.set(this.list);
+    }
+  }
+
+  updateWithMsg(msg:IMessage) {
+    const conversationId = msg.formId === this.userId ? msg.toId : msg.formId;
+
+    const conversation = this.list.find((item) => item.id === conversationId);
+    if (conversation) {
+      const oldMsg = conversation.lastMsg || { msgTime: 0 };
+
+      if (msg.msgTime >= oldMsg.msgTime) {
+        conversation.lastMsg = msg;
+        conversation.lastTime = msg.msgTime;
+        this.set(this.list);
+      }
     }
   }
 
@@ -120,7 +141,6 @@ class ConversationSrv implements IConversationSrv {
         noDisturd: false,
         placedTop: false,
         type: EConversationType.single,
-        editorTextContent: '',
       };
       this.list.unshift(conversation);
     } else {
@@ -147,7 +167,6 @@ class ConversationSrv implements IConversationSrv {
         noDisturd: false,
         placedTop: false,
         type: EConversationType.group,
-        editorTextContent: '',
       };
       this.list.unshift(conversation);
     } else {
