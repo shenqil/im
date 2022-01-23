@@ -55,13 +55,14 @@ class SQ3Base implements ISQ3Base {
 
     return new Promise((resolve, reject) => {
       if (!tabelName || !tabelStruct) {
-        throw new Error('表名或表结构不存在');
+        throw new Error(`${tabelName}:表名或表结构不存在`);
       }
       const sqldata = tabelStruct.join(',');
       const sentence = ` create table if not exists ${tabelName} (${sqldata});`;
       this.db?.exec(sentence, (err) => {
         if (err) {
-          reject(err);
+          console.error(tabelStruct);
+          reject(new Error(`创建表-${tabelName}:${err}`));
         } else {
           resolve('');
         }
@@ -92,7 +93,7 @@ class SQ3Base implements ISQ3Base {
     return new Promise((resolve, reject) => {
       (this.db as any)[mode](sql, params, (err:Error, data:unknown) => {
         if (err) {
-          reject(err);
+          reject(new Error(`${err}`));
         }
         resolve(data);
       });
