@@ -1,4 +1,6 @@
 /* eslint-disable class-methods-use-this */
+import ipcEvent from '@main/ipcMain/event';
+import { EMainEventKey } from '@main/ipcMain/eventInterface';
 import { IUserBaseInfo } from '@main/modules/sqlite3/interface';
 import conversationSrv from '@main/server/conversationSrv';
 import mqtt from '../modules/mqtt';
@@ -40,6 +42,12 @@ class UserSrv implements IUserSrv {
   }
 
   // ================================ 接口 ================================
+  async init() {
+    const userInfo = await this.getUserInfo();
+    ipcEvent.emit(EMainEventKey.UserInfoChange, userInfo);
+    return userInfo;
+  }
+
   clear() {
     this.token = undefined;
     this.userInfo = undefined;

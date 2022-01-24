@@ -49,7 +49,8 @@ class ConversationSrv implements IConversationSrv {
     });
 
     // 监听消息变化，实时更新会话
-    ipcEvent.on(EMainEventKey.MsgChange, this.updateWithMsg.bind(this));
+    ipcEvent.on(EMainEventKey.MsgInsert, this.updateWithMsg.bind(this));
+    ipcEvent.on(EMainEventKey.MsgUpdate, this.updateWithMsg.bind(this));
   }
 
   async init(userId:string) {

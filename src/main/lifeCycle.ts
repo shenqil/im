@@ -30,8 +30,8 @@ export async function beforeLogin() {
 export async function afterLogin() {
   console.log('afterLogin');
 
-  // 拿到用户信息
-  const userInfo = await userSrv.getUserInfo();
+  // 初始化用户信息
+  const userInfo = await userSrv.init();
 
   // 创建用户表
   await chartMsg.createTable(userInfo.id);

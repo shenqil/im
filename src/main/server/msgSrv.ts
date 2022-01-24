@@ -28,18 +28,11 @@ class MsgSrv implements IMsgSrv {
   }
 
   /**
-   * 推给订阅消息变化的服务
-   * */
-  private emitMsg(msg:IMessage) {
-    ipcEvent.emit(EMainEventKey.MsgChange, msg);
-  }
-
-  /**
    * 保存一条新消息
    * */
   private async saveMsg(msg:IMessage) {
     await sqlite3.chartMsg.insert(msg);
-    this.emitMsg(msg);
+    ipcEvent.emit(EMainEventKey.MsgInsert, msg);
   }
 
   /**
@@ -50,7 +43,7 @@ class MsgSrv implements IMsgSrv {
       msg.msgId,
       msg.sendMsgStatus || ESendMsgStatus.fulfilled,
     );
-    this.emitMsg({
+    ipcEvent.emit(EMainEventKey.MsgUpdate, {
       ...msg,
       msgTime: time,
     });
