@@ -72,7 +72,11 @@ export const selectConversationSortList = (state:RootState) => {
 
   function insert(sortList:IConversationInfo[], conversation:IConversationInfo) {
     const index = sortList.findIndex((item) => conversation.lastTime >= item.lastTime);
-    sortList.splice(index, 0, conversation);
+    if (index !== -1) {
+      sortList.splice(index, 0, conversation);
+    } else {
+      sortList.push(conversation);
+    }
   }
 
   for (const item of list) {
