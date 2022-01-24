@@ -13,7 +13,7 @@ export const editContentBackupMap:Map<string, string> = new Map();
  * */
 export interface IConversationState {
   list:Array<IConversationInfo>,
-  activaId:String
+  activaId:string
 }
 
 const initialState:IConversationState = {
@@ -33,7 +33,7 @@ export const conversationSlice = createSlice({
   name: 'conversation',
   initialState,
   reducers: {
-    changeActivaId: (state, action:PayloadAction<String>) => ({
+    changeActivaId: (state, action:PayloadAction<string>) => ({
       ...state,
       activaId: action.payload,
     }),

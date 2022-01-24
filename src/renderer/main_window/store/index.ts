@@ -5,6 +5,7 @@ import friendReducer from './friend';
 import groupReducer from './group';
 import navigationReducer from './navigation';
 import conversationReducer from './conversation';
+import msgReducer from './msg';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     friend: friendReducer,
     group: groupReducer,
     conversation: conversationReducer,
+    msg: msgReducer,
   },
 });
 

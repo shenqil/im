@@ -6,13 +6,13 @@ import { changeFriendList, changeQuasiFriendList } from '@renderer/main_window/s
 
 // 监听好友列表变化
 mainEvent.on(EMainEventKey.MyFriendChange, (list:IFriendInfo[]) => {
-  console.log(list, 'friendList');
+  // console.log(list, 'friendList');
   store.dispatch(changeFriendList(list));
 });
 
 // 监听准好友变化
 mainEvent.on(EMainEventKey.QuasiFriendChange, (list:IQuasiFriendSrv[]) => {
-  console.log(list, 'quasiFriendList');
+  // console.log(list, 'quasiFriendList');
   store.dispatch(changeQuasiFriendList(list));
 });
 

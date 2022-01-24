@@ -4,11 +4,13 @@ import { mainBridge } from '@renderer/public/ipcRenderer';
 import type { RootState } from '../index';
 
 export interface IUserState {
-  userInfo:IUserInfo | undefined
+  userInfo:IUserInfo | undefined,
+  userId:string
 }
 
 const initialState: IUserState = {
   userInfo: undefined,
+  userId: '',
 };
 
 export const fetchUserInfoAsync = createAsyncThunk(
@@ -24,14 +26,14 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     chanegUserInfo: (state, action: PayloadAction<IUserInfo>) => ({
-      ...state,
+      userId: action.payload.id,
       userInfo: action.payload,
     }),
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserInfoAsync.fulfilled, (state, action) => ({
-        ...state,
+        userId: action.payload.id,
         userInfo: action.payload,
       }));
   },

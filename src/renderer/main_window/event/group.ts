@@ -5,7 +5,7 @@ import { changeGroupList } from '@renderer/main_window/store/group';
 
 // 监听群组列表变化
 mainEvent.on(EMainEventKey.MyGroupChange, (list:IGroupInfo[]) => {
-  console.log(list, 'groupList');
+  // console.log(list, 'groupList');
   store.dispatch(changeGroupList(list));
 });
 
