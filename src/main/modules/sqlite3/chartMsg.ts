@@ -1,9 +1,9 @@
-import { IMessage, ESendMsgStatus } from '@main/interface/msg';
+import { IMessage, EMsgStatus } from '@main/interface/msg';
 import SQ3Base, { ESQ3Mode } from './base';
 
 export interface ISQ3ChartMsg{
   insert(params:IMessage):Promise<unknown>
-  updateStatus(msgId:string, sendMsgStatus:ESendMsgStatus):Promise<number>
+  updateStatus(msgId:string, msgStatus:EMsgStatus):Promise<number>
 }
 
 /**
@@ -20,7 +20,7 @@ class SQ3ChartMsg extends SQ3Base implements ISQ3ChartMsg {
     super();
     this.tabelName = '';
     this.tabelField = ['msgId', 'id', 'formId', 'formName', 'toId', 'toName',
-      'msgTime', 'charType', 'msgType', 'payload', 'sendMsgStatus'];
+      'msgTime', 'charType', 'msgType', 'payload', 'msgStatus'];
     this.tabelStruct = [
       'msgId varchar(255) primary key NOT NULL',
       'id varchar(255)',
@@ -32,7 +32,7 @@ class SQ3ChartMsg extends SQ3Base implements ISQ3ChartMsg {
       'charType varchar(255)',
       'msgType varchar(255)',
       'payload varchar(255)',
-      'sendMsgStatus varchar(255)',
+      'msgStatus varchar(255)',
     ];
   }
 
@@ -61,11 +61,11 @@ class SQ3ChartMsg extends SQ3Base implements ISQ3ChartMsg {
   /**
    * 更新消息状态
    * */
-  async updateStatus(msgId:string, sendMsgStatus:ESendMsgStatus) {
+  async updateStatus(msgId:string, msgStatus:EMsgStatus) {
     const time = Date.now();
     await this.sql(
-      `UPDATE ${this.tabelName} SET sendMsgStatus=? , msgTime=? WHERE msgId=?`,
-      [sendMsgStatus, time, msgId],
+      `UPDATE ${this.tabelName} SET msgStatus=? , msgTime=? WHERE msgId=?`,
+      [msgStatus, time, msgId],
       ESQ3Mode.run,
     );
 

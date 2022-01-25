@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { IMessage, EMsgType, ESendMsgStatus } from '@main/interface/msg';
+import { IMessage, EMsgType, EMsgStatus } from '@main/interface/msg';
 import type { IUserInfo } from '@main/modules/mqtt/interface';
 import mqtt from '@main/modules/mqtt';
 import sqlite3 from '@main/modules/sqlite3';
@@ -41,7 +41,7 @@ class MsgSrv implements IMsgSrv {
   private async updateMsgStatus(msg:IMessage) {
     const time = await sqlite3.chartMsg.updateStatus(
       msg.msgId,
-      msg.sendMsgStatus || ESendMsgStatus.fulfilled,
+      msg.msgStatus || EMsgStatus.sendFulfilled,
     );
     ipcEvent.emit(EMainEventKey.MsgUpdate, {
       ...msg,
@@ -63,12 +63,12 @@ class MsgSrv implements IMsgSrv {
         try {
           this.saveMsg({
             ...msg,
-            sendMsgStatus: ESendMsgStatus.pending,
+            msgStatus: EMsgStatus.sendPending,
           });
           await mqtt.msg.send(msg);
           this.updateMsgStatus({
             ...msg,
-            sendMsgStatus: ESendMsgStatus.fulfilled,
+            msgStatus: EMsgStatus.sendFulfilled,
           });
         } catch (error) {
           console.error(error);
@@ -76,7 +76,7 @@ class MsgSrv implements IMsgSrv {
           // 消息发送失败
           this.updateMsgStatus({
             ...msg,
-            sendMsgStatus: ESendMsgStatus.rejected,
+            msgStatus: EMsgStatus.sendRejected,
           });
         }
         break;
