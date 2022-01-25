@@ -1,21 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IMessage } from '@main/interface/msg';
+import { mergeId } from '@renderer/public/utils/common';
 import type { RootState } from '../index';
-
-/**
- * 合并成一个唯一id
- * */
-export function mergeId(id1:string, id2:string) {
-  const i1 = id1.replaceAll('-', '');
-  const i2 = id2.replaceAll('-', '');
-
-  if (i1 > i2) {
-    return `${i1}${i2}`;
-  }
-
-  return `${i2}${i1}`;
-}
 
 export interface IMsgState {
   msgMap:any // Object<string,IMessage[]>
@@ -32,7 +19,7 @@ export const msgSlice = createSlice({
     insert: (state, action:PayloadAction<IMessage>) => {
       const { msgMap } = state;
       const newMsg = action.payload;
-      const id = mergeId(newMsg.formId, newMsg.toId);
+      const { id } = newMsg;
       const msgList = (msgMap[id] || []) as Array<IMessage>;
 
       // 去重
@@ -63,7 +50,7 @@ export const msgSlice = createSlice({
     update: (state, action:PayloadAction<IMessage>) => {
       const { msgMap } = state;
       const newMsg = action.payload;
-      const id = mergeId(newMsg.formId, newMsg.toId);
+      const { id } = newMsg;
       const msgList = (msgMap[id] || []) as Array<IMessage>;
 
       const index = msgList.findIndex((msgItem) => msgItem.msgId === newMsg.msgId);

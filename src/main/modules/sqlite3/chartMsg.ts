@@ -19,10 +19,11 @@ class SQ3ChartMsg extends SQ3Base implements ISQ3ChartMsg {
   constructor() {
     super();
     this.tabelName = '';
-    this.tabelField = ['msgId', 'formId', 'formName', 'toId', 'toName',
+    this.tabelField = ['msgId', 'id', 'formId', 'formName', 'toId', 'toName',
       'msgTime', 'charType', 'msgType', 'payload', 'sendMsgStatus'];
     this.tabelStruct = [
       'msgId varchar(255) primary key NOT NULL',
+      'id varchar(255)',
       'formId varchar(255)',
       'formName varchar(255)',
       'toId varchar(255)',

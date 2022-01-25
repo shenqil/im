@@ -47,6 +47,7 @@ export interface ICardPayload {
  * 定义基本消息结构
  * */
 export interface IMessage{
+  id:string,
   msgId:string,
   formId:string,
   formName:string,
