@@ -18,10 +18,12 @@ export enum EMsgType {
 /**
  * 发送消息状态
  * */
-export enum ESendMsgStatus{
-  pending = 'PENDING',
-  fulfilled = 'FULFILLED',
-  rejected = 'REJECTED',
+export enum EMsgStatus{
+  sendPending = 'SEND_PENDING',
+  sendFulfilled = 'SEND_FULFILLED',
+  sendRejected = 'SEND_REJECTED',
+  reciveAccepted = 'RECIVE_ACCEPTED',
+  reciveRead = 'RECIVE_READ',
 }
 
 /**
@@ -58,5 +60,5 @@ export interface IMessage{
   msgType:EMsgType,
   payload:string | IFilePayload | ICardPayload,
 
-  sendMsgStatus?:ESendMsgStatus // 发送状态
+  msgStatus?:EMsgStatus // 发送状态
 }
