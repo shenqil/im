@@ -12,6 +12,7 @@ export class MainWindow extends BaseWIN implements IMainWindow {
       height: 600,
       maximizable: true,
       resizable: true,
+      backgroundColor: '#f5ff5f5',
     };
     if (options) {
       o = Object.assign(o, options);
