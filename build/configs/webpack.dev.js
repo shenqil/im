@@ -21,9 +21,6 @@ module.exports = merge(common, {
         oneOf:[
           {
             test: /\.((c|sa|sc)ss)$/i,
-            exclude: [
-              /node_modules/,
-            ],
             use: [
               "style-loader",
               "css-loader",
