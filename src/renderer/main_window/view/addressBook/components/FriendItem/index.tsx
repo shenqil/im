@@ -3,7 +3,7 @@ import { mainBridge } from '@renderer/public/ipcRenderer';
 import type { IFriendInfo } from '@main/modules/mqtt/interface';
 import Avatar from '@renderer/main_window/components/Avatar';
 import { message } from 'antd';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 interface IFriendItem {
   friendInfo:IFriendInfo

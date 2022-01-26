@@ -9,7 +9,7 @@ import {
 } from 'antd';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import { EConversationType } from '@main/modules/sqlite3/enum';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 interface IMemberItemProps{
   conversationInfo:IConversationInfo,

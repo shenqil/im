@@ -11,7 +11,7 @@ import {
   CloseCircleOutlined,
 } from '@ant-design/icons';
 import PinyinMatch from 'pinyin-match';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 interface IMemberItemProps {
   info:IFriendInfo,

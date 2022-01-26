@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { Input, Button } from 'antd';
 import { mainBridge, mainEvent, EMainEventKey } from '@renderer/public/ipcRenderer';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 const AddFriend = function () {
   let value:string = '';

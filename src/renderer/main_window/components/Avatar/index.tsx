@@ -2,7 +2,7 @@ import React from 'react';
 import { selectFileServer } from '@renderer/main_window/store/config';
 import { useAppSelector } from '@renderer/main_window/store/hooks';
 import defaultImg from '@renderer/public/img/avatar.png';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 /**
  * 头像
  * */

@@ -7,7 +7,7 @@ import md5 from 'md5';
 import { throttle } from 'throttle-debounce';
 import { ILoginInfo } from '@main/server/interface';
 import { mainBridge } from '@renderer/public/ipcRenderer';
-import style from './index.scss';
+import style from './index.modules.scss';
 
 const NormalLogin = function () {
   const [loading, setLoading] = useState(false);

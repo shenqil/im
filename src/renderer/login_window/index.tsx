@@ -3,8 +3,8 @@ import { render } from 'react-dom';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import NormalLogin from './components/NormalLogin';
 import 'antd/dist/antd.css';
-import style from './index.scss';
-import '../public/css/index.scss';
+import '@renderer/public/css/index.scss';
+import style from './index.modules.scss';
 
 const App = function () {
   useEffect(() => {

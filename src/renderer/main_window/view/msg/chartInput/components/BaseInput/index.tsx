@@ -1,5 +1,5 @@
 import React, { forwardRef, LegacyRef } from 'react';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 export interface IBaseInputProps{
 }

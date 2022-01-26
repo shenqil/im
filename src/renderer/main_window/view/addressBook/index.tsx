@@ -4,7 +4,7 @@ import Friend from '@renderer/main_window/view/addressBook/friend';
 import Group from '@renderer/main_window/view/addressBook/group';
 import QuasiFriend from '@renderer/main_window/view/addressBook/quasiFriend';
 import SideBar, { EActiva } from './components/SideBar';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 const AddressBook = function () {
   const [activa, setActiva] = useState(EActiva.frequentContacts);

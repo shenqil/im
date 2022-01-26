@@ -6,7 +6,7 @@ import Avatar from '@renderer/main_window/components/Avatar';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import { EMsgType } from '@main/interface/msg';
 import NoDisturb from './img/no-disturb.png';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 interface IConversationItemProps {
   conversationInfo:IConversationInfo

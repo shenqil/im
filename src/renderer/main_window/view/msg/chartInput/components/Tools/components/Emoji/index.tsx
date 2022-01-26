@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Popover } from 'antd';
 import emojiData from '@renderer/public/data/emoji.json';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 export interface IEmojiItem {
   key:string,

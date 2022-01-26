@@ -4,7 +4,7 @@ import { useAppSelector } from '@renderer/main_window/store/hooks';
 import { selectGroupList } from '@renderer/main_window/store/group';
 import type { IGroupInfo } from '@main/modules/mqtt/interface';
 import Avatar from '@renderer/main_window/components/Avatar';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 interface IGroupItemProps {
   groupInfo:IGroupInfo

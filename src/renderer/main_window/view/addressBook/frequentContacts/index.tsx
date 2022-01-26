@@ -2,7 +2,7 @@ import React from 'react';
 import { useAppSelector } from '@renderer/main_window/store/hooks';
 import { selectFrequentContacts } from '@renderer/main_window/store/friend';
 import FriendItem from '../components/FriendItem';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 const FrequentContacts = function () {
   const friendList = useAppSelector(selectFrequentContacts);

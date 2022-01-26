@@ -12,7 +12,7 @@ import { mainBridge } from '@renderer/public/ipcRenderer';
 import { mergeId } from '@renderer/public/utils/common';
 import BaseInput from './components/BaseInput';
 import Tools from './components/Tools';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 export interface EMsgItem {
   type:EMsgType,

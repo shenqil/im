@@ -3,7 +3,7 @@ import { mainBridge, mainEvent, EMainEventKey } from '@renderer/public/ipcRender
 import { IFriendInfoSrv } from '@main/server/interface';
 import defaultImg from '@renderer/public/img/avatar.png';
 
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 const BusinessCardItem = function (props: { label: string; content: string; }) {
   const { label, content } = props;

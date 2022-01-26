@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import type { IConversationInfo } from '@main/modules/sqlite3/interface';
 import type { IGroupInfo } from '@main/modules/mqtt/interface';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 interface IConversationHeaderProps {
   conversationInfo:IConversationInfo

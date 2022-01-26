@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 import Emoji from './components/Emoji';
 
 export interface IToolsProps {

@@ -6,12 +6,12 @@ import { selectFriendList } from '@renderer/main_window/store/friend';
 import { selectUserInfo } from '@renderer/main_window/store/user';
 import type { IGroupInfo, IFriendInfo } from '@main/modules/mqtt/interface';
 import { EConversationType } from '@main/modules/sqlite3/enum';
-import styles from './index.scss';
 import Conversation from './conversation';
 import ConversationHeader from './conversationHeader';
 import ChatBox from './chatBox';
 import ChartInput from './chartInput';
 import RightMenu from './rightMenu';
+import styles from './index.modules.scss';
 
 const Msg:FC = function () {
   const userInfo = useAppSelector(selectUserInfo);

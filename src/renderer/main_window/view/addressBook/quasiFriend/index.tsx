@@ -7,7 +7,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import { EFriendStatus } from '@main/modules/mqtt/enum';
 import FriendItem from '../components/FriendItem';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 // 准好友操作状态
 interface IQuasiFriendStatusProps{

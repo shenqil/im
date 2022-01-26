@@ -8,7 +8,7 @@ import { mergeId } from '@renderer/public/utils/common';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
 import ChatItem from './components/ChatItem';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 const ChatBox:FC = function () {
   const dispatch = useAppDispatch();
