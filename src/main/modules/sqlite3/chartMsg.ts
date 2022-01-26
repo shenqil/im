@@ -4,6 +4,7 @@ import SQ3Base, { ESQ3Mode } from './base';
 export interface ISQ3ChartMsg{
   insert(params:IMessage):Promise<unknown>
   updateStatus(msgId:string, msgStatus:EMsgStatus):Promise<number>
+  fetchBeforeByTime(id: string, msgTime: number, page: number, limit: number):Promise<IMessage[]>
 }
 
 /**
@@ -70,6 +71,28 @@ class SQ3ChartMsg extends SQ3Base implements ISQ3ChartMsg {
     );
 
     return time;
+  }
+
+  /**
+   * 获取指定时间之前的消息
+   * */
+  async fetchBeforeByTime(id: string, msgTime: number, page: number, limit: number) {
+    //  参数处理
+    if (typeof page !== 'number' || typeof limit !== 'number') {
+      throw new Error('参数类型错误');
+    }
+
+    const resultData = await this.sql(
+      `SELECT * FROM ${this.tabelName} WHERE id = ? AND msgTime < ? order by msgTime desc LIMIT ${page * limit}, ${limit}`,
+      [id, msgTime],
+      ESQ3Mode.all,
+    );
+
+    if (!Array.isArray(resultData)) {
+      return [];
+    }
+
+    return resultData as IMessage[];
   }
 }
 

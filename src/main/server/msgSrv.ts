@@ -8,7 +8,8 @@ import { EMainEventKey } from '@main/ipcMain/eventInterface';
 
 export interface IMsgSrv {
   sendMsg(msg:IMessage):Promise<unknown>,
-  onReciveNewMsg(msg:IMessage):void
+  onReciveNewMsg(msg:IMessage):void,
+  fetchBeforeByTime(id: string, msgTime: number, page: number, limit: number):Promise<IMessage[]>
 }
 
 class MsgSrv implements IMsgSrv {
@@ -33,6 +34,13 @@ class MsgSrv implements IMsgSrv {
   private async saveMsg(msg:IMessage) {
     await sqlite3.chartMsg.insert(msg);
     ipcEvent.emit(EMainEventKey.MsgInsert, msg);
+  }
+
+  /**
+   * 获取指定时间之前的消息列表
+   * */
+  async fetchBeforeByTime(id: string, msgTime: number, page: number, limit: number) {
+    return sqlite3.chartMsg.fetchBeforeByTime(id, msgTime, page, limit);
   }
 
   /**
