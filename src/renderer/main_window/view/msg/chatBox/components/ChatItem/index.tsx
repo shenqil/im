@@ -4,7 +4,7 @@ import { useAppSelector } from '@renderer/main_window/store/hooks';
 import { selectUserInfo } from '@renderer/main_window/store/user';
 import Avatar from '@renderer/main_window/components/Avatar';
 import TextMsg from '../TextMsg';
-import styles from './index.scss';
+import './index.scss';
 
 export interface IChatItemProps {
   msg:IMessage
@@ -26,12 +26,12 @@ const ChatItem:FC<IChatItemProps> = function (props) {
   }, [userInfo, msg]);
 
   return (
-    <div className={`${styles['chat-item']} ${isSelf && styles['chat-item--self']}`}>
-      <div className={styles['chat-item__avatar']}>
+    <div className={`chat-item ${isSelf && 'chat-item--self'}`}>
+      <div className="chat-item__avatar">
         <Avatar url={userInfo?.avatar || ''} />
       </div>
 
-      <div className={styles['chat-item__content']}>
+      <div className="chat-item__content">
         {/* 文本消息 */}
         {
           msg.msgType === EMsgType.text

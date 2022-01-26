@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import styles from './index.scss';
+import './index.scss';
 
 export interface ITextMsg {
   text:string
@@ -7,7 +7,7 @@ export interface ITextMsg {
 
 const TextMsg:FC<ITextMsg> = function ({ text }) {
   return (
-    <div className={styles['text-msg']}>
+    <div className="text-msg">
       {text}
     </div>
   );
