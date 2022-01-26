@@ -1,8 +1,9 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IMessage } from '@main/interface/msg';
+import { IMessage, EMsgType } from '@main/interface/msg';
 import { useAppSelector } from '@renderer/main_window/store/hooks';
 import { selectUserInfo } from '@renderer/main_window/store/user';
 import Avatar from '@renderer/main_window/components/Avatar';
+import TextMsg from '../TextMsg';
 import styles from './index.scss';
 
 export interface IChatItemProps {
@@ -31,7 +32,12 @@ const ChatItem:FC<IChatItemProps> = function (props) {
       </div>
 
       <div className={styles['chat-item__content']}>
-        {JSON.stringify(msg)}
+        {/* 文本消息 */}
+        {
+          msg.msgType === EMsgType.text
+          && <TextMsg text={msg.payload as string} />
+        }
+
       </div>
     </div>
   );
