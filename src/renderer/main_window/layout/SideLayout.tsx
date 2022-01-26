@@ -5,7 +5,7 @@ import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hook
 import { selectUserInfo, fetchUserInfoAsync } from '@renderer/main_window/store/user';
 import Navigation from './components/Navigation';
 import Avatar from '../components/Avatar';
-import styles from './sideLayout.scss';
+import styles from './sideLayout.modules.scss';
 
 const SideLayout = function () {
   const userInfo = useAppSelector(selectUserInfo);

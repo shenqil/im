@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hook
 import {
   selectNavigationActiva, selectNavigationList, changeActiva, INavigationItem,
 } from '@renderer/main_window/store/navigation';
-import styles from './index.scss';
+import styles from './index.modules.scss';
 
 /**
  * 导航栏元素
