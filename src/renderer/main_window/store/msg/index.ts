@@ -5,6 +5,22 @@ import { mergeId } from '@renderer/public/utils/common';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import type { RootState } from '../index';
 
+export enum EMsgLoadStatus {
+  none = 'NONE',
+  lodding = 'LODDING',
+  finished = 'FINISHED',
+}
+
+/**
+ * 返回一个默认消息结构
+ * */
+function defaultItem():IMsgItem {
+  return {
+    msgList: [],
+    loadStatus: EMsgLoadStatus.none,
+  };
+}
+
 /**
  * 利用二分法查找消息插入位置
  * */
@@ -30,9 +46,13 @@ function searchInsertIndex(list:IMessage[], target:IMessage) {
   }
   return index;
 }
+export interface IMsgItem {
+  msgList:IMessage[], // 消息列表
+  loadStatus:EMsgLoadStatus // 加载状态
+}
 
 export interface IMsgState {
-  msgMap:any // Object<string,IMessage[]>
+  msgMap:any // Object<string,IMsgItem[]>
 }
 
 const initialState:IMsgState = {
@@ -43,7 +63,13 @@ export const loadMsgListAsync = createAsyncThunk(
   'msg/loadList',
   async (id:string) => {
     const { msgMap } = initialState;
-    const msgList = (msgMap[id] || []) as Array<IMessage>;
+    const { msgList, loadStatus } = (msgMap[id] || defaultItem()) as IMsgItem;
+
+    if (loadStatus !== EMsgLoadStatus.none) {
+      // 无需请求接口
+      return [];
+    }
+
     // 拿到当前消息列表中最老的事件
     let time = Date.now();
     if (msgList.length) {
@@ -68,7 +94,7 @@ export const msgSlice = createSlice({
       const { msgMap } = state;
       const newMsg = action.payload;
       const { id } = newMsg;
-      const msgList = (msgMap[id] || []) as Array<IMessage>;
+      const { msgList, loadStatus } = (msgMap[id] || defaultItem()) as IMsgItem;
 
       // // 去重
       // const i = msgList.findIndex((msgItem) => msgItem.msgId === newMsg.msgId);
@@ -76,11 +102,12 @@ export const msgSlice = createSlice({
       //   return;
       // }
 
+      // 插入
       const index = searchInsertIndex(msgList, newMsg);
       msgList.splice(index, 0, newMsg);
 
       // 更新
-      msgMap[id] = msgList;
+      msgMap[id] = { msgList, loadStatus };
       state.msgMap = { ...msgMap };
     },
     /**
@@ -90,7 +117,7 @@ export const msgSlice = createSlice({
       const { msgMap } = state;
       const newMsg = action.payload;
       const { id } = newMsg;
-      const msgList = (msgMap[id] || []) as Array<IMessage>;
+      const { msgList } = (msgMap[id] || defaultItem()) as IMsgItem;
 
       const index = msgList.findIndex((msgItem) => msgItem.msgId === newMsg.msgId);
       if (index === -1) {
@@ -120,7 +147,7 @@ export const msgSlice = createSlice({
           return;
         }
         const { id } = newList[0];
-        const msgList = (msgMap[id] || []) as Array<IMessage>;
+        const { msgList, loadStatus } = (msgMap[id] || defaultItem()) as IMsgItem;
 
         for (const msgItem of newList) {
           const index = searchInsertIndex(msgList, msgItem);
@@ -128,7 +155,7 @@ export const msgSlice = createSlice({
         }
 
         // 更新
-        msgMap[id] = msgList;
+        msgMap[id] = { msgList, loadStatus };
         state.msgMap = { ...msgMap };
       });
   },
@@ -144,11 +171,11 @@ export const selectMsgListByCurConversation = (state:RootState) => {
   const conversationId = state.conversation.activaId;
   const { userId } = state.user;
   if (!userId || !conversationId) {
-    return [];
+    return defaultItem();
   }
   const id = mergeId(conversationId, userId);
 
-  return (state.msg.msgMap[id] || []) as Array<IMessage>;
+  return (state.msg.msgMap[id] || defaultItem()) as IMsgItem;
 };
 
 export default msgSlice.reducer;

@@ -1,0 +1,22 @@
+.chat-item{
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  &--self{
+    flex-flow: row-reverse nowrap;
+  }
+
+  &__avatar{
+    width: 36px;
+    height: 36px;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  &__content{
+    max-width: 50%;
+  }
+}
