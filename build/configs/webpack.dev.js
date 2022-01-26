@@ -18,35 +18,38 @@ module.exports = merge(common, {
   module: {
     rules: [
       {
-        test: /\.((c|sa|sc)ss)$/i,
-        include: [
-          /node_modules/,
-          resolve("src/renderer/public"),
-        ],
-        use: [
-          "style-loader",
-          "css-loader",
-          "sass-loader"
-        ],
-      },
-      {
-        test: /\.((c|sa|sc)ss)$/i,
-        exclude: [
-          /node_modules/,
-          resolve("src/renderer/public"),
-        ],
-        use: [
-          "style-loader",
+        oneOf:[
           {
-            loader: "css-loader",
-            options:{
-              modules:{
-                localIdentName: "[path][name]__[local]--[hash:base64:5]",
-              }
-            }
+            test: /\.((c|sa|sc)ss)$/i,
+            exclude: [
+              /node_modules/,
+            ],
+            use: [
+              "style-loader",
+              "css-loader",
+              "sass-loader"
+            ],
           },
-          "sass-loader"
-        ],
+          {
+            test: /\.modules\.((c|sa|sc)ss)$/i,
+            enforce: 'pre',
+            exclude: [
+              /node_modules/,
+            ],
+            use: [
+              "style-loader",
+              {
+                loader: "css-loader",
+                options:{
+                  modules:{
+                    localIdentName: "[path][name]__[local]--[hash:base64:5]",
+                  }
+                }
+              },
+              "sass-loader"
+            ],
+          },
+        ]
       },
     ],
   },
