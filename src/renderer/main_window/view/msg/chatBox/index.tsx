@@ -11,6 +11,8 @@ import { mergeId } from '@renderer/public/utils/common';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
 import { IUserInfo } from '@main/modules/mqtt/interface';
+import { IMessage } from '@main/interface/msg';
+import * as moment from 'moment';
 import ChatItem from './components/ChatItem';
 import styles from './index.modules.scss';
 
@@ -96,6 +98,9 @@ const ChatBox:FC<IChatBoxProps> = function ({ userInfo }) {
     }
   }
 
+  /**
+   * 切换会话执行的init
+   * */
   async function init() {
     if (msgList.length < 10) {
       // 消息列表数量小于10，加载更多
@@ -117,6 +122,24 @@ const ChatBox:FC<IChatBoxProps> = function ({ userInfo }) {
     scrollToBottom();
   }, [msgList]);
 
+  // 计算两条消息的间隔
+  function formatTimeSpace(preMsg:IMessage | undefined, nextMsg:IMessage | undefined) {
+    const gutter = 1000 * 60 * 5;
+    if (!preMsg || !nextMsg) {
+      return '';
+    }
+
+    if (preMsg.msgTime + gutter >= nextMsg.msgTime) {
+      return '';
+    }
+
+    return (
+      <div className={styles['chat-box__inner-time']}>
+        {moment(preMsg.msgTime).format('YYYY/MM/DD hh:mm')}
+      </div>
+    );
+  }
+
   return (
     <div
       ref={chatBoxRef}
@@ -136,12 +159,17 @@ const ChatBox:FC<IChatBoxProps> = function ({ userInfo }) {
       {/* 主体内容 */}
       <div className={styles['chat-box__inner']}>
         {msgList && msgList.map(
-          (item) => (
-            <ChatItem
+          (item, index) => (
+            <div
               key={item.msgId}
-              userInfo={userInfo}
-              msg={item}
-            />
+              className={styles['chat-box__inner-item']}
+            >
+              {formatTimeSpace(msgList[index === 0 ? 0 : index - 1], item)}
+              <ChatItem
+                userInfo={userInfo}
+                msg={item}
+              />
+            </div>
           ),
         )}
       </div>
