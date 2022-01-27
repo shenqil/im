@@ -48,23 +48,32 @@ class ConversationSrv implements IConversationSrv {
         }));
     });
 
-    // 监听消息变化，实时更新会话
+    // 订阅
     ipcEvent.on(EMainEventKey.MsgInsert, this.updateWithMsg.bind(this));
     ipcEvent.on(EMainEventKey.MsgUpdate, this.updateWithMsg.bind(this));
   }
 
+  /**
+   * 初始化
+   * */
   async init(userId:string) {
     this.clear();
     this.userId = userId;
     await this.get();
   }
 
+  /**
+   * 清空数据
+   * */
   clear() {
     this.list = [];
     this.activaId = '';
     this.userId = '';
   }
 
+  /**
+   * 根据用户信息更新会话
+   * */
   updateWithUserInfo(userInfo:IUserBaseInfo) {
     const conversation = this.list.find((item) => item.id === userInfo.id);
     if (conversation) {
@@ -74,6 +83,9 @@ class ConversationSrv implements IConversationSrv {
     }
   }
 
+  /**
+   * 根据群信息更新会话
+   * */
   updateWithGroupInfo(groupInfo:IGroupInfo) {
     const conversation = this.list.find((item) => item.id === groupInfo.id);
     if (conversation) {
@@ -83,6 +95,9 @@ class ConversationSrv implements IConversationSrv {
     }
   }
 
+  /**
+   * 根据消息更新会话
+   * */
   updateWithMsg(msg:IMessage) {
     const conversationId = msg.formId === this.userId ? msg.toId : msg.formId;
 
@@ -98,6 +113,9 @@ class ConversationSrv implements IConversationSrv {
     }
   }
 
+  /**
+   * 获取会话列表
+   * */
   async get():Promise<IConversationInfo[]> {
     if (!this.userId) {
       return [];
@@ -111,6 +129,9 @@ class ConversationSrv implements IConversationSrv {
     return this.list;
   }
 
+  /**
+   * 设置会话列表
+   * */
   async set(list: IConversationInfo[]): Promise<unknown> {
     if (!this.userId) {
       return;
@@ -121,15 +142,24 @@ class ConversationSrv implements IConversationSrv {
     this.list = list;
   }
 
+  /**
+   * 设置选中会话的id
+   * */
   async setActivaId(id:string) {
     this.activaId = id;
     ipcEvent.emit(EMainEventKey.ConversationaAtivaIdChange, id);
   }
 
+  /**
+   * 获取选中会话id
+   * */
   async getActivaId():Promise<string> {
     return this.activaId;
   }
 
+  /**
+   * 从好友跳转到会话
+   * */
   private async gotoConversationWithFriendInfo(info:IFriendInfo) {
     let conversation = this.list.find((item) => item.id === info.id);
     if (!conversation) {
@@ -156,6 +186,9 @@ class ConversationSrv implements IConversationSrv {
     ipcEvent.emit(EMainEventKey.RouteChange, 'msg');
   }
 
+  /**
+   * 从群组跳转到会话
+   * */
   private async gotoConversationWithGroupInfo(info:IGroupInfo) {
     let conversation = this.list.find((item) => item.id === info.id);
     if (!conversation) {
@@ -182,6 +215,9 @@ class ConversationSrv implements IConversationSrv {
     ipcEvent.emit(EMainEventKey.RouteChange, 'msg');
   }
 
+  /**
+   * 跳转到会话
+   * */
   async gotoConversation(info:IFriendInfo | IGroupInfo) {
     if (typeof (info as IGroupInfo).groupName === 'string') {
       await this.gotoConversationWithGroupInfo(info as IGroupInfo);
@@ -190,6 +226,9 @@ class ConversationSrv implements IConversationSrv {
     }
   }
 
+  /**
+   * 更新会话信息
+   * */
   async updateConversationInfo(info:IConversationInfo) {
     const index = this.list.findIndex((item) => item.id === info.id);
     if (index !== -1) {
@@ -200,6 +239,9 @@ class ConversationSrv implements IConversationSrv {
     await this.set(this.list);
   }
 
+  /**
+   * 删除会话
+   * */
   async removeConversationInfo(id:string) {
     const index = this.list.findIndex((item) => item.id === id);
     if (index === -1) {

@@ -22,6 +22,9 @@ class ConnectSrv implements IConnectSrv {
     this.whenMainMenuList = [];
   }
 
+  /**
+   * 等待主窗口加载完毕
+   * */
   private whenMainMenuReady() {
     return new Promise((resolve) => {
       if (this.isMainMenuReady) {
@@ -32,6 +35,9 @@ class ConnectSrv implements IConnectSrv {
     });
   }
 
+  /**
+   * 主窗口加载完成时调用
+   * */
   async mainMenuReady() {
     if (wins.main.win) {
       this.isMainMenuReady = true;
@@ -42,6 +48,9 @@ class ConnectSrv implements IConnectSrv {
     }
   }
 
+  /**
+   * 登录窗口加载完成时调用
+   * */
   async loginMenuReady() {
     if (wins.login.win) {
       beforeLogin();
