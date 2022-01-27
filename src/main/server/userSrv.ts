@@ -41,18 +41,28 @@ class UserSrv implements IUserSrv {
     this.cacheUserInfoStatus = false;
   }
 
-  // ================================ 接口 ================================
+  /**
+   * 初始化
+   * */
   async init() {
     const userInfo = await this.getUserInfo();
     ipcEvent.emit(EMainEventKey.UserInfoChange, userInfo);
     return userInfo;
   }
 
+  /**
+     * 清空数据
+     * */
   clear() {
     this.token = undefined;
     this.userInfo = undefined;
   }
 
+  // ================================ 接口 ================================
+
+  /**
+   * 获取token 带缓存
+   * */
   async getToken(): Promise<IToken> {
     if (this.token) {
       return Object.freeze(this.token);
@@ -63,6 +73,9 @@ class UserSrv implements IUserSrv {
     return Object.freeze(this.token);
   }
 
+  /**
+   * 获取用户信息
+   * */
   async getUserInfo(): Promise<IUserInfo> {
     if (this.userInfo) {
       return Object.freeze(this.userInfo);
@@ -73,6 +86,9 @@ class UserSrv implements IUserSrv {
     return Object.freeze(this.userInfo);
   }
 
+  /**
+   * 获取用户基本信息
+   * */
   private async getUserBaseInfo(ids:string[]):Promise<IUserBaseInfo[]> {
     if (!ids.length) {
       return [];
@@ -80,6 +96,9 @@ class UserSrv implements IUserSrv {
     return mqtt.user.getFriendInfo(ids);
   }
 
+  /**
+   * 获取缓存的登录信息
+   * */
   async getUserLoginInfo():Promise<ILoginInfo > {
     const res = await SQ3.common.getData(ESQ3CommonKey.userLoginInfo);
     if (!res) {
@@ -93,6 +112,9 @@ class UserSrv implements IUserSrv {
     return JSON.parse(res) as ILoginInfo;
   }
 
+  /**
+   * 缓存当前登录人信息
+   * */
   async saveUserLoginInfo(params:ILoginInfo) {
     const loginInfo = params;
     if (!loginInfo.remember) {
@@ -106,12 +128,18 @@ class UserSrv implements IUserSrv {
   // ================================ 接口 ================================
 
   //  ================================ 缓存用户信息 =========================
+  /**
+   * 判断两个对象是否相等
+   * */
   private isObjectChanged(source:Object, comparison:object) {
     const s = JSON.stringify(source);
     const c = JSON.stringify({ ...source, ...comparison });
     return s !== c;
   }
 
+  /**
+   * 将用缓存的用户信息队列，一次保存
+   * */
   private userInfoQueue() {
     if (this.cacheUserInfoStatus || !this.cacheUserInfoQueue.length) {
       return;
@@ -132,6 +160,9 @@ class UserSrv implements IUserSrv {
       });
   }
 
+  /**
+   * 缓存用户信息
+   * */
   cacheUserInfo(info:IUserBaseInfo) {
     const oldInfo = this.allUserInfoList.get(info.id);
     if (oldInfo && this.isObjectChanged(oldInfo, info)) {
@@ -151,6 +182,9 @@ class UserSrv implements IUserSrv {
     this.userInfoQueue();
   }
 
+  /**
+   * 获取用户信息，优先取缓存
+   * */
   async getCacheUserInfo(ids:string[], noCache = false):Promise<IUserBaseInfo[]> {
     const resultInfo = [];
     // 分三步，第一步取内存，第二步取本地数据库，第三步取服务器
