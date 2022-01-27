@@ -44,7 +44,7 @@ const Msg:FC = function () {
       <div className={styles.msg__right}>
         {/* 展示区 */}
         {
-          conversationInfo
+          conversationInfo && userInfo
           && (
             <>
               <div className={styles['msg__right-head']}>
@@ -57,7 +57,9 @@ const Msg:FC = function () {
               </div>
               <div className={styles['msg__right-box']}>
                 {/* 滚动区 */}
-                <ChatBox />
+                <ChatBox
+                  userInfo={userInfo}
+                />
               </div>
               <div className={styles['msg__right-input']}>
                 {/* 输入框 */}

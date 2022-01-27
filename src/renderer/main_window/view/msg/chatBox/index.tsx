@@ -6,17 +6,19 @@ import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hook
 import {
   selectMsgListByCurConversation, loadMsgListAsync, EMsgLoadStatus,
 } from '@renderer/main_window/store/msg';
-import { selectUserInfo } from '@renderer/main_window/store/user';
 import { selectActivaId } from '@renderer/main_window/store/conversation';
 import { mergeId } from '@renderer/public/utils/common';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
+import { IUserInfo } from '@main/modules/mqtt/interface';
 import ChatItem from './components/ChatItem';
 import styles from './index.modules.scss';
 
-const ChatBox:FC = function () {
+export interface IChatBoxProps {
+  userInfo:IUserInfo
+}
+const ChatBox:FC<IChatBoxProps> = function ({ userInfo }) {
   const dispatch = useAppDispatch();
-  const userInfo = useAppSelector(selectUserInfo);
   const conversationId = useAppSelector(selectActivaId);
   const { msgList, loadStatus } = useAppSelector(selectMsgListByCurConversation);
   const chatBoxRef = useRef<HTMLDivElement>(null); // 定义编辑框的引用
@@ -59,8 +61,7 @@ const ChatBox:FC = function () {
    * */
   async function loadMore() {
     if (
-      !userInfo
-      || loadStatus !== EMsgLoadStatus.none
+      loadStatus !== EMsgLoadStatus.none
       || !conversationId
     ) {
       return;
@@ -121,6 +122,7 @@ const ChatBox:FC = function () {
           (item) => (
             <ChatItem
               key={item.msgId}
+              userInfo={userInfo}
               msg={item}
             />
           ),
