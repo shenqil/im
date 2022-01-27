@@ -38,18 +38,34 @@ class FriendSrv implements IFriendSrv {
   constructor() {
     this.friends = [];
     this.quasiFriends = [];
+    this.listenMQTTEvent();
   }
 
-  async init() {
-    // 监听事件
+  /**
+   * 监听mqtt 事件
+   *
+   * 每次退出登录后,事件会被清空
+   * */
+  listenMQTTEvent() {
     mqtt.friend.onFriendChange(this.onFriendChange.bind(this));
+  }
+
+  /**
+   * 初始化
+   * */
+  async init() {
     await this.myFriendList();
     await this.quasiFriendList();
   }
 
+  /**
+   * 清空数据
+   * */
   clear() {
     this.friends = [];
     this.quasiFriends = [];
+
+    this.listenMQTTEvent();
   }
 
   // 改变好友列表唯一入口
@@ -67,6 +83,9 @@ class FriendSrv implements IFriendSrv {
     ipcEvent.emit(EMainEventKey.QuasiFriendChange, this.quasiFriends);
   }
 
+  /**
+   * 获取我的好友，带缓存
+   * */
   async getMyFriendList(): Promise<IFriendInfo[]> {
     if (this.friends.length === 0) {
       await this.myFriendList();
@@ -75,6 +94,9 @@ class FriendSrv implements IFriendSrv {
     return this.friends;
   }
 
+  /**
+   * 获取我的准好友带缓存
+   * */
   async getQuasiFriendList(): Promise<IQuasiFriendSrv[]> {
     if (this.quasiFriends.length === 0) {
       await this.quasiFriendList();
@@ -83,6 +105,9 @@ class FriendSrv implements IFriendSrv {
     return this.quasiFriends;
   }
 
+  /**
+   * 转换为准好友结构
+   * */
   toQuasiFriendSrv(item:IQuasiFriend):IQuasiFriendSrv {
     let [selfStatus, friendStatus] = [item.status.status1, item.status.status2];
 
@@ -99,6 +124,9 @@ class FriendSrv implements IFriendSrv {
   }
 
   // --------------------- 接口调用 ----------------------
+  /**
+   * 搜索指定用户信息
+   * */
   async search(keywords:string):Promise<IFriendInfoSrv | undefined> {
     const friendInfo = await mqtt.friend.search(keywords);
 
@@ -112,6 +140,9 @@ class FriendSrv implements IFriendSrv {
     };
   }
 
+  /**
+   * 获取我的好友，不带缓存
+   * */
   async myFriendList(): Promise<IFriendInfo[]> {
     const list = await mqtt.friend.myFriendList();
     this.changeFriends(list);
@@ -123,6 +154,9 @@ class FriendSrv implements IFriendSrv {
     return list;
   }
 
+  /**
+   * 获取我的准好友，不带缓存
+   * */
   async quasiFriendList(): Promise<IQuasiFriendSrv[]> {
     const list = await mqtt.friend.quasiFriendList();
 
@@ -132,16 +166,25 @@ class FriendSrv implements IFriendSrv {
     return newList;
   }
 
+  /**
+   * 添加好友
+   * */
   async add(userId:string): Promise<unknown> {
     const userInfo = await userSrv.getUserInfo();
     return mqtt.friend.add({ formUserId: userInfo.id, toUserId: userId });
   }
 
+  /**
+   * 忽略对方添加
+   * */
   async ignore(userId:string): Promise<unknown> {
     const userInfo = await userSrv.getUserInfo();
     return mqtt.friend.ignore({ formUserId: userInfo.id, toUserId: userId });
   }
 
+  /**
+   * 删除好友
+   * */
   async remove(userId:string): Promise<unknown> {
     const userInfo = await userSrv.getUserInfo();
     return mqtt.friend.remove({ formUserId: userInfo.id, toUserId: userId });
