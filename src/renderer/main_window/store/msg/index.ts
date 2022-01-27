@@ -63,7 +63,20 @@ const initialState:IMsgState = {
 
 export const loadMsgListAsync = createAsyncThunk(
   'msg/loadList',
-  async ({ id, time }:{ id:string, time:number }) => {
+  async ({ id, time }:{ id:string, time:number }, thunkAPI) => {
+    const { getState, dispatch } = thunkAPI;
+    const { msgMap } = (getState() as RootState).msg;
+    const { loadStatus } = (msgMap[id] || defaultItem()) as IMsgItem;
+    if (loadStatus !== EMsgLoadStatus.none) {
+      // 重复请求不做处理
+      return undefined;
+    }
+
+    // 将加载状态置为加载中
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    dispatch(changeLoadStatus({ id, loadStatus: EMsgLoadStatus.lodding }));
+
+    // 开始请求
     const list = await mainBridge
       .server.msgSrv.fetchBeforeByTime(id, time, 0, LIMIT);
     if (!Array.isArray(list)) {
@@ -86,11 +99,11 @@ export const msgSlice = createSlice({
       const { id } = newMsg;
       const { msgList, loadStatus } = (msgMap[id] || defaultItem()) as IMsgItem;
 
-      // 去重
-      const i = msgList.findIndex((msgItem) => msgItem.msgId === newMsg.msgId);
-      if (i !== -1) {
-        return;
-      }
+      // // 去重
+      // const i = msgList.findIndex((msgItem) => msgItem.msgId === newMsg.msgId);
+      // if (i !== -1) {
+      //   return;
+      // }
 
       // 插入
       const index = searchInsertIndex(msgList, newMsg);
@@ -127,22 +140,31 @@ export const msgSlice = createSlice({
       msgList.splice(i, 0, newMsg);
       state.msgMap = { ...msgMap };
     },
+    /**
+     * 改变loadmore状态
+     * */
+    changeLoadStatus: (state, action:PayloadAction<{ id:string, loadStatus:EMsgLoadStatus }>) => {
+      const { msgMap } = state;
+      const { id, loadStatus } = action.payload;
+      const { msgList } = (msgMap[id] || defaultItem()) as IMsgItem;
+
+      // 更新
+      msgMap[id] = { msgList, loadStatus };
+      state.msgMap = { ...msgMap };
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loadMsgListAsync.pending, (state, action) => {
-        const { msgMap } = state;
-        const { id } = action.meta.arg;
-        const { msgList } = (msgMap[id] || defaultItem()) as IMsgItem;
-
-        msgMap[id] = { msgList, loadStatus: EMsgLoadStatus.lodding };
-        state.msgMap = { ...msgMap };
-      })
       .addCase(loadMsgListAsync.fulfilled, (state, action) => {
         const { msgMap } = state;
         const { id } = action.meta.arg;
         const list = action.payload;
         const { msgList } = (msgMap[id] || defaultItem()) as IMsgItem;
+
+        // 非法数据不做处理
+        if (!list) {
+          return;
+        }
 
         // 插入得到的消息
         for (const msgItem of list) {
@@ -156,15 +178,6 @@ export const msgSlice = createSlice({
         // 更新
         msgMap[id] = { msgList, loadStatus: status };
         state.msgMap = { ...msgMap };
-      })
-      .addCase(loadMsgListAsync.rejected, (state, action) => {
-        const { msgMap } = state;
-        const { id } = action.meta.arg;
-        const { msgList, loadStatus } = (msgMap[id] || defaultItem()) as IMsgItem;
-
-        const status = loadStatus === EMsgLoadStatus.finished ? loadStatus : EMsgLoadStatus.none;
-        msgMap[id] = { msgList, loadStatus: status };
-        state.msgMap = { ...msgMap };
       });
   },
 });
@@ -172,6 +185,7 @@ export const msgSlice = createSlice({
 export const {
   insert,
   update,
+  changeLoadStatus,
 } = msgSlice.actions;
 
 // 当前会话的消息列表

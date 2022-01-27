@@ -22,12 +22,13 @@ const ChatBox:FC<IChatBoxProps> = function ({ userInfo }) {
   const conversationId = useAppSelector(selectActivaId);
   const { msgList, loadStatus } = useAppSelector(selectMsgListByCurConversation);
   const chatBoxRef = useRef<HTMLDivElement>(null); // 定义编辑框的引用
+  const isAutoScroll = useRef<boolean>(true); // 是否自动滚动到底部
 
   /**
    * 滚动到底部
    * */
   function scrollToBottom() {
-    if (!chatBoxRef.current) {
+    if (!chatBoxRef.current || !isAutoScroll.current) {
       return;
     }
     const { scrollHeight, clientHeight } = chatBoxRef.current;
@@ -80,10 +81,18 @@ const ChatBox:FC<IChatBoxProps> = function ({ userInfo }) {
    * 监听滚动事件
    * */
   function onScroll(event:UIEvent<HTMLDivElement>) {
-    const { scrollTop } = event.target as HTMLDivElement;
-
-    if (scrollTop <= 5) {
+    const { scrollTop, scrollHeight, clientHeight } = event.target as HTMLDivElement;
+    const deadZone = 5;
+    // 滚动到顶部，加载更多
+    if (scrollTop <= deadZone) {
       loadMore();
+    }
+
+    // 滚动到底部,自动滚动
+    if (scrollTop + clientHeight + deadZone >= scrollHeight) {
+      isAutoScroll.current = true;
+    } else {
+      isAutoScroll.current = false;
     }
   }
 
@@ -92,6 +101,7 @@ const ChatBox:FC<IChatBoxProps> = function ({ userInfo }) {
       // 消息列表数量小于10，加载更多
       await loadMore();
     }
+    isAutoScroll.current = true;
     scrollToBottom();
   }
 
@@ -99,6 +109,13 @@ const ChatBox:FC<IChatBoxProps> = function ({ userInfo }) {
   useEffect(() => {
     init();
   }, [conversationId]);
+
+  /**
+   * 监听消息变化
+   * */
+  useEffect(() => {
+    scrollToBottom();
+  }, [msgList]);
 
   return (
     <div
