@@ -24,16 +24,37 @@ class GroupSrv implements IGroupSrv {
 
   constructor() {
     this.groups = [];
+    this.listenMQTTEvent();
   }
 
+  /**
+   * 监听mqtt 事件
+   *
+   * 每次退出登录后,事件会被清空
+   * */
+  listenMQTTEvent() {
+    mqtt.group.onGroupCreate(this.onGroupCreate.bind(this));
+    mqtt.group.onGroupDelete(this.onGroupDelete.bind(this));
+    mqtt.group.onGroupUpdate(this.onGroupUpdate.bind(this));
+    mqtt.group.onGroupAddMembers(this.onGroupAddMembers.bind(this));
+    mqtt.group.onGroupDelMembers(this.onGroupDelMembers.bind(this));
+    mqtt.group.onGroupExit(this.onGroupExit.bind(this));
+  }
+
+  /**
+   * 初始化
+   * */
   async init() {
-    this.clear();
-    this.initEvent();
     await this.myGroupList();
   }
 
+  /**
+   * 清空
+   * */
   clear() {
     this.groups = [];
+
+    this.listenMQTTEvent();
   }
 
   // 改变群列表唯一入口
@@ -42,6 +63,9 @@ class GroupSrv implements IGroupSrv {
     ipcEvent.emit(EMainEventKey.MyGroupChange, list);
   }
 
+  /**
+   * 获取我的群组列表 带缓存
+   * */
   async getMyGroupList():Promise<IGroupInfo[]> {
     if (this.groups.length === 0) {
       await this.myGroupList();
@@ -51,6 +75,9 @@ class GroupSrv implements IGroupSrv {
   }
 
   // ======================= 接口 ============================
+  /**
+   * 获取我的群组，不带缓存
+   * */
   async myGroupList():Promise<IGroupInfo[]> {
     const list = await mqtt.group.myGroupList();
     // 更新会话
@@ -63,18 +90,30 @@ class GroupSrv implements IGroupSrv {
     return list;
   }
 
+  /**
+   * 创建群组
+   * */
   async create(params:IGroupInfo):Promise<unknown> {
     return mqtt.group.create(params);
   }
 
+  /**
+   * 删除群组
+   * */
   async remove(groupId:string):Promise<unknown> {
     return mqtt.group.remove(groupId);
   }
 
+  /**
+   * 更新群组
+   * */
   async update(params:IGroupInfo):Promise<unknown> {
     return mqtt.group.update(params);
   }
 
+  /**
+   * 添加群成员
+   * */
   async addMembers(groupId:string, members:IGroupMemberInfo[]):Promise<unknown> {
     const userInfo = await userSrv.getUserInfo();
     return mqtt.group.addMembers({
@@ -85,6 +124,9 @@ class GroupSrv implements IGroupSrv {
     });
   }
 
+  /**
+   * 删除群成员
+   * */
   async delMembers(groupId:string, members:IGroupMemberInfo[]):Promise<unknown> {
     const userInfo = await userSrv.getUserInfo();
     return mqtt.group.delMembers({
@@ -95,6 +137,9 @@ class GroupSrv implements IGroupSrv {
     });
   }
 
+  /**
+   * 退出群组
+   * */
   async exit(groupId:string):Promise<unknown> {
     const userInfo = await userSrv.getUserInfo();
     return mqtt.group.exit({
@@ -110,15 +155,6 @@ class GroupSrv implements IGroupSrv {
   // ======================= 接口 ============================
 
   // ======================= 事件监听 ========================
-  initEvent() {
-    mqtt.group.onGroupCreate(this.onGroupCreate.bind(this));
-    mqtt.group.onGroupDelete(this.onGroupDelete.bind(this));
-    mqtt.group.onGroupUpdate(this.onGroupUpdate.bind(this));
-    mqtt.group.onGroupAddMembers(this.onGroupAddMembers.bind(this));
-    mqtt.group.onGroupDelMembers(this.onGroupDelMembers.bind(this));
-    mqtt.group.onGroupExit(this.onGroupExit.bind(this));
-  }
-
   async onGroupCreate(groupItem:IGroupInfo) {
     const index = this.groups.findIndex((item) => item.id === groupItem.id);
     if (index !== -1) {
