@@ -11,11 +11,23 @@ export interface IChatItemProps {
 }
 const ChatItem:FC<IChatItemProps> = function (props) {
   const { msg, userInfo } = props;
+  const isSelf = userInfo.id === msg.formId;
+
+  function getCardId() {
+    if (userInfo.id === msg.toId) {
+      return msg.formId;
+    }
+
+    return undefined;
+  }
 
   return (
-    <div className={`chat-item ${userInfo.id === msg.formId && 'chat-item--self'}`}>
+    <div className={`chat-item ${isSelf && 'chat-item--self'}`}>
       <div className="chat-item__avatar">
-        <Avatar url={userInfo.avatar || ''} />
+        <Avatar
+          url={userInfo.avatar}
+          cardId={getCardId()}
+        />
       </div>
 
       <div className="chat-item__content">

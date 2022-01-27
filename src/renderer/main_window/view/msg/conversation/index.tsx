@@ -6,6 +6,7 @@ import Avatar from '@renderer/main_window/components/Avatar';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import { EMsgType } from '@main/interface/msg';
 import { Badge } from 'antd';
+import { EConversationType } from '@main/modules/sqlite3/enum';
 import NoDisturb from './img/no-disturb.png';
 import styles from './index.modules.scss';
 
@@ -103,6 +104,14 @@ const ConversationItem:FC<IConversationItemProps> = function (props:IConversatio
     mainBridge.server.conversationSrv.setActivaId(conversationInfo.id);
   }
 
+  function getCardId() {
+    if (conversationInfo.type === EConversationType.single) {
+      return conversationInfo.id;
+    }
+
+    return undefined;
+  }
+
   return (
     <div
       className={`${styles['conversation-item']} ${activaId === conversationInfo.id && 'scroll__item--activa'}`}
@@ -116,7 +125,10 @@ const ConversationItem:FC<IConversationItemProps> = function (props:IConversatio
           overflowCount={99}
           size="small"
         >
-          <Avatar url={conversationInfo.avatar} />
+          <Avatar
+            url={conversationInfo.avatar}
+            cardId={getCardId()}
+          />
         </Badge>
       </div>
 

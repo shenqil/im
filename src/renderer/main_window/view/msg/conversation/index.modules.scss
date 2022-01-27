@@ -24,6 +24,10 @@
     width: 64px;
     height: 64px;
     padding: 12px;
+    img {
+      border-radius: 6px;
+      overflow: hidden;
+    }
   }
 
   &__info{
