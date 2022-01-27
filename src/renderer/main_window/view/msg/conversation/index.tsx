@@ -5,6 +5,7 @@ import type { IConversationInfo } from '@main/modules/sqlite3/interface';
 import Avatar from '@renderer/main_window/components/Avatar';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import { EMsgType } from '@main/interface/msg';
+import { Badge } from 'antd';
 import NoDisturb from './img/no-disturb.png';
 import styles from './index.modules.scss';
 
@@ -109,7 +110,14 @@ const ConversationItem:FC<IConversationItemProps> = function (props:IConversatio
       aria-hidden="true"
     >
       <div className={styles['conversation-item__avatar']}>
-        <Avatar url={conversationInfo.avatar} />
+        <Badge
+          dot={conversationInfo.noDisturd}
+          count={conversationInfo.unreadNum}
+          overflowCount={99}
+          size="small"
+        >
+          <Avatar url={conversationInfo.avatar} />
+        </Badge>
       </div>
 
       <div className={styles['conversation-item__info']}>

@@ -6,9 +6,12 @@ import { IConversationInfo } from '@main/modules/sqlite3/conversation';
 import type { IFriendInfo, IGroupInfo } from '@main/modules/mqtt/interface';
 import { throttle } from 'throttle-debounce';
 import type { IUserBaseInfo } from '@main/modules/sqlite3/interface';
-import { IMessage } from '@main/interface/msg';
+import { EMsgStatus, IMessage } from '@main/interface/msg';
+import friendSrv from './friendSrv';
+import groupSrv from './groupSrv';
 
 export interface IConversationSrv {
+  getConversationInfoById(id:string):Promise<IConversationInfo | undefined>
   get():Promise<IConversationInfo[]>,
   set(list:IConversationInfo[]):Promise<unknown>,
   gotoConversation(info:IFriendInfo): Promise<unknown>,
@@ -37,7 +40,7 @@ class ConversationSrv implements IConversationSrv {
     this.activaId = '';
 
     // 节流推送和储存到数据库中
-    this.throttleSave = throttle(1500, false, (list:IConversationInfo[]) => {
+    this.throttleSave = throttle(800, false, (list:IConversationInfo[]) => {
       if (!this.userId) {
         return;
       }
@@ -72,6 +75,60 @@ class ConversationSrv implements IConversationSrv {
   }
 
   /**
+   * 通过会话id获取一个的会话信息
+   * */
+  async getConversationInfoById(id:string) {
+    // 1.先获取缓存
+    let conversationItem = this.list.find((item) => item.id === id);
+    if (conversationItem) {
+      return conversationItem;
+    }
+
+    // 2.在好友列表中查找
+    const friendList = await friendSrv.getMyFriendList();
+    const friendItem = friendList.find((item) => item.id === id);
+    if (friendItem) {
+      conversationItem = {
+        id,
+        name: friendItem.realName,
+        avatar: friendItem.avatar,
+        lastTime: Date.now(),
+        unreadNum: 0,
+        noDisturd: false,
+        placedTop: false,
+        type: EConversationType.single,
+      };
+
+      this.list.push(conversationItem);
+      this.set(this.list);
+
+      return conversationItem;
+    }
+
+    // 3.在群组列表中查找
+    const groupList = await groupSrv.getMyGroupList();
+    const groupItem = groupList.find((item) => item.id === id);
+    if (groupItem) {
+      conversationItem = {
+        id,
+        name: groupItem.groupName,
+        avatar: groupItem.avatar,
+        lastTime: Date.now(),
+        unreadNum: 0,
+        noDisturd: false,
+        placedTop: false,
+        type: EConversationType.group,
+      };
+
+      this.list.push(conversationItem);
+      this.set(this.list);
+      return conversationItem;
+    }
+
+    return undefined;
+  }
+
+  /**
    * 根据用户信息更新会话
    * */
   updateWithUserInfo(userInfo:IUserBaseInfo) {
@@ -98,16 +155,23 @@ class ConversationSrv implements IConversationSrv {
   /**
    * 根据消息更新会话
    * */
-  updateWithMsg(msg:IMessage) {
+  async updateWithMsg(msg:IMessage) {
     const conversationId = msg.formId === this.userId ? msg.toId : msg.formId;
 
-    const conversation = this.list.find((item) => item.id === conversationId);
+    const conversation = await this.getConversationInfoById(conversationId);
     if (conversation) {
       const oldMsg = conversation.lastMsg || { msgTime: 0 };
 
+      // 更新会话内的最后一条消息
       if (msg.msgTime >= oldMsg.msgTime) {
         conversation.lastMsg = msg;
         conversation.lastTime = msg.msgTime;
+        this.set(this.list);
+      }
+
+      // 更新会话的未读数
+      if (conversation.id !== this.activaId && msg.msgStatus === EMsgStatus.reciveAccepted) {
+        conversation.unreadNum++;
         this.set(this.list);
       }
     }
@@ -148,6 +212,12 @@ class ConversationSrv implements IConversationSrv {
   async setActivaId(id:string) {
     this.activaId = id;
     ipcEvent.emit(EMainEventKey.ConversationaAtivaIdChange, id);
+
+    const conversationItem = this.list.find((item) => item.id === id);
+    if (conversationItem) {
+      conversationItem.unreadNum = 0;
+      this.set(this.list);
+    }
   }
 
   /**

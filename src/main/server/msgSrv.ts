@@ -13,19 +13,52 @@ export interface IMsgSrv {
 }
 
 class MsgSrv implements IMsgSrv {
+  msgQueue:IMessage[];
+
+  msgFlag:boolean;
+
   userInfo:IUserInfo | undefined;
 
+  conversationActivaId:string;
+
   constructor() {
+    this.msgQueue = [];
+    this.msgFlag = false;
     this.init(undefined);
+    this.listenMQTTEvent();
+    this.conversationActivaId = '';
+    ipcEvent.on(EMainEventKey.ConversationaAtivaIdChange, (id:string) => {
+      this.conversationActivaId = id;
+    });
   }
 
-  async init(userInfo:IUserInfo | undefined) {
-    this.userInfo = userInfo;
+  /**
+   * 监听mqtt 事件
+   *
+   * 每次退出登录后,事件会被清空
+   * */
+  listenMQTTEvent() {
     mqtt.msg.onReciveNewMsg(this.onReciveNewMsg.bind(this));
   }
 
+  /**
+   * 初始化
+   * */
+  async init(userInfo:IUserInfo | undefined) {
+    this.userInfo = userInfo;
+    this.consumeMsgQueue();
+  }
+
+  /**
+   * 清空数据
+   * */
   clear() {
     this.userInfo = undefined;
+    this.msgQueue = [];
+    this.msgFlag = false;
+    this.conversationActivaId = '';
+
+    this.listenMQTTEvent();
   }
 
   /**
@@ -96,8 +129,34 @@ class MsgSrv implements IMsgSrv {
     }
   }
 
+  /**
+   * 消费
+   * */
+  consumeMsgQueue() {
+    if (!this.userInfo) {
+      return;
+    }
+    const msgItem = this.msgQueue.shift();
+    if (!msgItem || this.msgFlag) {
+      return;
+    }
+
+    this.msgFlag = true;
+    this.saveMsg(msgItem)
+      .finally(() => {
+        this.msgFlag = false;
+        this.consumeMsgQueue();
+      });
+  }
+
   onReciveNewMsg(msg:IMessage) {
-    console.log(msg, 'onReciveNewMsg');
+    this.msgQueue.push({
+      ...msg,
+      msgStatus: this.conversationActivaId === msg.formId
+        ? EMsgStatus.reciveRead
+        : EMsgStatus.reciveAccepted,
+    });
+    this.consumeMsgQueue();
   }
 }
 
