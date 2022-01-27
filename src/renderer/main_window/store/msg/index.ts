@@ -5,6 +5,8 @@ import { mergeId } from '@renderer/public/utils/common';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import type { RootState } from '../index';
 
+const LIMIT = 10; // 每条消息数量
+
 export enum EMsgLoadStatus {
   none = 'NONE',
   lodding = 'LODDING',
@@ -61,25 +63,13 @@ const initialState:IMsgState = {
 
 export const loadMsgListAsync = createAsyncThunk(
   'msg/loadList',
-  async (id:string) => {
-    const { msgMap } = initialState;
-    const { msgList, loadStatus } = (msgMap[id] || defaultItem()) as IMsgItem;
-
-    if (loadStatus !== EMsgLoadStatus.none) {
-      // 无需请求接口
+  async ({ id, time }:{ id:string, time:number }) => {
+    const list = await mainBridge
+      .server.msgSrv.fetchBeforeByTime(id, time, 0, LIMIT);
+    if (!Array.isArray(list)) {
       return [];
     }
-
-    // 拿到当前消息列表中最老的事件
-    let time = Date.now();
-    if (msgList.length) {
-      const firstMsg = msgList[0];
-      time = firstMsg.msgTime;
-    }
-
-    const response = await mainBridge
-      .server.msgSrv.fetchBeforeByTime(id, time, 0, 10);
-    return response;
+    return list;
   },
 );
 
@@ -96,11 +86,11 @@ export const msgSlice = createSlice({
       const { id } = newMsg;
       const { msgList, loadStatus } = (msgMap[id] || defaultItem()) as IMsgItem;
 
-      // // 去重
-      // const i = msgList.findIndex((msgItem) => msgItem.msgId === newMsg.msgId);
-      // if (i !== -1) {
-      //   return;
-      // }
+      // 去重
+      const i = msgList.findIndex((msgItem) => msgItem.msgId === newMsg.msgId);
+      if (i !== -1) {
+        return;
+      }
 
       // 插入
       const index = searchInsertIndex(msgList, newMsg);
@@ -140,22 +130,40 @@ export const msgSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(loadMsgListAsync.pending, (state, action) => {
+        const { msgMap } = state;
+        const { id } = action.meta.arg;
+        const { msgList } = (msgMap[id] || defaultItem()) as IMsgItem;
+
+        msgMap[id] = { msgList, loadStatus: EMsgLoadStatus.lodding };
+        state.msgMap = { ...msgMap };
+      })
       .addCase(loadMsgListAsync.fulfilled, (state, action) => {
         const { msgMap } = state;
-        const newList = action.payload;
-        if (!newList.length) {
-          return;
-        }
-        const { id } = newList[0];
-        const { msgList, loadStatus } = (msgMap[id] || defaultItem()) as IMsgItem;
+        const { id } = action.meta.arg;
+        const list = action.payload;
+        const { msgList } = (msgMap[id] || defaultItem()) as IMsgItem;
 
-        for (const msgItem of newList) {
+        // 插入得到的消息
+        for (const msgItem of list) {
           const index = searchInsertIndex(msgList, msgItem);
           msgList.splice(index, 0, msgItem);
         }
 
+        // 判断所有消息是否加载完毕
+        const status = list.length === LIMIT ? EMsgLoadStatus.none : EMsgLoadStatus.finished;
+
         // 更新
-        msgMap[id] = { msgList, loadStatus };
+        msgMap[id] = { msgList, loadStatus: status };
+        state.msgMap = { ...msgMap };
+      })
+      .addCase(loadMsgListAsync.rejected, (state, action) => {
+        const { msgMap } = state;
+        const { id } = action.meta.arg;
+        const { msgList, loadStatus } = (msgMap[id] || defaultItem()) as IMsgItem;
+
+        const status = loadStatus === EMsgLoadStatus.finished ? loadStatus : EMsgLoadStatus.none;
+        msgMap[id] = { msgList, loadStatus: status };
         state.msgMap = { ...msgMap };
       });
   },

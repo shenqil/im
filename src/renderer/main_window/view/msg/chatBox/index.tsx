@@ -1,7 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { FC, UIEvent, useEffect } from 'react';
+import React, {
+  FC, UIEvent, useEffect, useRef,
+} from 'react';
 import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hooks';
-import { selectMsgListByCurConversation, loadMsgListAsync, EMsgLoadStatus } from '@renderer/main_window/store/msg';
+import {
+  selectMsgListByCurConversation, loadMsgListAsync, EMsgLoadStatus,
+} from '@renderer/main_window/store/msg';
 import { selectUserInfo } from '@renderer/main_window/store/user';
 import { selectActivaId } from '@renderer/main_window/store/conversation';
 import { mergeId } from '@renderer/public/utils/common';
@@ -15,12 +19,29 @@ const ChatBox:FC = function () {
   const userInfo = useAppSelector(selectUserInfo);
   const conversationId = useAppSelector(selectActivaId);
   const { msgList, loadStatus } = useAppSelector(selectMsgListByCurConversation);
+  const chatBoxRef = useRef<HTMLDivElement>(null); // 定义编辑框的引用
 
-  function getStatusText() {
+  /**
+   * 滚动到底部
+   * */
+  function scrollToBottom() {
+    if (!chatBoxRef.current) {
+      return;
+    }
+    const { scrollHeight, clientHeight } = chatBoxRef.current;
+    chatBoxRef.current.scrollTop = scrollHeight - clientHeight;
+  }
+
+  /**
+   * 获取消息状态
+   * */
+  function getLoadStatus() {
     if (loadStatus === EMsgLoadStatus.lodding) {
       return (
         <>
-          <Space><LoadingOutlined /></Space>
+          <span className={styles['chat-box__tips-icon']}>
+            <Space><LoadingOutlined /></Space>
+          </span>
           加载中...
         </>
       );
@@ -36,7 +57,7 @@ const ChatBox:FC = function () {
   /**
    * 加载更多
    * */
-  function loadMore() {
+  async function loadMore() {
     if (
       !userInfo
       || loadStatus !== EMsgLoadStatus.none
@@ -45,38 +66,51 @@ const ChatBox:FC = function () {
       return;
     }
     const id = mergeId(userInfo.id, conversationId);
-    dispatch(loadMsgListAsync(id));
+
+    let time = Date.now();
+    if (msgList.length) {
+      const firstMsg = msgList[0];
+      time = firstMsg.msgTime;
+    }
+    await dispatch(loadMsgListAsync({ id, time }));
   }
 
   /**
    * 监听滚动事件
    * */
   function onScroll(event:UIEvent<HTMLDivElement>) {
-    const { scrollHeight, clientHeight, scrollTop } = event.target as HTMLDivElement;
-    console.log(scrollHeight, clientHeight, scrollTop);
+    const { scrollTop } = event.target as HTMLDivElement;
 
     if (scrollTop <= 5) {
-      // loadMore();
+      loadMore();
     }
+  }
+
+  async function init() {
+    if (msgList.length < 10) {
+      // 消息列表数量小于10，加载更多
+      await loadMore();
+    }
+    scrollToBottom();
   }
 
   // 监听会话发生变化
   useEffect(() => {
-    if (msgList.length < 10) {
-      // 消息列表数量小于10，加载更多
-      loadMore();
-    }
+    init();
   }, [conversationId]);
 
   return (
-    <div className={`scroll ${styles['chat-box']}`} onScroll={(e) => onScroll(e)}>
-
+    <div
+      ref={chatBoxRef}
+      className={`scroll ${styles['chat-box']}`}
+      onScroll={(e) => onScroll(e)}
+    >
       {/* 状态tips */}
       {
           loadStatus !== EMsgLoadStatus.none
           && (
           <div className={styles['chat-box__tips']}>
-            {getStatusText()}
+            {getLoadStatus()}
           </div>
           )
       }

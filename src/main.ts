@@ -4,6 +4,7 @@ import './main/ipcMain/index';
 // 引入所有自定义协议
 import './main/schemes/index';
 // 引入所有窗口
+import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import wins from './main/window/index';
 import { appReady } from './main/lifeCycle';
 
@@ -11,6 +12,15 @@ import { appReady } from './main/lifeCycle';
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    try {
+      await installExtension(REACT_DEVELOPER_TOOLS);
+      await installExtension(REDUX_DEVTOOLS);
+    } catch (e) {
+      console.error('React Devtools failed to install:', e);
+    }
+  }
+
   await appReady();
   wins.login.openWin();
 });
