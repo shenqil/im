@@ -34,11 +34,13 @@ const ChatBox:FC<IChatBoxProps> = function ({ userInfo, memberList, friendInfo }
    * 滚动到底部
    * */
   function scrollToBottom() {
-    if (!chatBoxRef.current || !isAutoScroll.current) {
-      return;
-    }
-    const { scrollHeight, clientHeight } = chatBoxRef.current;
-    chatBoxRef.current.scrollTop = scrollHeight - clientHeight;
+    setTimeout(() => {
+      if (!chatBoxRef.current || !isAutoScroll.current) {
+        return;
+      }
+      const { scrollHeight, clientHeight } = chatBoxRef.current;
+      chatBoxRef.current.scrollTop = scrollHeight - clientHeight;
+    });
   }
 
   /**

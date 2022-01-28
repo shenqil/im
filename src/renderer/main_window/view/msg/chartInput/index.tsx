@@ -267,7 +267,10 @@ const ChartInput:FC<IChartInputProps> = function (props) {
 
       {/* 输入框内容区 */}
       <div className={styles['chart-input__base']}>
-        <BaseInput ref={editPanelRef} />
+        <BaseInput
+          ref={editPanelRef}
+          sendMsg={() => sendMsg()}
+        />
       </div>
 
       {/* 底部发送 */}
