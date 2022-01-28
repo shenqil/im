@@ -1,5 +1,5 @@
 import React, {
-  forwardRef, LegacyRef, KeyboardEvent, useRef,
+  forwardRef, LegacyRef, KeyboardEvent,
 } from 'react';
 import styles from './index.modules.scss';
 
