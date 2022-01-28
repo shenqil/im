@@ -10,7 +10,7 @@ export interface IMsg {
 function send(msg:IMessage) {
   return new Promise((resolve, reject) => {
     connect.sendMsg({
-      topic: `${connect.clientPrefix}/${msg.toId}/${msg.charType}/new/${msg.msgId}`,
+      topic: `${connect.clientPrefix}/${msg.toId}/${msg.charType}/new`,
       opts: {
         qos: 1,
         retain: false,

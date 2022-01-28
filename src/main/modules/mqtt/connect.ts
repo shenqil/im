@@ -375,7 +375,7 @@ class MQTTConnect implements IMQTTConnect {
   }
 
   /**
-   * 监听单聊消息 IMClient/userId/singleMsg/type/msgId
+   * 监听单聊消息 IMClient/userId/singleMsg/type
    * */
   private onSingleMsg(topicAry:string[], message:Buffer) {
     if (topicAry[0] !== ECharType.single || topicAry.length < 2) {
@@ -400,7 +400,7 @@ class MQTTConnect implements IMQTTConnect {
   }
 
   /**
-   * 监听群聊消息 IMClient/groupId/groupMsg/type/msgId
+   * 监听群聊消息 IMClient/groupId/groupMsg/type
    * */
   private onGroupMsg(topicAry:string[], message:Buffer) {
     if (topicAry[0] !== ECharType.group || topicAry.length < 2) {
