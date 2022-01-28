@@ -7,7 +7,6 @@ import {
   selectMsgListByCurConversation, loadMsgListAsync, EMsgLoadStatus,
 } from '@renderer/main_window/store/msg';
 import { selectActivaId } from '@renderer/main_window/store/conversation';
-import { mergeId } from '@renderer/public/utils/common';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
 import { IUserInfo } from '@main/modules/mqtt/interface';
@@ -69,14 +68,13 @@ const ChatBox:FC<IChatBoxProps> = function ({ userInfo }) {
     ) {
       return;
     }
-    const id = mergeId(userInfo.id, conversationId);
 
     let time = Date.now();
     if (msgList.length) {
       const firstMsg = msgList[0];
       time = firstMsg.msgTime;
     }
-    await dispatch(loadMsgListAsync({ id, time }));
+    await dispatch(loadMsgListAsync({ id: conversationId, time }));
   }
 
   /**

@@ -1,5 +1,7 @@
 /* eslint-disable class-methods-use-this */
-import { IMessage, EMsgType, EMsgStatus } from '@main/interface/msg';
+import {
+  IMessage, EMsgType, EMsgStatus, ECharType,
+} from '@main/interface/msg';
 import type { IUserInfo } from '@main/modules/mqtt/interface';
 import mqtt from '@main/modules/mqtt';
 import sqlite3 from '@main/modules/sqlite3';
@@ -152,6 +154,7 @@ class MsgSrv implements IMsgSrv {
   onReciveNewMsg(msg:IMessage) {
     this.msgQueue.push({
       ...msg,
+      conversationId: msg.charType === ECharType.single ? msg.formId : msg.toId,
       msgStatus: this.conversationActivaId === msg.formId
         ? EMsgStatus.reciveRead
         : EMsgStatus.reciveAccepted,

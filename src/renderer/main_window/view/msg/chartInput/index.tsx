@@ -9,7 +9,6 @@ import type { IConversationInfo } from '@main/modules/sqlite3/interface';
 import { editContentBackupMap } from '@renderer/main_window/store/conversation';
 import { v4 as uuidv4 } from 'uuid';
 import { mainBridge } from '@renderer/public/ipcRenderer';
-import { mergeId } from '@renderer/public/utils/common';
 import BaseInput from './components/BaseInput';
 import Tools from './components/Tools';
 import styles from './index.modules.scss';
@@ -75,7 +74,7 @@ const ChartInput:FC<IChartInputProps> = function (props) {
     const charType = conversationInfo.type === EConversationType.single
       ? ECharType.single : ECharType.group;
     return {
-      id: mergeId(userInfo?.id || '', conversationInfo.id),
+      conversationId: conversationInfo.id,
       charType,
       msgType: msgItem.type,
       msgTime: Date.now(),

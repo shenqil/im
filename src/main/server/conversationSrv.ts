@@ -156,7 +156,7 @@ class ConversationSrv implements IConversationSrv {
    * 根据消息更新会话
    * */
   async updateWithMsg(msg:IMessage) {
-    const conversationId = msg.formId === this.userId ? msg.toId : msg.formId;
+    const { conversationId } = msg;
 
     const conversation = await this.getConversationInfoById(conversationId);
     if (conversation) {

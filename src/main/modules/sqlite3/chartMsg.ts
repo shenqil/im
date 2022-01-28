@@ -4,7 +4,8 @@ import SQ3Base, { ESQ3Mode } from './base';
 export interface ISQ3ChartMsg{
   insert(params:IMessage):Promise<unknown>
   updateStatus(msgId:string, msgStatus:EMsgStatus):Promise<number>
-  fetchBeforeByTime(id: string, msgTime: number, page: number, limit: number):Promise<IMessage[]>
+  fetchBeforeByTime(conversationId: string,
+    msgTime: number, page: number, limit: number):Promise<IMessage[]>
 }
 
 /**
@@ -20,11 +21,11 @@ class SQ3ChartMsg extends SQ3Base implements ISQ3ChartMsg {
   constructor() {
     super();
     this.tabelName = '';
-    this.tabelField = ['msgId', 'id', 'formId', 'formName', 'toId', 'toName',
+    this.tabelField = ['msgId', 'conversationId', 'formId', 'formName', 'toId', 'toName',
       'msgTime', 'charType', 'msgType', 'payload', 'msgStatus'];
     this.tabelStruct = [
       'msgId varchar(255) primary key NOT NULL',
-      'id varchar(255)',
+      'conversationId varchar(255)',
       'formId varchar(255)',
       'formName varchar(255)',
       'toId varchar(255)',
@@ -76,15 +77,15 @@ class SQ3ChartMsg extends SQ3Base implements ISQ3ChartMsg {
   /**
    * 获取指定时间之前的消息
    * */
-  async fetchBeforeByTime(id: string, msgTime: number, page: number, limit: number) {
+  async fetchBeforeByTime(conversationId: string, msgTime: number, page: number, limit: number) {
     //  参数处理
     if (typeof page !== 'number' || typeof limit !== 'number') {
       throw new Error('参数类型错误');
     }
 
     const resultData = await this.sql(
-      `SELECT * FROM ${this.tabelName} WHERE id = ? AND msgTime < ? order by msgTime desc LIMIT ${page * limit}, ${limit}`,
-      [id, msgTime],
+      `SELECT * FROM ${this.tabelName} WHERE conversationId = ? AND msgTime < ? order by msgTime desc LIMIT ${page * limit}, ${limit}`,
+      [conversationId, msgTime],
       ESQ3Mode.all,
     );
 

@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IMessage } from '@main/interface/msg';
-import { mergeId } from '@renderer/public/utils/common';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import type { RootState } from '../index';
 
@@ -96,21 +95,15 @@ export const msgSlice = createSlice({
     insert: (state, action:PayloadAction<IMessage>) => {
       const { msgMap } = state;
       const newMsg = action.payload;
-      const { id } = newMsg;
-      const { msgList, loadStatus } = (msgMap[id] || defaultItem()) as IMsgItem;
-
-      // // 去重
-      // const i = msgList.findIndex((msgItem) => msgItem.msgId === newMsg.msgId);
-      // if (i !== -1) {
-      //   return;
-      // }
+      const { conversationId } = newMsg;
+      const { msgList, loadStatus } = (msgMap[conversationId] || defaultItem()) as IMsgItem;
 
       // 插入
       const index = searchInsertIndex(msgList, newMsg);
       msgList.splice(index, 0, newMsg);
 
       // 更新
-      msgMap[id] = { msgList, loadStatus };
+      msgMap[conversationId] = { msgList, loadStatus };
       state.msgMap = { ...msgMap };
     },
     /**
@@ -119,8 +112,8 @@ export const msgSlice = createSlice({
     update: (state, action:PayloadAction<IMessage>) => {
       const { msgMap } = state;
       const newMsg = action.payload;
-      const { id } = newMsg;
-      const { msgList } = (msgMap[id] || defaultItem()) as IMsgItem;
+      const { conversationId } = newMsg;
+      const { msgList } = (msgMap[conversationId] || defaultItem()) as IMsgItem;
 
       const index = msgList.findIndex((msgItem) => msgItem.msgId === newMsg.msgId);
       if (index === -1) {
@@ -195,9 +188,8 @@ export const selectMsgListByCurConversation = (state:RootState) => {
   if (!userId || !conversationId) {
     return defaultItem();
   }
-  const id = mergeId(conversationId, userId);
 
-  return (state.msg.msgMap[id] || defaultItem()) as IMsgItem;
+  return (state.msg.msgMap[conversationId] || defaultItem()) as IMsgItem;
 };
 
 export default msgSlice.reducer;
