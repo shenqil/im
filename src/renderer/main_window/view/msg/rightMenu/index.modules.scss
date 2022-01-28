@@ -40,6 +40,10 @@
       border-radius: 5px;
       overflow: hidden;
       margin-right: 10px;
+
+      img {
+        border-radius: 5px;
+      }
     }
 
     &-name{
@@ -131,6 +135,7 @@
     width: 40px;
     height: 40px;
     border-radius: 5px;
+    overflow: hidden;
   }
   &__name{
     width: 100%;
