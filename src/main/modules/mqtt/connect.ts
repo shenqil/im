@@ -260,7 +260,10 @@ class MQTTConnect implements IMQTTConnect {
     topicAry.shift();
     // 检查消息接收人
     if (topicAry.length === 0
-      || (topicAry[0] !== this.getUserID && topicAry[0] !== this.username)) {
+      || (topicAry[0] !== this.getUserID
+        && topicAry[0] !== this.username
+        && topicAry[1] !== EEventName.groupMsgNew
+      )) {
       return;
     }
     topicAry.shift();
@@ -277,12 +280,17 @@ class MQTTConnect implements IMQTTConnect {
     }
 
     // 群组关系发生变化
-    if (this.onGroupMsg(topicAry, message)) {
+    if (this.onGroupChange(topicAry, message)) {
       return;
     }
 
     // 是否是单聊消息
     if (this.onSingleMsg(topicAry, message)) {
+      return;
+    }
+
+    // 是群聊消息
+    if (this.onGroupMsg(topicAry, message)) {
       return;
     }
 
@@ -318,7 +326,7 @@ class MQTTConnect implements IMQTTConnect {
   /**
    * 群组变动 IMClient/userId/group/type/groupID
    * */
-  private onGroupMsg(topicAry:string[], message:Buffer) {
+  private onGroupChange(topicAry:string[], message:Buffer) {
     if (topicAry[0] !== 'group' || topicAry.length < 2) {
       return false;
     }
@@ -384,6 +392,31 @@ class MQTTConnect implements IMQTTConnect {
     switch (topicAry[1]) {
       case 'new': {
         this.trigger(EEventName.singleMsgNew, payload);
+        return true;
+      }
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * 监听群聊消息 IMClient/groupId/groupMsg/type/msgId
+   * */
+  private onGroupMsg(topicAry:string[], message:Buffer) {
+    if (topicAry[0] !== ECharType.group || topicAry.length < 2) {
+      return false;
+    }
+
+    let payload = {};
+    try {
+      payload = JSON.parse(message.toString());
+    } catch {
+      return false;
+    }
+
+    switch (topicAry[1]) {
+      case 'new': {
+        this.trigger(EEventName.groupMsgNew, payload);
         return true;
       }
       default:

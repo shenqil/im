@@ -32,6 +32,7 @@ function send(msg:IMessage) {
 
 function onReciveNewMsg(callback:Function) {
   connect.listen(EEventName.singleMsgNew, callback);
+  connect.listen(EEventName.groupMsgNew, callback);
 }
 
 export default {

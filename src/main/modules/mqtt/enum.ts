@@ -7,6 +7,7 @@ export enum EEventName {
   groupDelMembers = 'GROUP_DELMEMBERS',
   groupExitGroup = 'GROUP_EXITGROUP',
   singleMsgNew = 'SINGLEMSG_NEW',
+  groupMsgNew = 'GROUPMSG_NEW',
 }
 
 export enum EFriendStatus {
