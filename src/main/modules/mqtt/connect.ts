@@ -262,7 +262,7 @@ class MQTTConnect implements IMQTTConnect {
     if (topicAry.length === 0
       || (topicAry[0] !== this.getUserID
         && topicAry[0] !== this.username
-        && topicAry[1] !== EEventName.groupMsgNew
+        && topicAry[1] !== ECharType.group
       )) {
       return;
     }

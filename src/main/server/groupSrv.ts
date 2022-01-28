@@ -45,7 +45,10 @@ class GroupSrv implements IGroupSrv {
    * 初始化
    * */
   async init() {
-    await this.myGroupList();
+    const list = await this.myGroupList();
+    await Promise.all(
+      list.map((item) => mqtt.group.subscribeGroupTopic(item.id)),
+    );
   }
 
   /**
@@ -163,6 +166,7 @@ class GroupSrv implements IGroupSrv {
       this.groups.push(groupItem);
     }
 
+    mqtt.group.subscribeGroupTopic(groupItem.id);
     this.changeGroups(this.groups);
   }
 
@@ -170,6 +174,8 @@ class GroupSrv implements IGroupSrv {
     const index = this.groups.findIndex((item) => item.id === info.id);
     if (index !== -1) {
       this.groups.splice(index, 1);
+
+      mqtt.group.unsubscribeGroupTopic(info.id);
       this.changeGroups(this.groups);
     }
   }
@@ -180,6 +186,7 @@ class GroupSrv implements IGroupSrv {
       this.groups.splice(index, 1, groupItem);
       conversationSrv.updateWithGroupInfo(groupItem);
     } else {
+      mqtt.group.subscribeGroupTopic(groupItem.id);
       this.groups.push(groupItem);
     }
 
@@ -221,6 +228,7 @@ class GroupSrv implements IGroupSrv {
   onGroupExit(params:IGroupMemberChangeParams) {
     const index = this.groups.findIndex((item) => item.id === params.groupId);
     if (index !== -1) {
+      mqtt.group.unsubscribeGroupTopic(params.groupId);
       this.groups.splice(index, 1);
       this.changeGroups(this.groups);
     }

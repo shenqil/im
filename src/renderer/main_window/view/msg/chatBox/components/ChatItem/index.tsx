@@ -1,33 +1,43 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { IMessage, EMsgType, ECharType } from '@main/interface/msg';
-import { useAppSelector } from '@renderer/main_window/store/hooks';
-import { selectFriendList } from '@renderer/main_window/store/friend';
+import type { IUserBaseInfo } from '@main/modules/sqlite3/interface';
+import type { IFriendInfo, IUserInfo } from '@main/modules/mqtt/interface';
 import Avatar from '@renderer/main_window/components/Avatar';
-import { IUserInfo } from '@main/modules/mqtt/interface';
 import TextMsg from '../TextMsg';
 import './index.scss';
 
 export interface IChatItemProps {
   msg:IMessage,
   userInfo:IUserInfo,
+  memberList:IUserBaseInfo[] | undefined,
+  friendInfo:IFriendInfo | undefined,
 }
 const ChatItem:FC<IChatItemProps> = function (props) {
-  const { msg, userInfo } = props;
-  const friendList = useAppSelector(selectFriendList);
-  const isSelf = userInfo.id === msg.formId;
+  const {
+    msg, userInfo, memberList, friendInfo,
+  } = props;
+  const [avatar, setAvatar] = useState('');
+  const [name, setName] = useState('');
 
-  const avatar = useMemo(() => {
+  useEffect(() => {
+    setAvatar('');
+    setName('');
     if (userInfo.id === msg.formId) {
-      return userInfo.avatar;
+      setAvatar(userInfo.avatar);
+      return;
     }
 
     if (msg.charType === ECharType.single) {
-      const friendInfo = friendList.find((item) => item.id === msg.formId);
-      return friendInfo?.avatar || '';
+      setAvatar(friendInfo?.avatar || '');
+      return;
     }
 
-    return '';
-  }, [friendList, userInfo, msg]);
+    if (msg.charType === ECharType.group) {
+      const memberInfo = memberList?.find((item) => item.id === msg.formId);
+      setAvatar(memberInfo?.avatar || '');
+      setName(memberInfo?.realName || '');
+    }
+  }, [memberList, userInfo, msg, friendInfo?.avatar]);
 
   function getCardId() {
     if (userInfo.id === msg.toId) {
@@ -38,22 +48,34 @@ const ChatItem:FC<IChatItemProps> = function (props) {
   }
 
   return (
-    <div className={`chat-item ${isSelf && 'chat-item--self'}`}>
-      <div className="chat-item__avatar">
-        <Avatar
-          url={avatar}
-          cardId={getCardId()}
-        />
-      </div>
+    <div className={`chat-item ${userInfo.id === msg.formId && 'chat-item--self'}`}>
+      {
+        avatar && (
+        <>
+          <div className="chat-item__avatar">
+            <Avatar
+              url={avatar}
+              cardId={getCardId()}
+            />
+          </div>
+          <div className="chat-item__content">
+            {/* 群成员名称 */}
+            {
+              name && (
+              <div className="chat-item__content-name">
+                {name}
+              </div>
+              )
+            }
 
-      <div className="chat-item__content">
-        {/* 文本消息 */}
-        {
-          msg.msgType === EMsgType.text
-          && <TextMsg text={msg.payload as string} />
-        }
+            {/* 文本消息 */}
+            {msg.msgType === EMsgType.text
+              && <TextMsg text={msg.payload as string} />}
 
-      </div>
+          </div>
+        </>
+        )
+      }
     </div>
   );
 };

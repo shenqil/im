@@ -92,6 +92,7 @@ const MemberItem:FC<IMemberItemProps> = function (props) {
 
 interface IRightMenuProps {
   userInfo:IUserInfo | undefined,
+  memberList:IUserBaseInfo[] | undefined,
   conversationInfo:IConversationInfo,
   groupInfo:IGroupInfo | undefined,
   friendInfo:IFriendInfo | undefined,
@@ -99,9 +100,8 @@ interface IRightMenuProps {
 }
 const RightMenu:FC<IRightMenuProps> = function (props) {
   const {
-    conversationInfo, groupInfo, friendInfo, handleRightMenu, userInfo,
+    conversationInfo, groupInfo, memberList, friendInfo, handleRightMenu, userInfo,
   } = props;
-  const [memberList, setMemberList] = useState<IUserBaseInfo[]>([]);
   const [groupNameEdit, setGroupNameEdit] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [isOwner, setIsOwner] = useState(false);
@@ -121,25 +121,6 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
     newConversationInfo.noDisturd = !conversationInfo.noDisturd;
     mainBridge.server.conversationSrv.updateConversationInfo(newConversationInfo);
   }
-
-  // 填充群成员信息
-  useEffect(() => {
-    if (conversationInfo.type === EConversationType.group) {
-      const ids = groupInfo?.memberIDs;
-      if (ids && ids.length) {
-        mainBridge.server.userSrv.getCacheUserInfo(ids)
-          .then((list) => {
-            setMemberList(list);
-          })
-          .catch((err) => {
-            console.error(err);
-            message.error('群成员信息获取失败!');
-          });
-      }
-    } else {
-      setMemberList([]);
-    }
-  }, [conversationInfo, groupInfo]);
 
   // 判断是否是群拥有者
   useEffect(() => {
@@ -338,7 +319,7 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
 
               <div className={styles['right-menu__member-container']}>
                 {
-                  memberList.map((item) => (
+                  memberList && memberList.map((item) => (
                     <MemberItem
                       key={item.id}
                       isOwner={isOwner}

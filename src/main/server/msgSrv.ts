@@ -143,6 +143,15 @@ class MsgSrv implements IMsgSrv {
       return;
     }
 
+    if (msgItem.formId === this.userInfo?.id
+      && /^RECIVE_/.test(msgItem.msgStatus || '')) {
+      // 去掉自己接受自己发送的消息
+      setTimeout(() => {
+        this.consumeMsgQueue();
+      });
+      return;
+    }
+
     this.msgFlag = true;
     this.saveMsg(msgItem)
       .finally(() => {

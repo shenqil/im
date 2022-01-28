@@ -6,19 +6,24 @@ import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hook
 import {
   selectMsgListByCurConversation, loadMsgListAsync, EMsgLoadStatus,
 } from '@renderer/main_window/store/msg';
+import type { IConversationInfo, IUserBaseInfo } from '@main/modules/sqlite3/interface';
+import type { IGroupInfo, IFriendInfo, IUserInfo } from '@main/modules/mqtt/interface';
 import { selectActivaId } from '@renderer/main_window/store/conversation';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
-import { IUserInfo } from '@main/modules/mqtt/interface';
 import { IMessage } from '@main/interface/msg';
 import * as moment from 'moment';
 import ChatItem from './components/ChatItem';
 import styles from './index.modules.scss';
 
 export interface IChatBoxProps {
-  userInfo:IUserInfo
+  userInfo:IUserInfo,
+  memberList:IUserBaseInfo[] | undefined,
+  conversationInfo:IConversationInfo,
+  groupInfo:IGroupInfo | undefined,
+  friendInfo:IFriendInfo | undefined,
 }
-const ChatBox:FC<IChatBoxProps> = function ({ userInfo }) {
+const ChatBox:FC<IChatBoxProps> = function ({ userInfo, memberList, friendInfo }) {
   const dispatch = useAppDispatch();
   const conversationId = useAppSelector(selectActivaId);
   const { msgList, loadStatus } = useAppSelector(selectMsgListByCurConversation);
@@ -165,6 +170,8 @@ const ChatBox:FC<IChatBoxProps> = function ({ userInfo }) {
               {formatTimeSpace(msgList[index === 0 ? 0 : index - 1], item)}
               <ChatItem
                 userInfo={userInfo}
+                friendInfo={friendInfo}
+                memberList={memberList}
                 msg={item}
               />
             </div>

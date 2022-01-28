@@ -37,7 +37,9 @@ export interface IGroup {
   onGroupAddMembers(callback:Function):void,
   onGroupDelMembers(callback:Function):void,
   onGroupUpdate(callback:Function):void,
-  onGroupExit(callback:Function):void
+  onGroupExit(callback:Function):void,
+  subscribeGroupTopic(groupId:string):Promise<unknown>,
+  unsubscribeGroupTopic(groupId:string):Promise<unknown>,
 }
 
 /**
@@ -173,6 +175,20 @@ function onGroupExit(callback:Function) {
   connect.listen(EEventName.groupExitGroup, callback);
 }
 
+/**
+ * 订阅一个群组
+ * */
+function subscribeGroupTopic(groupId:string) {
+  return connect.subscribeTopic(`${groupId}/groupMsg/#`);
+}
+
+/**
+ * 取消订阅一个群组
+ * */
+function unsubscribeGroupTopic(groupId:string) {
+  return connect.unsubscribeTopic(`${groupId}/groupMsg/#`);
+}
+
 export default {
   myGroupList,
   create,
@@ -187,4 +203,6 @@ export default {
   onGroupDelMembers,
   onGroupUpdate,
   onGroupExit,
+  subscribeGroupTopic,
+  unsubscribeGroupTopic,
 };
