@@ -13,7 +13,7 @@ function send(msg:IMessage) {
       topic: `${connect.clientPrefix}/${msg.toId}/${msg.charType}/new/${msg.msgId}`,
       opts: {
         qos: 1,
-        retain: true,
+        retain: false,
       },
       message: JSON.stringify({
         ...msg,
