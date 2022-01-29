@@ -16,7 +16,7 @@
     "dist": "electron-builder --config=./electron-builder.json5",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "rebuild": "electron-rebuild -f -a x64 -v 15.3.1 -w sqlite3",
-    "electron:generate-icons": "electron-icon-builder --input=./src/renderer/public/img/logo.png --output=./build --flatten"
+    "electron:generate-icons": "electron-icon-builder --input=./src/static/img/logo.png --output=./build --flatten"
   },
   "author": "lsq",
   "license": "ISC",
@@ -40,7 +40,6 @@
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
     "babel-loader": "^8.2.3",
-    "copy-webpack-plugin": "^10.0.0",
     "core-js": "^3.19.2",
     "cross-env": "^7.0.3",
     "css-loader": "^6.5.1",
@@ -57,6 +56,7 @@
     "eslint-plugin-react": "^7.27.1",
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-webpack-plugin": "^3.1.1",
+    "fs-extra": "^10.0.0",
     "html-loader": "^3.0.1",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.4.5",

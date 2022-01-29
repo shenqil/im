@@ -11,8 +11,10 @@ import chartMsg from '@main/modules/sqlite3/chartMsg';
  * */
 export async function appReady() {
   console.log('appReady');
+  // 创建托盘
+  await import('@main/utils/tray');
   // 初始化数据库，创建好对应的表
-  sqlite3Init();
+  await sqlite3Init();
 }
 
 /**

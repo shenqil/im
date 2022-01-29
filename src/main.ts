@@ -20,7 +20,6 @@ app.whenReady().then(async () => {
       console.error('React Devtools failed to install:', e);
     }
   }
-
   await appReady();
   wins.login.openWin();
 });
