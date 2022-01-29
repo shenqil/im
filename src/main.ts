@@ -7,12 +7,12 @@ import './main/schemes/index';
 import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import wins from './main/window/index';
 import { appReady } from './main/lifeCycle';
-
+import '@main/utils/singleInstance';
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
+  if (process.env.WEBPACK_DEV_SERVER_URL && process.env.WEBPACK_DEV_SERVER_URL1) {
     try {
       await installExtension(REACT_DEVELOPER_TOOLS);
       await installExtension(REDUX_DEVTOOLS);

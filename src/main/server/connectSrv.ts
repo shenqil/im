@@ -10,6 +10,8 @@ export interface IConnectSrv {
   signOut():Promise<unknown>
   mainMenuReady():Promise<unknown>
   loginMenuReady():Promise<unknown>
+  show():void
+  hide():void
 }
 
 class ConnectSrv implements IConnectSrv {
@@ -20,6 +22,14 @@ class ConnectSrv implements IConnectSrv {
   constructor() {
     this.isMainMenuReady = false;
     this.whenMainMenuList = [];
+  }
+
+  show(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  hide(): void {
+    throw new Error('Method not implemented.');
   }
 
   /**
@@ -70,6 +80,8 @@ class ConnectSrv implements IConnectSrv {
     wins.main.win?.show();
     wins.main.win?.focus();
     await afterLogin();
+
+    ipcEvent.emit(EMainEventKey.loginStatus, true);
   }
 
   /**
@@ -77,6 +89,7 @@ class ConnectSrv implements IConnectSrv {
    * */
   async signOut() {
     wins.main.win?.hide();
+    ipcEvent.emit(EMainEventKey.loginStatus, false);
     await mqtt.connect.signOut();
     this.isMainMenuReady = false;
     wins.main.win?.reload();

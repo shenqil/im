@@ -1,4 +1,5 @@
 export enum EMainEventKey {
+  loginStatus = 'LOGIN_STATUS', // 登录状态
   UserInfoChange = 'USER_INFO_CHANGE', // 当前用户信息发生变化
 
   RouteChange = 'ROUTE_CHANGE',
