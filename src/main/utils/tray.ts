@@ -120,6 +120,9 @@ class TrayClass {
    * 开启托盘闪烁
    * */
   taryRemindOn() {
+    if (this.isTwinkling) {
+      return;
+    }
     this.isTwinkling = true;
     clearInterval(this.trayTimeHande);
     if (process.platform !== 'win32') {
@@ -156,6 +159,11 @@ const tray = new TrayClass();
  * */
 ipcEvent.on(EMainEventKey.loginStatus, (status:boolean) => {
   isLogin = status;
+});
+
+// 监听消息通知
+ipcEvent.on(EMainEventKey.MsgNotifica, () => {
+  tray.taryRemindOn();
 });
 
 export default tray;

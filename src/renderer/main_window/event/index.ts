@@ -9,6 +9,7 @@ import './friend';
 import './group';
 import './conversation';
 import './msg';
+import './playAudio';
 
 mainEvent.on(EMainEventKey.UnifiedPrompt, ({ type, msg }:any) => {
   switch (type) {

@@ -16,6 +16,7 @@ export enum EMainEventKey {
 
   MsgInsert = 'MSG_INSERT',
   MsgUpdate = 'MSG_UPDATE',
+  MsgNotifica = 'MSG_NOTIFICA',
 }
 
 export default EMainEventKey;
