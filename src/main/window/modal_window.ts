@@ -60,9 +60,9 @@ export class ModalWindow extends BaseWIN implements IModalWindow {
 
   openWin() {
     if (!mainWin.win) {
-      return;
+      return undefined;
     }
-    super.openWin({
+    const win = super.openWin({
       show: false,
       width: this.width,
       height: this.height,
@@ -73,15 +73,19 @@ export class ModalWindow extends BaseWIN implements IModalWindow {
       parent: mainWin.win || undefined,
     });
 
-    this.win?.once('ready-to-show', () => {
-      ipcMainEvent.emit(EMainEventKey.ModalRouteChange, this.routePath);
-      this.win?.on('blur', () => {
-        this.win?.hide();
+    if (win) {
+      win.once('ready-to-show', () => {
+        ipcMainEvent.emit(EMainEventKey.ModalRouteChange, this.routePath);
+        this.win?.on('blur', () => {
+          this.win?.hide();
+        });
+        this.win?.on('hide', () => {
+          ipcMainEvent.emit(EMainEventKey.ModalRouteChange, '/');
+        });
       });
-      this.win?.on('hide', () => {
-        ipcMainEvent.emit(EMainEventKey.ModalRouteChange, '/');
-      });
-    });
+    }
+
+    return win;
   }
 
   private show() {

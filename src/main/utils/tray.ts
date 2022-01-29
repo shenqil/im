@@ -72,6 +72,7 @@ class TrayClass {
       label: '退出',
       type: 'normal',
       click: () => {
+        ipcEvent.emit(EMainEventKey.appQuit, true);
         app.exit();
       },
     },

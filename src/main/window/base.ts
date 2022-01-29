@@ -49,7 +49,7 @@ export function createBrowserWindow(option: BrowserWindowConstructorOptions, win
  * */
 export interface IBaseWIN {
   win: BrowserWindow | null
-  openWin(options: BrowserWindowConstructorOptions | void): void
+  openWin(options: BrowserWindowConstructorOptions | void): BrowserWindow | undefined
   closeWin():void
 }
 
@@ -69,12 +69,13 @@ class BaseWIN implements IBaseWIN {
   /**
    * 打开窗口
    * */
-  openWin(options: BrowserWindowConstructorOptions | void) {
+  openWin(options: BrowserWindowConstructorOptions | void):BrowserWindow | undefined {
     if (this.win) {
-      return;
+      return undefined;
     }
 
     this.win = createBrowserWindow(options || {}, this.WIN_NAME);
+    return this.win;
   }
 
   /**
