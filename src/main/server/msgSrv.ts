@@ -154,8 +154,10 @@ class MsgSrv implements IMsgSrv {
 
     this.msgFlag = true;
     this.saveMsg(msgItem)
-      .finally(() => {
+      .then(() => {
         ipcEvent.emit(EMainEventKey.MsgNotifica, true);
+      })
+      .finally(() => {
         this.msgFlag = false;
         this.consumeMsgQueue();
       });
