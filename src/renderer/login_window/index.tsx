@@ -13,7 +13,7 @@ const App = function () {
   return (
     <div className={style.login}>
       <div className={style.title}>
-        IM - 即时沟通
+        E-Chart - 即时沟通
       </div>
       <div className={style.container}>
         <NormalLogin />
