@@ -76,11 +76,10 @@ class ConnectSrv implements IConnectSrv {
     await mqtt.connect.login(username, password);
     await this.whenMainMenuReady();
     wins.login.win?.hide();
-    ipcEvent.emit(EMainEventKey.RouteChange, 'msg');
     wins.main.win?.show();
     wins.main.win?.focus();
     await afterLogin();
-
+    ipcEvent.emit(EMainEventKey.RouteChange, 'msg');
     ipcEvent.emit(EMainEventKey.loginStatus, true);
   }
 

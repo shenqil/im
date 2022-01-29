@@ -10,6 +10,7 @@ import { mainBridge } from '@renderer/public/ipcRenderer';
 import { Provider } from 'react-redux';
 import Msg from '@renderer/main_window/view/msg';
 import AddressBook from '@renderer/main_window/view/addressBook';
+import { Spin } from 'antd';
 import { store } from '../store';
 import SideLayout from '../layout/SideLayout';
 
@@ -22,9 +23,17 @@ const NonePage = function () {
   }, [navActiva]);
 
   return (
-    <div>
-      未登录
+    <div style={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+    >
+      <Spin size="large" />
     </div>
+
   );
 };
 
