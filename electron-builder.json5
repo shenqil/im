@@ -1,7 +1,7 @@
 {
-  appId: "com.example.app", // 应用程序 ID
-  productName: "electron-demo", // 可执行文件指定产品名称
-  copyright: "Copyright © 2021 LSQ",
+  appId: "com.eChat.app", // 应用程序 ID
+  productName: "eChat", // 可执行文件指定产品名称
+  copyright: "Copyright © 2022 LSQ",
   directories: {
     app: ".webpack",
   },
@@ -9,7 +9,7 @@
   win: {
     target: "nsis", // 打包类型
     icon: "build/icons/icon.ico", // 应用程序图标的路径
-    legalTrademarks: "fssq", // 字符串 - 商标和注册商标
+    legalTrademarks: "eChat", // 字符串 - 商标和注册商标
   },
   nsis: {
     oneClick: false,
