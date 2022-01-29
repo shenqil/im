@@ -40,7 +40,7 @@ const ChatItem:FC<IChatItemProps> = function (props) {
   }, [memberList, userInfo, msg, friendInfo?.avatar]);
 
   function getCardId() {
-    if (userInfo.id === msg.toId) {
+    if (userInfo.id !== msg.formId) {
       return msg.formId;
     }
 

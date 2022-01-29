@@ -243,7 +243,7 @@ const RightMenu:FC<IRightMenuProps> = function (props) {
         {/* 头像 */}
         <div className={styles['right-menu__header']}>
           <div className={styles['right-menu__header-avatar']}>
-            <Avatar url={conversationInfo.avatar} />
+            <Avatar url={conversationInfo.avatar} cardId={friendInfo?.id} />
           </div>
           <div className={styles['right-menu__header-name']}>
             {/* 显示名称 */}
