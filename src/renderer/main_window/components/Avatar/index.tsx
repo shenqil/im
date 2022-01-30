@@ -2,7 +2,7 @@ import React from 'react';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import { selectFileServer } from '@renderer/main_window/store/config';
 import { useAppSelector } from '@renderer/main_window/store/hooks';
-import defaultImg from '@renderer/public/img/avatar.png';
+import defaultImg from '@renderer/public/img/logo.png';
 import styles from './index.modules.scss';
 /**
  * 头像

@@ -91,6 +91,7 @@ const Msg:FC = function () {
                 <ChartInput
                   userInfo={userInfo}
                   groupInfo={groupInfo}
+                  memberList={memberList}
                   friendInfo={friendInfo}
                   conversationInfo={conversationInfo}
                 />
