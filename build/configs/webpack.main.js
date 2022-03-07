@@ -8,5 +8,5 @@ module.exports = merge(base, {
   entry: resolve("src/main.ts"),
   output: {
     path: resolve(".webpack"),
-  },
+  }
 });

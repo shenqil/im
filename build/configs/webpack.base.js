@@ -1,5 +1,5 @@
 const { isProduction } = require("../utils/common");
-
+const { resolve } = require("../utils/common");
 module.exports = {
   output: {
     filename: "[name].built.js",
@@ -31,5 +31,11 @@ module.exports = {
   },
   resolve: {
     extensions: [".js", ".ts", ".jsx", ".tsx", ".json"],
+    alias: {
+      "@src/":resolve("./src"),
+      "@main": resolve("./src/main"),
+      "@preload": resolve("./src/preload"),
+      "@renderer": resolve("./src/renderer")
+    },
   },
 };

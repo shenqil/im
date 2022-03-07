@@ -11,10 +11,42 @@ body {
     height: 100%;
     font-family: "PingFang SC", "Microsoft YaHei", "SimHei", "Helvetica Neue",
         "Hiragino Sans GB";
+    user-select: none;
 }
 
 #root{
   width: 100%;
   height: 100%;
+  background-color: #f5f5f5;
 }
 
+.scroll{
+  overflow-x: hidden;
+  overflow-y: overlay;
+}
+
+.scroll__item--activa{
+  background-color: #eaebed;
+}
+
+.scroll::-webkit-scrollbar {
+  background: none;
+  width: 6px;
+  height: 6px;
+  display: none;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  width: 2px;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(169, 169, 169, .5);
+}
+
+.scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #c1c1c1;
+}
+
+.scroll:hover::-webkit-scrollbar{
+  display: block;
+}

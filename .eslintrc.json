@@ -29,6 +29,9 @@
         "peerDependencies": false
       }
     ],
-    "no-restricted-syntax":"warn"
+    "no-restricted-syntax":"off",
+    "default-param-last":"off",
+    "func-names":"off",
+    "no-plusplus":"off"
   }
 }

@@ -1,42 +1,44 @@
-/* eslint-disable import/extensions */
-import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-import IStore, { INavigationState, INavigationItem } from '../../../store/interface';
-import actions, { INavigationActions } from '../../../store/navigation/actions';
-import styles from './index.scss';
-
-interface IProps extends INavigationState, INavigationActions, RouteComponentProps {
-}
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hooks';
+import {
+  selectNavigationActiva, selectNavigationList, changeActiva, INavigationItem,
+} from '@renderer/main_window/store/navigation';
+import styles from './index.modules.scss';
 
 /**
  * 导航栏元素
  * */
-function NavigationItem(props:{ navItem:INavigationItem, activa:INavigationItem }) {
+const NavigationItem = function (props:{ navItem:INavigationItem, activa:string }) {
   const { navItem, activa } = props;
+
   return (
-    <div className={`${styles['nav-item']} ${activa.key === navItem.key && styles['nav-item--activa']}`}>
+    <div className={`${styles['nav-item']} ${navItem.key === activa && styles['nav-item--activa']}`}>
       <i className={`iconfont ${navItem.icon}`} />
     </div>
   );
-}
+};
 
 /**
  * 导航栏
  * */
-function Navigation(props:IProps) {
-  console.log(props);
-  const {
-    list: NavList, activa, changeActiva, history,
-  } = props;
+const Navigation = function () {
+  const navList = useAppSelector(selectNavigationList);
+  const navActiva = useAppSelector(selectNavigationActiva);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate(navActiva.path);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navActiva]);
 
   /**
    * 选中的导航栏发生变化
    * */
   function handleActiva(item:INavigationItem) {
-    changeActiva(item);
-    if (item.path) {
-      history.replace(item.path);
+    if (item.key !== navActiva.key) {
+      dispatch(changeActiva(item));
     }
   }
 
@@ -45,7 +47,7 @@ function Navigation(props:IProps) {
       {/* 导航栏上半部分 */}
       <div className={styles['nav-list-top']}>
         {
-          NavList.slice(0, NavList.length - 1)
+          navList.slice(0, navList.length - 1)
             .map((item, index) => (
               <div
                 key={item.key}
@@ -54,7 +56,7 @@ function Navigation(props:IProps) {
                 onClick={() => handleActiva(item)}
                 onKeyUp={() => {}}
               >
-                <NavigationItem navItem={item} activa={activa} />
+                <NavigationItem navItem={item} activa={navActiva.key} />
               </div>
             ))
         }
@@ -63,25 +65,20 @@ function Navigation(props:IProps) {
       {/* 导航栏下半部分 */}
       <div className={styles['nav-list-bottom']}>
         {
-          NavList.slice(-1)
+          navList.slice(-1)
             .map((item, index) => (
               <div
                 key={item.key}
                 role="button"
                 tabIndex={index}
-                onClick={() => changeActiva(item)}
-                onKeyUp={() => {}}
               >
-                <NavigationItem navItem={item} activa={activa} />
+                <NavigationItem navItem={item} activa={navActiva.key} />
               </div>
             ))
         }
       </div>
     </div>
   );
-}
+};
 
-const mapStateToPropsParam = (state:IStore) => state.navigation;
-const mapDispatchToPropsParam = actions;
-
-export default connect(mapStateToPropsParam, mapDispatchToPropsParam)(withRouter(Navigation));
+export default Navigation;

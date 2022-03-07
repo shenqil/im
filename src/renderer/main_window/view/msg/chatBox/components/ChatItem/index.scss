@@ -1,0 +1,41 @@
+.chat-item{
+  margin: 8px 0px;
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  &__avatar{
+    width: 36px;
+    height: 36px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-right: 10px;
+  }
+
+  &__content{
+    &-name{
+      margin-bottom: 2px;
+      color: #a2a3a5;
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    max-width: 50%;
+  }
+}
+
+.chat-item--self{
+  flex-flow: row-reverse nowrap;
+  .chat-item{
+    &__avatar{
+      margin-right: 0;
+      margin-left: 10px;
+    }
+  }
+  .text-msg{
+    background-color: #c9e7ff;
+  }
+}

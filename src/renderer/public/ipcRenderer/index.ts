@@ -1,7 +1,9 @@
-import IMainBridge from '../../../main/ipcMain/interface';
+import IMainBridge from '@main/ipcMain/interface';
+import { EMainEventKey } from '@main/ipcMain/eventInterface';
 
 const { mainBridgeCall } = (window as any);
 
+// -------------------------- js 桥 start ------------------
 function NewProxy(key:any) {
   const a = () => {};
   a.keys = [key];
@@ -36,3 +38,14 @@ export const mainBridge = new Proxy({}, {
 }) as IMainBridge;
 
 export default IMainBridge;
+// -------------------------- js 桥 end ------------------
+
+// -------------------------- 事件中心 start --------------
+interface IMainEvent{
+  on(name: EMainEventKey, callBack: Function):void,
+  off(name: EMainEventKey, callBack: Function): void,
+  emit(name: EMainEventKey, params: unknown):void,
+}
+export * from '@main/ipcMain/eventInterface';
+export const mainEvent = (window as any).mainEvent as IMainEvent;
+// -------------------------- 事件中心 end ----------------

@@ -1,31 +1,39 @@
-import React, { FC } from 'react';
-import { renderRoutes, RouteConfigComponentProps } from 'react-router-config';
-import styles from './sideLayout.scss';
-import Navigation from './components/Navigation/index';
-import Avatar from '../components/Avatar/index';
+import React from 'react';
 
-interface IProps extends RouteConfigComponentProps {
+import { Outlet } from 'react-router-dom';
+import { useAppSelector, useAppDispatch } from '@renderer/main_window/store/hooks';
+import { selectUserInfo, fetchUserInfoAsync } from '@renderer/main_window/store/user';
+import Navigation from './components/Navigation';
+import Avatar from '../components/Avatar';
+import styles from './sideLayout.modules.scss';
 
-}
+const SideLayout = function () {
+  const userInfo = useAppSelector(selectUserInfo);
+  const dispatch = useAppDispatch();
 
-const SideLayout:FC<IProps> = ({ route }) => (
-  <div className={styles['side-layout']}>
-    {/* 侧边导航 */}
-    <div className={styles.navigation}>
-      <div className={styles.avatar}>
-        <Avatar />
+  if (!userInfo) {
+    dispatch(fetchUserInfoAsync());
+  }
+
+  return (
+    <div className={styles['side-layout']}>
+      {/* 侧边导航 */}
+      <div className={styles.navigation}>
+        <div className={styles.avatar}>
+          <Avatar url={userInfo?.avatar || ''} />
+        </div>
+
+        <div className={styles.content}>
+          <Navigation />
+        </div>
+
       </div>
-
-      <div className={styles.content}>
-        <Navigation />
+      {/* 内容区 */}
+      <div className={styles.container}>
+        <Outlet />
       </div>
-
     </div>
-    {/* 内容区 */}
-    <div className={styles.container}>
-      {route && renderRoutes(route.routes)}
-    </div>
-  </div>
-);
+  );
+};
 
 export default SideLayout;

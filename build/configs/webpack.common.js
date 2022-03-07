@@ -26,22 +26,23 @@ module.exports = merge(base, {
         },
       },
       {
-        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        test: /\.(woff|woff2|eot|ttf|otf|mp3)$/i,
         type: "asset/resource",
         generator: {
           filename: "static/font/[hash][ext][query]",
+        },
+      },
+      {
+        test: /\.(mp3)$/i,
+        type: "asset/resource",
+        generator: {
+          filename: "static/music/[hash][ext][query]",
         },
       },
     ],
   },
   resolve: {
     // 配置省略文件路径的后缀名
-    extensions: [".tsx", ".ts", ".js"],
-    alias: {
-      "@/":resolve("./src/"),
-      "@renderer/": resolve("./src/renderer/"),
-      "@preload/": resolve("./src/preload/"),
-      "@renderer/": resolve("./src/renderer/")
-    },
+    extensions: [".tsx", ".ts", ".js"]
   },
 });

@@ -1,19 +1,27 @@
-import React, { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from 'react';
 import {
   Form, Input, Button, Checkbox, message,
 } from 'antd';
 import md5 from 'md5';
-import style from './index.scss';
-// eslint-disable-next-line import/extensions
-import { mainBridge } from '../../../public/ipcRenderer/index';
+import { throttle } from 'throttle-debounce';
+import { ILoginInfo } from '@main/server/interface';
+import { mainBridge } from '@renderer/public/ipcRenderer';
+import style from './index.modules.scss';
 
-function NormalLogin() {
+const NormalLogin = function () {
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm<ILoginInfo>();
 
-  const onFinish = (values: any) => {
+  const throttleSaveUserLoginInfo = throttle(1000, () => {
+    mainBridge.server.userSrv.saveUserLoginInfo(form.getFieldsValue());
+  });
+
+  const onFinish = () => {
     setLoading(true);
 
-    const { username, password } = values;
+    const { username, password } = form.getFieldsValue();
+
     mainBridge.server.connectSrv.login(
       username,
       md5(password),
@@ -30,14 +38,32 @@ function NormalLogin() {
       });
   };
 
+  const onFieldsChange = () => {
+    throttleSaveUserLoginInfo();
+  };
+
+  useEffect(() => {
+    mainBridge.server.userSrv.getUserLoginInfo()
+      .then((res) => {
+        form.setFieldsValue(res);
+        if (res.username && res.password && res.autoLogin) {
+          onFinish();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
+
   return (
     <div className={style['normal-login']}>
       <Form
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        initialValues={{ remember: true }}
+        form={form}
         onFinish={onFinish}
+        onFieldsChange={onFieldsChange}
         autoComplete="off"
       >
         <Form.Item
@@ -55,12 +81,21 @@ function NormalLogin() {
             { required: true, message: '请输入密码!' },
             { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/, message: '需要8-16个包含大小写字母和数字的字符' },
           ]}
+          className={style.password}
         >
           <Input.Password size="large" />
         </Form.Item>
 
-        <Form.Item name="remember" valuePropName="checked" wrapperCol={{ span: 16 }}>
-          <Checkbox>记住我</Checkbox>
+        <Form.Item name="remember" valuePropName="checked" wrapperCol={{ span: 16 }} className={style.remember}>
+          <Checkbox>
+            记住我
+          </Checkbox>
+        </Form.Item>
+
+        <Form.Item name="autoLogin" valuePropName="checked" wrapperCol={{ span: 16 }}>
+          <Checkbox>
+            自动登录
+          </Checkbox>
         </Form.Item>
 
         <Form.Item wrapperCol={{ span: 16 }}>
@@ -72,6 +107,6 @@ function NormalLogin() {
     </div>
 
   );
-}
+};
 
 export default NormalLogin;
