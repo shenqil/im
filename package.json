@@ -74,6 +74,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@reduxjs/toolkit": "^1.6.2",
+    "@shen9401/react-im-input": "0.0.1",
     "antd": "^4.17.2",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
