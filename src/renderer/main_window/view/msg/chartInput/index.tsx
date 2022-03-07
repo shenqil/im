@@ -1,5 +1,5 @@
 import React, {
-  FC, useRef, useMemo, useCallback,
+  FC, useRef, useMemo, useCallback, useEffect,
 } from 'react';
 import {
   EMsgType, IFilePayload, IMessage, ECharType,
@@ -13,6 +13,7 @@ import { mainBridge } from '@renderer/public/ipcRenderer';
 import { v4 as uuidv4 } from 'uuid';
 import ImInput from '@shen9401/react-im-input';
 import defaultImg from '@renderer/public/img/logo.png';
+import { editContentBackupMap } from '@renderer/main_window/store/conversation';
 import Tools from './components/Tools';
 import styles from './index.modules.scss';
 
@@ -112,6 +113,26 @@ const ChartInput:FC<IChartInputProps> = function (props) {
   function sendMsg(list:EMsgItem[]) {
     list.forEach((msgItem) => mainBridge.server.msgSrv.sendMsg(generateMsg(msgItem)));
   }
+
+  /**
+   * 备份,还原输入框内容
+   * */
+  useEffect(() => {
+    // eslint-disable-next-line prefer-destructuring
+    const id = conversationInfo.id;
+    const { setInnerHTML, getInnerHTML } = imInputRef.current;
+
+    if (id && setInnerHTML) {
+      const text = editContentBackupMap.get(id);
+      setInnerHTML(text || '');
+    }
+
+    return () => {
+      if (id && getInnerHTML) {
+        editContentBackupMap.set(id, getInnerHTML());
+      }
+    };
+  }, [conversationInfo.id]);
 
   return (
     <div className={styles['chart-input']}>
