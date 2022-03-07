@@ -36,7 +36,7 @@ const ChartInput:FC<IChartInputProps> = function (props) {
   const fileServer = useAppSelector(selectFileServer);
 
   const members = useMemo(() => {
-    if (!memberList) {
+    if (!memberList || conversationInfo.type === EConversationType.single) {
       return [];
     }
     return [
@@ -53,7 +53,7 @@ const ChartInput:FC<IChartInputProps> = function (props) {
           avatar: `${fileServer}${item.avatar}`,
         })),
     ];
-  }, [memberList, userInfo, fileServer]);
+  }, [memberList, userInfo, fileServer, conversationInfo]);
 
   /**
    * 插入Emoji

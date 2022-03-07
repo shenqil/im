@@ -52,6 +52,8 @@ const Msg:FC = function () {
             message.error('群成员信息获取失败!');
           });
       }
+    } else {
+      setMemberList([]);
     }
   }, [conversationInfo, groupList]);
 
