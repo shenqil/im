@@ -11,7 +11,7 @@ import { selectFileServer } from '@renderer/main_window/store/config';
 import { EConversationType } from '@main/modules/sqlite3/enum';
 import { mainBridge } from '@renderer/public/ipcRenderer';
 import { v4 as uuidv4 } from 'uuid';
-import ImInput from '@shen9401/react-im-input';
+import ImInput, { IIMRef } from '@shen9401/react-im-input';
 import defaultImg from '@renderer/public/img/logo.png';
 import { editContentBackupMap } from '@renderer/main_window/store/conversation';
 import Tools from './components/Tools';
@@ -33,7 +33,7 @@ const ChartInput:FC<IChartInputProps> = function (props) {
     conversationInfo, groupInfo, friendInfo, userInfo, memberList,
   } = props;
 
-  const imInputRef = useRef<any>(null);
+  const imInputRef = useRef<IIMRef>(null);
   const fileServer = useAppSelector(selectFileServer);
 
   const members = useMemo(() => {
