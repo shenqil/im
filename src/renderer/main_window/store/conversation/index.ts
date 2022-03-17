@@ -1,12 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { IConversationInfo } from '@main/modules/sqlite3/interface';
 import { mainBridge } from '@renderer/public/ipcRenderer';
+import { clearCache } from '@shen9401/react-im-input';
 import type { RootState } from '../index';
-
-/**
- * 输入框编辑内容备份
- * */
-export const editContentBackupMap:Map<string, string> = new Map();
 
 /**
  * 定义会话列表
@@ -43,7 +39,7 @@ export const conversationSlice = createSlice({
     }),
     conversationaRemove: (state, action:PayloadAction<string>) => {
       // 会话删除，清空对应的备份
-      editContentBackupMap.delete(action.payload);
+      clearCache(action.payload);
       return state;
     },
   },
